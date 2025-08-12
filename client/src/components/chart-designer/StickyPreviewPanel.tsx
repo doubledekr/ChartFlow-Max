@@ -86,7 +86,7 @@ export function StickyPreviewPanel() {
         </h3>
         <div 
           className="bg-white rounded border border-gray-200 shadow-sm overflow-hidden"
-          style={{ aspectRatio: '4/3' }}
+          style={{ aspectRatio: '16/9' }}
           data-testid="chart-preview"
         >
           <div className="w-full h-full p-3">
@@ -100,7 +100,7 @@ export function StickyPreviewPanel() {
             >
               {config.title.text}
             </div>
-            <svg width="100%" height="120" viewBox="0 0 280 120">
+            <svg width="100%" height="100" viewBox="0 0 280 100">
               {/* Grid lines for preview */}
               {config.gridLines.style !== 'none' && (
                 <g opacity={config.gridLines.opacity / 100}>

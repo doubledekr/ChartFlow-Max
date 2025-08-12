@@ -33,7 +33,7 @@ export function ChartCanvas() {
     if (canvasRef.current && !fabricCanvas) {
       const canvas = new fabric.Canvas(canvasRef.current, {
         width: 800,
-        height: 600,
+        height: 450,
         backgroundColor: 'transparent',
       });
 
@@ -79,7 +79,7 @@ export function ChartCanvas() {
 
     const margin = { top: 20, right: 30, bottom: 40, left: 50 };
     const width = 700 - margin.left - margin.right;
-    const height = 350 - margin.top - margin.bottom;
+    const height = 300 - margin.top - margin.bottom;
 
     const g = svg.append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
@@ -332,7 +332,7 @@ export function ChartCanvas() {
         <div 
           ref={containerRef}
           className="mx-auto bg-white rounded-lg shadow-lg relative"
-          style={{ width: 800, height: 600 }}
+          style={{ width: 800, height: 450 }}
         >
           <div className={cn(
             "absolute inset-0 rounded-lg overflow-hidden",
@@ -342,7 +342,7 @@ export function ChartCanvas() {
             <svg
               ref={svgRef}
               width="700"
-              height="400"
+              height="340"
               className="absolute top-8 left-8"
               style={{ zIndex: 1 }}
             />
