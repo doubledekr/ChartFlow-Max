@@ -10,6 +10,7 @@ import { AxisFormattingPanel } from '@/components/chart-designer/AxisFormattingP
 import { ElementLibraryPanel } from '@/components/chart-designer/ElementLibraryPanel';
 import { ChartCanvas } from '@/components/chart-designer/ChartCanvas';
 import { SimpleCanvas } from '@/components/chart-designer/SimpleCanvas';
+import { FinancialChartCanvas } from '@/components/financial';
 import { StickyPreviewPanel } from '@/components/chart-designer/StickyPreviewPanel';
 import { PropertyPanel } from '@/components/chart-designer/PropertyPanel';
 import { useToast } from '@/hooks/use-toast';
@@ -122,7 +123,9 @@ export default function ChartDesigner() {
         </div>
 
         {/* Center Panel - Canvas */}
-        <SimpleCanvas />
+        <div className="flex-1 p-4">
+          <FinancialChartCanvas />
+        </div>
 
         {/* Right Panel - Preview & Properties */}
         <div className="w-96 bg-white border-l border-gray-200 flex flex-col">
