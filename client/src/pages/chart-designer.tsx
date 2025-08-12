@@ -9,6 +9,7 @@ import { TypographyPanel } from '@/components/chart-designer/TypographyPanel';
 import { AxisFormattingPanel } from '@/components/chart-designer/AxisFormattingPanel';
 import { ElementLibraryPanel } from '@/components/chart-designer/ElementLibraryPanel';
 import { ChartCanvas } from '@/components/chart-designer/ChartCanvas';
+import { SimpleCanvas } from '@/components/chart-designer/SimpleCanvas';
 import { StickyPreviewPanel } from '@/components/chart-designer/StickyPreviewPanel';
 import { PropertyPanel } from '@/components/chart-designer/PropertyPanel';
 import { useToast } from '@/hooks/use-toast';
@@ -121,7 +122,7 @@ export default function ChartDesigner() {
         </div>
 
         {/* Center Panel - Canvas */}
-        <ChartCanvas key={chartVersion} />
+        <SimpleCanvas />
 
         {/* Right Panel - Preview & Properties */}
         <div className="w-96 bg-white border-l border-gray-200 flex flex-col">

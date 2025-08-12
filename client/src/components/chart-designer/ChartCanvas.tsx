@@ -129,6 +129,8 @@ export function ChartCanvas() {
         
         console.log('Added test element to canvas:', testText);
         console.log('Canvas objects count:', canvas.getObjects().length);
+        console.log('Canvas element dimensions:', canvas.getElement().width, 'x', canvas.getElement().height);
+        console.log('Canvas wrapper element:', canvas.wrapperEl);
 
         return () => {
           if (canvas) {
@@ -453,17 +455,18 @@ export function ChartCanvas() {
             </div>
             
             {/* Fabric.js Canvas for interactive elements */}
-            <canvas
-              ref={canvasRef}
-              className={cn(
-                "absolute inset-0",
-                canvasMode === 'default' && 'canvas-default',
-                canvasMode === 'interactive' && 'canvas-interactive',
-                canvasMode === 'dragging' && 'canvas-interactive'
-              )}
-              style={{ zIndex: 15 }}
-              data-testid="fabric-canvas"
-            />
+            <div className="absolute inset-0" style={{ zIndex: 15 }}>
+              <canvas
+                ref={canvasRef}
+                className={cn(
+                  "block",
+                  canvasMode === 'default' && 'canvas-default',
+                  canvasMode === 'interactive' && 'canvas-interactive',
+                  canvasMode === 'dragging' && 'canvas-interactive'
+                )}
+                data-testid="fabric-canvas"
+              />
+            </div>
           </div>
         </div>
       </div>
