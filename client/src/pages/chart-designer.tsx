@@ -1,0 +1,138 @@
+import { useState } from 'react';
+import { Undo, Redo, Save, Download, TrendingUp } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { DataSourcePanel } from '@/components/chart-designer/DataSourcePanel';
+import { ColorPalettePanel } from '@/components/chart-designer/ColorPalettePanel';
+import { GradientEffectsPanel } from '@/components/chart-designer/GradientEffectsPanel';
+import { LineStylingPanel } from '@/components/chart-designer/LineStylingPanel';
+import { TypographyPanel } from '@/components/chart-designer/TypographyPanel';
+import { AxisFormattingPanel } from '@/components/chart-designer/AxisFormattingPanel';
+import { ElementLibraryPanel } from '@/components/chart-designer/ElementLibraryPanel';
+import { ChartCanvas } from '@/components/chart-designer/ChartCanvas';
+import { StickyPreviewPanel } from '@/components/chart-designer/StickyPreviewPanel';
+import { PropertyPanel } from '@/components/chart-designer/PropertyPanel';
+import { useToast } from '@/hooks/use-toast';
+
+export default function ChartDesigner() {
+  const [chartVersion, setChartVersion] = useState(1);
+  const { toast } = useToast();
+
+  const handleDataUpdate = () => {
+    setChartVersion(prev => prev + 1);
+  };
+
+  const handleSaveProject = () => {
+    toast({
+      title: "Project Saved",
+      description: "Your chart project has been saved successfully.",
+    });
+  };
+
+  const handleUndo = () => {
+    toast({
+      title: "Undo",
+      description: "Last action undone.",
+    });
+  };
+
+  const handleRedo = () => {
+    toast({
+      title: "Redo",
+      description: "Action redone.",
+    });
+  };
+
+  return (
+    <div className="flex flex-col h-screen bg-gray-50" data-testid="chart-designer">
+      {/* Header Toolbar */}
+      <header className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between shadow-sm">
+        <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+              <TrendingUp className="text-white" size={16} />
+            </div>
+            <h1 className="text-xl font-bold text-gray-900">
+              ChartFlow Professional Chart Designer
+            </h1>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleUndo}
+              className="toolbar-btn text-gray-700 hover:text-gray-900"
+              data-testid="button-undo"
+            >
+              <Undo className="mr-1" size={16} />
+              Undo
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRedo}
+              className="toolbar-btn text-gray-700 hover:text-gray-900"
+              data-testid="button-redo"
+            >
+              <Redo className="mr-1" size={16} />
+              Redo
+            </Button>
+          </div>
+        </div>
+        
+        <div className="flex items-center space-x-3">
+          <Button
+            variant="outline"
+            onClick={handleSaveProject}
+            className="toolbar-btn bg-secondary hover:bg-secondary/90 text-white border-secondary"
+            data-testid="button-save-project"
+          >
+            <Save className="mr-1" size={16} />
+            Save Project
+          </Button>
+          <Button
+            onClick={handleSaveProject}
+            className="toolbar-btn bg-primary hover:bg-primary/90 text-white"
+            data-testid="button-export-chart-header"
+          >
+            <Download className="mr-1" size={16} />
+            Export Chart
+          </Button>
+        </div>
+      </header>
+
+      {/* Main Editor */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Left Panel - Controls */}
+        <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
+          <div className="p-4 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900">Design Controls</h2>
+          </div>
+          
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <DataSourcePanel onDataUpdate={handleDataUpdate} />
+            <ColorPalettePanel />
+            <GradientEffectsPanel />
+            <LineStylingPanel />
+            <TypographyPanel />
+            <AxisFormattingPanel />
+            <ElementLibraryPanel />
+          </div>
+        </div>
+
+        {/* Center Panel - Canvas */}
+        <ChartCanvas key={chartVersion} />
+
+        {/* Right Panel - Preview & Properties */}
+        <div className="w-96 bg-white border-l border-gray-200 flex flex-col">
+          <div className="p-4 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900">Live Preview & Export</h2>
+          </div>
+          
+          <StickyPreviewPanel />
+          <PropertyPanel />
+        </div>
+      </div>
+    </div>
+  );
+}
