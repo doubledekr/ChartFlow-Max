@@ -222,7 +222,7 @@ export function FinancialChartCanvas({
   ) => {
     if (!fabricCanvasRef.current || !pathData || data.length === 0) return;
 
-    // Convert SVG path to Fabric.js Path object
+    // Convert SVG path to Fabric.js Path object with proper styling
     const fabricPath = new (window as any).fabric.Path(pathData, {
       fill: '',
       stroke: lineProperties.color,
@@ -233,6 +233,8 @@ export function FinancialChartCanvas({
       selectable: false, // Will be part of group
       hasControls: false,
       hasBorders: false,
+      strokeLineCap: 'round',
+      strokeLineJoin: 'round'
     });
 
     // Convert D3 axis data to Fabric.js text objects
@@ -314,16 +316,55 @@ export function FinancialChartCanvas({
       }
     );
 
-    // Create a comprehensive group with chart line, axis elements, and labels
+    // Add axis elements as separate selectable objects
+    yAxisLine.set({
+      left: margin.left,
+      top: margin.top,
+      selectable: true,
+      hasControls: true,
+      hasBorders: true,
+      type: 'y-axis-line'
+    });
+
+    xAxisLine.set({
+      left: margin.left,
+      top: margin.top + chartHeight,
+      selectable: true,
+      hasControls: true,
+      hasBorders: true,
+      type: 'x-axis-line'
+    });
+
+    // Add individual axis labels as separate selectable objects
+    yAxisLabels.forEach((label: any) => {
+      label.set({
+        left: margin.left - 50,
+        top: margin.top + label.top,
+        selectable: true,
+        hasControls: true,
+        hasBorders: true
+      });
+      fabricCanvasRef.current.add(label);
+    });
+
+    xAxisLabels.forEach((label: any) => {
+      label.set({
+        left: margin.left + label.left,
+        top: margin.top + chartHeight + 25,
+        selectable: true,
+        hasControls: true,
+        hasBorders: true
+      });
+      fabricCanvasRef.current.add(label);
+    });
+
+    // Add axis lines as separate objects
+    fabricCanvasRef.current.add(yAxisLine);
+    fabricCanvasRef.current.add(xAxisLine);
+
+    // Create chart line group with proper z-index to avoid axis overlap
     const chartGroup = new (window as any).fabric.Group(
-      [
-        yAxisLine,
-        xAxisLine,
-        fabricPath,
-        currentPriceLabel,
-        ...yAxisLabels,
-        ...xAxisLabels
-      ], 
+      [fabricPath, currentPriceLabel], 
       {
         left: margin.left,
         top: margin.top,
@@ -379,8 +420,9 @@ export function FinancialChartCanvas({
       }
     });
 
-    // Add to canvas
+    // Add chart group and bring to front (above axis elements)
     fabricCanvasRef.current.add(chartGroup);
+    fabricCanvasRef.current.bringToFront(chartGroup);
     fabricCanvasRef.current.renderAll();
 
     // Auto-select the chart group
@@ -402,21 +444,32 @@ export function FinancialChartCanvas({
 
       switch (property) {
         case 'strokeWidth':
-          if (chartPath) chartPath.set('strokeWidth', value);
+          if (chartPath) {
+            chartPath.set('strokeWidth', value);
+            fabricCanvasRef.current?.renderAll();
+          }
           break;
         case 'opacity':
-          if (chartPath) chartPath.set('opacity', value);
+          if (chartPath) {
+            chartPath.set('opacity', value);
+            fabricCanvasRef.current?.renderAll();
+          }
           break;
         case 'color':
-          if (chartPath) chartPath.set('stroke', value);
-          if (priceIndicator) priceIndicator.set('fill', value);
+          if (chartPath) {
+            chartPath.set('stroke', value);
+            fabricCanvasRef.current?.renderAll();
+          }
+          if (priceIndicator) {
+            priceIndicator.set('fill', value);
+            fabricCanvasRef.current?.renderAll();
+          }
           break;
         case 'smoothness':
           console.log('Smoothness changed to:', value);
-          // Regenerate the chart with new smoothness
-          if (data.length > 0) {
-            setTimeout(() => renderChart(), 100);
-          }
+          // Clear canvas and regenerate with new smoothness
+          fabricCanvasRef.current?.clear();
+          setTimeout(() => renderChart(), 100);
           break;
       }
     } else {

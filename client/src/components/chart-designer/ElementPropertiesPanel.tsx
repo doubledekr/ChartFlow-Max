@@ -115,12 +115,13 @@ export function ElementPropertiesPanel({
 
         {isChartGroup && (
           <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="text-xs text-gray-600 mb-2">Chart Actions:</div>
             <div className="flex gap-2">
               <Button 
                 size="sm" 
                 variant="outline" 
                 className="text-xs"
-                onClick={() => console.log('Duplicate chart')}
+                onClick={() => onUpdateProperty('duplicate', true)}
               >
                 Duplicate Chart
               </Button>
@@ -128,7 +129,7 @@ export function ElementPropertiesPanel({
                 size="sm" 
                 variant="outline" 
                 className="text-xs text-red-600 hover:text-red-700"
-                onClick={() => console.log('Delete chart')}
+                onClick={() => onUpdateProperty('delete', true)}
               >
                 Delete
               </Button>
