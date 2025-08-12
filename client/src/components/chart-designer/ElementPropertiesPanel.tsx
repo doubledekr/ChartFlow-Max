@@ -3,6 +3,7 @@ import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { TrendingUp, Move, Edit3 } from 'lucide-react';
 
 interface ElementPropertiesPanelProps {
@@ -28,6 +29,7 @@ export function ElementPropertiesPanel({
   }
 
   const isChartGroup = properties.type === 'financial-chart-group';
+  const elementType = properties.type;
 
   return (
     <Card>
