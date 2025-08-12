@@ -8,15 +8,15 @@ import { LineStylingPanel } from '@/components/chart-designer/LineStylingPanel';
 import { TypographyPanel } from '@/components/chart-designer/TypographyPanel';
 import { AxisFormattingPanel } from '@/components/chart-designer/AxisFormattingPanel';
 import { ElementLibraryPanel } from '@/components/chart-designer/ElementLibraryPanel';
-import { ChartCanvas } from '@/components/chart-designer/ChartCanvas';
-import { SimpleCanvas } from '@/components/chart-designer/SimpleCanvas';
 import { FinancialChartCanvas } from '@/components/financial';
-import { StickyPreviewPanel } from '@/components/chart-designer/StickyPreviewPanel';
-import { PropertyPanel } from '@/components/chart-designer/PropertyPanel';
+import { TemplateManager, InstanceManager } from '@/components/templates';
 import { useToast } from '@/hooks/use-toast';
+import type { ChartTemplate, ChartInstance } from '@shared/schema';
 
 export default function ChartDesigner() {
   const [chartVersion, setChartVersion] = useState(1);
+  const [selectedTemplate, setSelectedTemplate] = useState<ChartTemplate | null>(null);
+  const [selectedInstance, setSelectedInstance] = useState<ChartInstance | null>(null);
   const { toast } = useToast();
 
   const handleDataUpdate = () => {
@@ -127,14 +127,31 @@ export default function ChartDesigner() {
           <FinancialChartCanvas />
         </div>
 
-        {/* Right Panel - Preview & Properties */}
+        {/* Right Panel - Templates & Instances */}
         <div className="w-96 bg-white border-l border-gray-200 flex flex-col">
           <div className="p-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Live Preview & Export</h2>
+            <h2 className="text-lg font-semibold text-gray-900">Templates & Charts</h2>
           </div>
           
-          <StickyPreviewPanel />
-          <PropertyPanel />
+          {/* Templates Section */}
+          <div className="p-4 border-b border-gray-200 flex-1 overflow-auto">
+            <TemplateManager 
+              onSelectTemplate={(template) => {
+                setSelectedTemplate(template);
+              }}
+              currentTemplate={selectedTemplate}
+            />
+          </div>
+
+          {/* Instances Section */}
+          <div className="p-4 flex-1 overflow-auto">
+            <InstanceManager 
+              selectedTemplate={selectedTemplate}
+              onSelectInstance={(instance) => {
+                setSelectedInstance(instance);
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>

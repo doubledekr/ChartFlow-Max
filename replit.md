@@ -41,24 +41,34 @@ Export functionality supports multiple formats with configurable options:
 
 ## Core Framework Dependencies
 - **React 18**: Frontend framework with TypeScript support
-- **Express.js**: Backend web server framework
+- **Express.js**: Backend web server framework with authentication middleware
 - **Vite**: Build tool and development server
 
 ## Chart and Canvas Libraries
-- **Fabric.js 5.3.0**: Interactive canvas library for draggable elements
-- **D3.js 7.8.0**: Data visualization library for chart rendering
-- **jsPDF**: PDF generation for export functionality
+- **Fabric.js 5.3.0**: Interactive canvas library for draggable elements and annotations
+- **D3.js 7.8.0**: Data visualization library for financial chart rendering
+- **jsPDF**: PDF generation for chart export functionality
 
 ## UI and Styling
 - **Tailwind CSS**: Utility-first CSS framework
 - **shadcn/ui**: Component library built on Radix UI primitives
-- **Radix UI**: Unstyled, accessible UI components
-- **Lucide React**: Icon library
+- **Radix UI**: Unstyled, accessible UI components for dialogs, selects, etc.
+- **Lucide React**: Icon library for financial and UI icons
 
 ## Database and ORM
 - **Drizzle ORM**: Type-safe SQL ORM with PostgreSQL dialect support
+- **PostgreSQL**: Database for templates, chart instances, and user data
 - **@neondatabase/serverless**: PostgreSQL connection for serverless environments
 - **Drizzle Kit**: Database migration and schema management tools
+
+## Financial Data Integration
+- **Polygon.io API**: Real-time and historical stock market data source
+- **Custom caching layer**: Database-backed API response caching for rate limiting
+
+## Authentication and Security
+- **Replit Auth**: OpenID Connect authentication system
+- **Passport.js**: Authentication middleware for Express
+- **Express Sessions**: Session management with PostgreSQL storage
 
 ## Development and Build Tools
 - **TypeScript**: Static type checking
@@ -66,6 +76,6 @@ Export functionality supports multiple formats with configurable options:
 - **ESBuild**: Fast JavaScript bundler for production builds
 
 ## Data Management
-- **TanStack Query**: Server state management and caching
+- **TanStack Query**: Server state management and API caching
 - **Wouter**: Lightweight client-side routing
-- **React Hook Form**: Form state management with validation
+- **React Hook Form**: Form state management with Zod validation
