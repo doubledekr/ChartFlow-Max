@@ -16,6 +16,7 @@ export function ChartCanvas() {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [fabricCanvas, setFabricCanvas] = useState<any>(null);
+  const [canvasMode, setCanvasMode] = useState<'default' | 'interactive' | 'dragging'>('default');
   
   const { 
     config, 
@@ -45,10 +46,12 @@ export function ChartCanvas() {
             selectElement(element);
           }
         }
+        setCanvasMode('interactive');
       });
 
       canvas.on('selection:cleared', () => {
         selectElement(null);
+        setCanvasMode('default');
       });
 
       canvas.on('object:moving', (e: any) => {
@@ -59,7 +62,34 @@ export function ChartCanvas() {
             y: activeObject.top,
           });
         }
+        setCanvasMode('dragging');
       });
+
+      canvas.on('object:modified', () => {
+        setCanvasMode('interactive');
+      });
+
+      canvas.on('mouse:over', (e: any) => {
+        if (e.target && e.target.chartElementId) {
+          setCanvasMode('interactive');
+          canvas.defaultCursor = 'move';
+        }
+      });
+
+      canvas.on('mouse:out', (e: any) => {
+        if (e.target && e.target.chartElementId) {
+          if (!canvas.getActiveObject()) {
+            setCanvasMode('default');
+            canvas.defaultCursor = 'crosshair';
+          }
+        }
+      });
+
+      // Set initial cursor
+      canvas.defaultCursor = 'crosshair';
+      canvas.hoverCursor = 'move';
+      canvas.moveCursor = 'grabbing';
+      canvas.freeDrawingCursor = 'crosshair';
 
       setFabricCanvas(canvas);
       setCanvasInstance(canvas);
@@ -371,7 +401,12 @@ export function ChartCanvas() {
             {/* Fabric.js Canvas for interactive elements */}
             <canvas
               ref={canvasRef}
-              className="absolute inset-0"
+              className={cn(
+                "absolute inset-0",
+                canvasMode === 'default' && 'canvas-default',
+                canvasMode === 'interactive' && 'canvas-interactive',
+                canvasMode === 'dragging' && 'canvas-interactive'
+              )}
               style={{ zIndex: 5 }}
               data-testid="fabric-canvas"
             />

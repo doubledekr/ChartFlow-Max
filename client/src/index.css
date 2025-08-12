@@ -170,6 +170,30 @@
     overflow-y: auto;
   }
 
+  .canvas-interactive {
+    cursor: grab;
+  }
+
+  .canvas-interactive:hover {
+    cursor: grab;
+  }
+
+  .canvas-interactive:active {
+    cursor: grabbing;
+  }
+
+  .canvas-element-hover {
+    cursor: move;
+  }
+
+  .canvas-element-selected {
+    cursor: move;
+  }
+
+  .canvas-default {
+    cursor: crosshair;
+  }
+
   .line-style-btn {
     @apply px-3 py-2 text-sm border rounded-md font-mono transition-all duration-200;
   }
