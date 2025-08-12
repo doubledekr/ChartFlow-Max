@@ -317,36 +317,37 @@ export function FinancialChartCanvas({
       type: 'x-axis-line'
     });
 
-    // Add individual axis labels as separate selectable objects
-    yAxisLabels.forEach((label: any) => {
-      label.set({
-        left: margin.left - 50,
-        top: margin.top + label.top,
-        selectable: true,
-        hasControls: true,
-        hasBorders: true
-      });
-      fabricCanvasRef.current.add(label);
+    // Create axis text groups for unified editing
+    const yAxisGroup = new (window as any).fabric.Group(yAxisLabels, {
+      left: margin.left - 50,
+      top: margin.top,
+      selectable: true,
+      hasControls: true,
+      hasBorders: true,
+      type: 'y-axis-labels'
     });
 
-    xAxisLabels.forEach((label: any) => {
-      label.set({
-        left: margin.left + label.left,
-        top: margin.top + chartHeight + 25,
-        selectable: true,
-        hasControls: true,
-        hasBorders: true
-      });
-      fabricCanvasRef.current.add(label);
+    const xAxisGroup = new (window as any).fabric.Group(xAxisLabels, {
+      left: margin.left,
+      top: margin.top + chartHeight + 25,
+      selectable: true,
+      hasControls: true,
+      hasBorders: true,
+      type: 'x-axis-labels'
     });
 
-    // Add axis lines as separate objects
-    fabricCanvasRef.current.add(yAxisLine);
-    fabricCanvasRef.current.add(xAxisLine);
+    // Don't add groups separately - they'll be part of the complete chart group
 
-    // Create chart line group with proper z-index to avoid axis overlap
-    const chartGroup = new (window as any).fabric.Group(
-      [fabricPath, chartTitleLabel], 
+    // Create comprehensive chart system with all components
+    const completeChartGroup = new (window as any).fabric.Group(
+      [
+        yAxisLine,
+        xAxisLine,
+        fabricPath,
+        chartTitleLabel,
+        yAxisGroup,
+        xAxisGroup
+      ], 
       {
         left: margin.left,
         top: margin.top,
@@ -359,32 +360,37 @@ export function FinancialChartCanvas({
         cornerSize: 8,
         lockScalingX: false,
         lockScalingY: false,
+        subTargetCheck: true, // Allow selection of sub-elements
       }
     );
 
-    // Add custom properties for financial chart group
-    chartGroup.type = 'financial-chart-group';
-    chartGroup.symbol = symbol;
-    chartGroup.timeframe = timeframe;
+    // Set up event handlers for the complete chart system
+    completeChartGroup.set({
+      type: 'financial-chart-group',
+      symbol,
+      timeframe,
+      properties: lineProperties
+    });
 
-    // Add event listeners for selection
-    chartGroup.on('selected', () => {
-      setSelectedChartLine(chartGroup);
-      console.log('Chart group selected');
+    completeChartGroup.on('selected', () => {
+      console.log('Chart system selected');
+      setSelectedChartLine(completeChartGroup);
       
       // Notify parent component about selection
       if (onElementSelect) {
-        onElementSelect(chartGroup, {
+        onElementSelect(completeChartGroup, {
           type: 'financial-chart-group',
           symbol,
           timeframe,
           properties: lineProperties,
-          updateFunction: updateChartLineProperties
+          updateFunction: updateChartLineProperties,
+          duplicateFunction: duplicateChartLine,
+          deleteFunction: deleteChartLine
         });
       }
     });
 
-    chartGroup.on('deselected', () => {
+    completeChartGroup.on('deselected', () => {
       setSelectedChartLine(null);
       
       // Notify parent component about deselection
@@ -393,23 +399,40 @@ export function FinancialChartCanvas({
       }
     });
 
-    // Enable text editing on double-click for axis labels
-    chartGroup.on('mousedblclick', (e: any) => {
+    // Enable sub-element selection for axis groups
+    completeChartGroup.on('mouse:down', (e: any) => {
       const target = e.subTargets?.[0];
-      if (target && (target.type === 'axis-label' || target.type === 'price-indicator')) {
-        target.enterEditing();
-        target.selectAll();
+      if (target && (target.type === 'y-axis-labels' || target.type === 'x-axis-labels')) {
+        // Allow axis text groups to be selected independently
+        setTimeout(() => {
+          fabricCanvasRef.current?.setActiveObject(target);
+          if (onElementSelect) {
+            onElementSelect(target, {
+              type: target.type,
+              updateFunction: (property: string, value: any) => {
+                const objects = target.getObjects();
+                objects.forEach((obj: any) => {
+                  if (property === 'fontSize') obj.set('fontSize', value);
+                  if (property === 'fill') obj.set('fill', value);
+                  if (property === 'fontFamily') obj.set('fontFamily', value);
+                  if (property === 'fontWeight') obj.set('fontWeight', value);
+                });
+                target.addWithUpdate();
+                fabricCanvasRef.current?.renderAll();
+              }
+            });
+          }
+        }, 10);
       }
     });
 
-    // Add chart group and bring to front (above axis elements)
-    fabricCanvasRef.current.add(chartGroup);
-    fabricCanvasRef.current.bringToFront(chartGroup);
+    // Add complete chart system
+    fabricCanvasRef.current.add(completeChartGroup);
     fabricCanvasRef.current.renderAll();
 
-    // Auto-select the chart group
-    fabricCanvasRef.current.setActiveObject(chartGroup);
-    setSelectedChartLine(chartGroup);
+    // Auto-select the chart system
+    fabricCanvasRef.current.setActiveObject(completeChartGroup);
+    setSelectedChartLine(completeChartGroup);
   };
 
   const updateChartLineProperties = (property: string, value: any) => {
