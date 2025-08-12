@@ -10,6 +10,7 @@ import { AxisFormattingPanel } from '@/components/chart-designer/AxisFormattingP
 import { ElementLibraryPanel } from '@/components/chart-designer/ElementLibraryPanel';
 import { FinancialChartCanvas } from '@/components/financial';
 import { TemplateManager, InstanceManager } from '@/components/templates';
+import { ElementPropertiesPanel } from '@/components/chart-designer/ElementPropertiesPanel';
 import { useToast } from '@/hooks/use-toast';
 import type { ChartTemplate, ChartInstance } from '@shared/schema';
 
@@ -17,10 +18,36 @@ export default function ChartDesigner() {
   const [chartVersion, setChartVersion] = useState(1);
   const [selectedTemplate, setSelectedTemplate] = useState<ChartTemplate | null>(null);
   const [selectedInstance, setSelectedInstance] = useState<ChartInstance | null>(null);
+  const [selectedElement, setSelectedElement] = useState<any>(null);
+  const [elementProperties, setElementProperties] = useState<any>(null);
   const { toast } = useToast();
 
   const handleDataUpdate = () => {
     setChartVersion(prev => prev + 1);
+  };
+
+  const handleElementSelect = (element: any, properties: any) => {
+    setSelectedElement(element);
+    setElementProperties(properties);
+  };
+
+  const handlePropertyUpdate = (property: string, value: any) => {
+    if (!selectedElement || !elementProperties) return;
+
+    // Update local properties state
+    setElementProperties((prev: any) => ({
+      ...prev,
+      properties: {
+        ...prev.properties,
+        [property]: value
+      }
+    }));
+
+    // Update the actual element via the canvas update function
+    if (elementProperties?.updateFunction) {
+      elementProperties.updateFunction(property, value);
+    }
+    console.log(`Updated ${property} to ${value} for element:`, selectedElement.type);
   };
 
   const handleSaveProject = () => {
@@ -113,6 +140,14 @@ export default function ChartDesigner() {
           
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             <DataSourcePanel onDataUpdate={handleDataUpdate} />
+            
+            {/* Element Properties Panel */}
+            <ElementPropertiesPanel 
+              selectedElement={selectedElement}
+              properties={elementProperties}
+              onUpdateProperty={handlePropertyUpdate}
+            />
+            
             <ColorPalettePanel />
             <GradientEffectsPanel />
             <LineStylingPanel />
@@ -124,7 +159,7 @@ export default function ChartDesigner() {
 
         {/* Center Panel - Canvas */}
         <div className="flex-1 p-4">
-          <FinancialChartCanvas />
+          <FinancialChartCanvas onElementSelect={handleElementSelect} />
         </div>
 
         {/* Right Panel - Templates & Instances */}

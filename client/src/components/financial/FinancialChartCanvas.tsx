@@ -11,9 +11,17 @@ import * as d3 from 'd3';
 interface FinancialChartCanvasProps {
   width?: number;
   height?: number;
+  onElementSelect?: (element: any, properties: any) => void;
 }
 
-export function FinancialChartCanvas({ width = 800, height = 450 }: FinancialChartCanvasProps) {
+export function FinancialChartCanvas({ 
+  width = 800, 
+  height = 450, 
+  onElementSelect 
+}: FinancialChartCanvasProps) {
+  
+  // Expose update function to parent component
+  const updateChartLinePropertiesRef = useRef<(property: string, value: any) => void>();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<any>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -310,14 +318,30 @@ export function FinancialChartCanvas({ width = 800, height = 450 }: FinancialCha
     chartGroup.on('selected', () => {
       setSelectedChartLine(chartGroup);
       console.log('Chart group selected');
+      
+      // Notify parent component about selection
+      if (onElementSelect) {
+        onElementSelect(chartGroup, {
+          type: 'financial-chart-group',
+          symbol,
+          timeframe,
+          properties: lineProperties,
+          updateFunction: updateChartLineProperties
+        });
+      }
     });
 
     chartGroup.on('deselected', () => {
       setSelectedChartLine(null);
+      
+      // Notify parent component about deselection
+      if (onElementSelect) {
+        onElementSelect(null, null);
+      }
     });
 
     // Enable text editing on double-click for axis labels
-    chartGroup.on('mousedblclick', (e) => {
+    chartGroup.on('mousedblclick', (e: any) => {
       const target = e.subTargets?.[0];
       if (target && (target.type === 'axis-label' || target.type === 'price-indicator')) {
         target.enterEditing();
@@ -474,76 +498,7 @@ export function FinancialChartCanvas({ width = 800, height = 450 }: FinancialCha
         </div>
       </Card>
 
-      {/* Chart Group Properties Panel */}
-      {selectedChartLine && (
-        <Card className="mb-4">
-          <div className="p-4">
-            <h3 className="text-sm font-medium mb-4">
-              {selectedChartLine.type === 'financial-chart-group' ? 'Chart Group Properties' : 'Chart Line Properties'}
-            </h3>
-            <div className="space-y-4">
-              <div>
-                <Label className="text-xs">Line Thickness: {lineProperties.strokeWidth}px</Label>
-                <Slider
-                  value={[lineProperties.strokeWidth]}
-                  onValueChange={([value]) => updateChartLineProperties('strokeWidth', value)}
-                  min={1}
-                  max={20}
-                  step={1}
-                  className="mt-2"
-                />
-              </div>
-              
-              <div>
-                <Label className="text-xs">Opacity: {Math.round(lineProperties.opacity * 100)}%</Label>
-                <Slider
-                  value={[lineProperties.opacity]}
-                  onValueChange={([value]) => updateChartLineProperties('opacity', value)}
-                  min={0.1}
-                  max={1}
-                  step={0.1}
-                  className="mt-2"
-                />
-              </div>
 
-              <div>
-                <Label className="text-xs">Smoothness: {Math.round(lineProperties.smoothness * 100)}%</Label>
-                <Slider
-                  value={[lineProperties.smoothness]}
-                  onValueChange={([value]) => updateChartLineProperties('smoothness', value)}
-                  min={0}
-                  max={1}
-                  step={0.1}
-                  className="mt-2"
-                />
-              </div>
-
-              <div>
-                <Label className="text-xs">Line Color</Label>
-                <div className="flex gap-2 mt-2">
-                  {['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'].map(color => (
-                    <button
-                      key={color}
-                      className={`w-6 h-6 rounded border-2 ${lineProperties.color === color ? 'border-gray-800' : 'border-gray-300'}`}
-                      style={{ backgroundColor: color }}
-                      onClick={() => updateChartLineProperties('color', color)}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {selectedChartLine.type === 'financial-chart-group' && (
-              <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                <p className="text-xs text-blue-700 font-medium mb-1">Interactive Features:</p>
-                <p className="text-xs text-blue-600">• Double-click axis labels to edit text</p>
-                <p className="text-xs text-blue-600">• Drag to move chart and labels together</p>
-                <p className="text-xs text-blue-600">• Scale handles resize entire chart group</p>
-              </div>
-            )}
-          </div>
-        </Card>
-      )}
 
       {error && (
         <Card className="mb-4 p-4 border-red-200 bg-red-50">
