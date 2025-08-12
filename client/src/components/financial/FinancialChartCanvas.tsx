@@ -133,48 +133,31 @@ export function FinancialChartCanvas({
     const g = svg.append('g')
       .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
-    // Add axes
-    g.append('g')
-      .attr('transform', `translate(0, ${chartHeight})`)
-      .call(d3.axisBottom(xScale).tickFormat(d3.timeFormat('%b %Y') as any));
+    // No D3 background elements - only Fabric.js vectors
 
-    g.append('g')
-      .call(d3.axisLeft(yScale).tickFormat(d3.format('$.2f')));
-
-    // Create chart path with dynamic smoothing based on smoothness parameter
-    let curveType;
-    if (lineProperties.smoothness < 0.2) {
-      curveType = d3.curveLinear;
-    } else if (lineProperties.smoothness < 0.5) {
-      curveType = d3.curveMonotoneX;
-    } else if (lineProperties.smoothness < 0.8) {
-      curveType = d3.curveCatmullRom.alpha(0.5);
-    } else {
-      curveType = d3.curveBasis;
+    // Create smoothed data based on smoothness parameter (reduce points for smoother lines)
+    const smoothingFactor = Math.max(1, Math.floor((1 - lineProperties.smoothness) * 10) + 1);
+    const smoothedData = data.filter((_, index) => index % smoothingFactor === 0);
+    
+    // Add the last point to ensure we complete the chart
+    if (smoothedData[smoothedData.length - 1] !== data[data.length - 1]) {
+      smoothedData.push(data[data.length - 1]);
     }
 
+    // Create chart path with smoothed data points
     const line = d3.line<ChartDataPoint>()
       .x(d => xScale(new Date(d.timestamp)))
       .y(d => yScale(d.close))
-      .curve(curveType);
+      .curve(d3.curveCatmullRom.alpha(0.5));
 
-    const pathData = line(data) || '';
+    const pathData = line(smoothedData) || '';
 
     // Create draggable chart group with axis text conversion
     setTimeout(() => {
       createDraggableChartGroup(pathData, margin, xScale, yScale, chartWidth, chartHeight);
     }, 100);
 
-    // Add dots for data points
-    g.selectAll('.dot')
-      .data(data.filter((_, i) => i % Math.max(1, Math.floor(data.length / 50)) === 0))
-      .enter().append('circle')
-      .attr('class', 'dot')
-      .attr('cx', d => xScale(new Date(d.timestamp)))
-      .attr('cy', d => yScale(d.close))
-      .attr('r', 2)
-      .attr('fill', '#9ca3af')
-      .attr('opacity', 0.7);
+    // No background dots - clean vector-only interface
   };
 
   const addAnnotation = () => {
@@ -297,10 +280,9 @@ export function FinancialChartCanvas({
       type: 'axis-line'
     });
 
-    // Current price indicator
-    const currentPrice = data[data.length - 1]?.close || 0;
-    const currentPriceLabel = new (window as any).fabric.Text(
-      `${symbol}: $${currentPrice.toFixed(2)}`, 
+    // Chart title without current price
+    const chartTitleLabel = new (window as any).fabric.Text(
+      `${symbol} - ${timeframe}`, 
       {
         left: 20,
         top: -30,
@@ -312,7 +294,7 @@ export function FinancialChartCanvas({
         hasControls: false,
         hasBorders: false,
         editable: true,
-        type: 'price-indicator'
+        type: 'chart-title'
       }
     );
 
@@ -364,7 +346,7 @@ export function FinancialChartCanvas({
 
     // Create chart line group with proper z-index to avoid axis overlap
     const chartGroup = new (window as any).fabric.Group(
-      [fabricPath, currentPriceLabel], 
+      [fabricPath, chartTitleLabel], 
       {
         left: margin.left,
         top: margin.top,
@@ -440,36 +422,54 @@ export function FinancialChartCanvas({
     if (selectedChartLine.type === 'financial-chart-group') {
       const objects = selectedChartLine.getObjects();
       const chartPath = objects.find((obj: any) => obj.type === 'path');
-      const priceIndicator = objects.find((obj: any) => obj.type === 'price-indicator');
+      const chartTitle = objects.find((obj: any) => obj.type === 'chart-title');
 
       switch (property) {
         case 'strokeWidth':
           if (chartPath) {
             chartPath.set('strokeWidth', value);
+            selectedChartLine.addWithUpdate();
             fabricCanvasRef.current?.renderAll();
           }
           break;
         case 'opacity':
           if (chartPath) {
             chartPath.set('opacity', value);
+            selectedChartLine.addWithUpdate();
             fabricCanvasRef.current?.renderAll();
           }
           break;
         case 'color':
           if (chartPath) {
             chartPath.set('stroke', value);
+            selectedChartLine.addWithUpdate();
             fabricCanvasRef.current?.renderAll();
           }
-          if (priceIndicator) {
-            priceIndicator.set('fill', value);
+          if (chartTitle) {
+            chartTitle.set('fill', value);
+            selectedChartLine.addWithUpdate();
             fabricCanvasRef.current?.renderAll();
           }
           break;
         case 'smoothness':
           console.log('Smoothness changed to:', value);
           // Clear canvas and regenerate with new smoothness
+          const currentPos = { 
+            left: selectedChartLine.left, 
+            top: selectedChartLine.top 
+          };
           fabricCanvasRef.current?.clear();
-          setTimeout(() => renderChart(), 100);
+          setTimeout(() => {
+            renderChart();
+            // Restore position after regeneration
+            setTimeout(() => {
+              const newChartGroup = fabricCanvasRef.current?.getActiveObject();
+              if (newChartGroup) {
+                newChartGroup.set(currentPos);
+                fabricCanvasRef.current?.renderAll();
+              }
+            }, 50);
+          }, 50);
           break;
       }
     } else {
@@ -503,12 +503,12 @@ export function FinancialChartCanvas({
       if (cloned.type === 'financial-chart-group') {
         const objects = cloned.getObjects();
         const chartPath = objects.find((obj: any) => obj.type === 'path');
-        const priceIndicator = objects.find((obj: any) => obj.type === 'price-indicator');
+        const chartTitle = objects.find((obj: any) => obj.type === 'chart-title');
         
         if (chartPath) chartPath.set('stroke', '#f59e0b');
-        if (priceIndicator) {
-          priceIndicator.set('fill', '#f59e0b');
-          priceIndicator.set('text', `${symbol} (Copy): $${(data[data.length - 1]?.close || 0).toFixed(2)}`);
+        if (chartTitle) {
+          chartTitle.set('fill', '#f59e0b');
+          chartTitle.set('text', `${symbol} (Copy) - ${timeframe}`);
         }
       } else {
         cloned.set('stroke', '#f59e0b');
