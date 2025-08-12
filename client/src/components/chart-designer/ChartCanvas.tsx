@@ -6,7 +6,6 @@ import { useChartDesigner } from '@/hooks/useChartDesigner';
 import { useChartData } from '@/hooks/useChartData';
 import { cn } from '@/lib/utils';
 import * as d3 from 'd3';
-
 declare global {
   const fabric: any;
 }
@@ -216,12 +215,15 @@ export function ChartCanvas() {
 
   }, [data, config]);
 
-  // Update canvas elements
+  // Update canvas elements when elements change
   useEffect(() => {
     if (!fabricCanvas) return;
 
-    // Clear existing elements
-    fabricCanvas.getObjects().forEach((obj: any) => {
+    console.log('Updating canvas elements:', config.elements);
+
+    // Clear existing elements that are chart elements
+    const objects = fabricCanvas.getObjects();
+    objects.forEach((obj: any) => {
       if (obj.chartElementId) {
         fabricCanvas.remove(obj);
       }
@@ -229,6 +231,7 @@ export function ChartCanvas() {
 
     // Add new elements
     config.elements.forEach(element => {
+      console.log('Adding element:', element);
       let fabricObject: any;
 
       switch (element.type) {
