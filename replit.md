@@ -26,7 +26,7 @@ The backend uses Express.js with a minimal API surface designed primarily to sup
 ## Chart Generation System
 The core chart functionality combines multiple libraries for different aspects:
 
-- **Interactive Chart Lines**: Fabric.js handles draggable financial chart lines with real-time property editing (thickness, opacity, smoothness, color)
+- **Interactive Chart Groups**: Fabric.js handles draggable financial chart lines grouped with editable axis labels, ensuring perfect alignment during manipulation
 - **Chart Rendering**: D3.js generates background axes and data points, with primary chart lines rendered as draggable Fabric.js paths
 - **Template System**: Complete CRUD operations for saving chart layouts and reusing them across different stock symbols
 - **Data Processing**: Polygon API integration with intelligent caching and demo data fallbacks for realistic financial data

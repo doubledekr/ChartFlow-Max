@@ -204,7 +204,7 @@ export function FinancialChartCanvas({ width = 800, height = 450 }: FinancialCha
   };
 
   const createDraggableChartLine = (pathData: string, margin: any) => {
-    if (!fabricCanvasRef.current || !pathData) return;
+    if (!fabricCanvasRef.current || !pathData || data.length === 0) return;
 
     // Convert SVG path to Fabric.js Path object
     const fabricPath = new (window as any).fabric.Path(pathData, {
@@ -212,41 +212,126 @@ export function FinancialChartCanvas({ width = 800, height = 450 }: FinancialCha
       stroke: lineProperties.color,
       strokeWidth: lineProperties.strokeWidth,
       opacity: lineProperties.opacity,
-      left: margin.left,
-      top: margin.top,
-      selectable: true,
-      hasControls: true,
-      hasBorders: true,
-      lockScalingX: false,
-      lockScalingY: false,
-      cornerColor: '#3b82f6',
-      cornerStyle: 'circle',
-      transparentCorners: false,
-      cornerSize: 8,
+      left: 0,
+      top: 0,
+      selectable: false, // Will be part of group
+      hasControls: false,
+      hasBorders: false,
     });
 
-    // Add custom properties for financial chart line
-    fabricPath.type = 'financial-chart-line';
-    fabricPath.symbol = symbol;
-    fabricPath.timeframe = timeframe;
+    // Create axis labels that follow the chart data
+    const firstPrice = data[0]?.close || 0;
+    const lastPrice = data[data.length - 1]?.close || 0;
+    const highPrice = Math.max(...data.map(d => d.high));
+    const lowPrice = Math.min(...data.map(d => d.low));
+
+    // Y-axis price labels (left side)
+    const yAxisLabels = [
+      { price: highPrice, y: margin.top + 20 },
+      { price: (highPrice + lowPrice) / 2, y: margin.top + height / 2 },
+      { price: lowPrice, y: height - margin.bottom - 20 }
+    ].map(({ price, y }) => new (window as any).fabric.Text(`$${price.toFixed(2)}`, {
+      left: 10,
+      top: y,
+      fontSize: 12,
+      fill: '#6b7280',
+      fontFamily: 'Inter, sans-serif',
+      selectable: false,
+      hasControls: false,
+      hasBorders: false,
+      editable: true,
+      type: 'axis-label'
+    }));
+
+    // X-axis date labels (bottom)
+    const startDate = new Date(data[0]?.timestamp || Date.now());
+    const endDate = new Date(data[data.length - 1]?.timestamp || Date.now());
+    const midDate = new Date((startDate.getTime() + endDate.getTime()) / 2);
+
+    const xAxisLabels = [
+      { date: startDate, x: margin.left + 20 },
+      { date: midDate, x: margin.left + width / 2 },
+      { date: endDate, x: width - margin.right - 80 }
+    ].map(({ date, x }) => new (window as any).fabric.Text(date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      year: 'numeric' 
+    }), {
+      left: x,
+      top: height - margin.bottom + 20,
+      fontSize: 12,
+      fill: '#6b7280',
+      fontFamily: 'Inter, sans-serif',
+      selectable: false,
+      hasControls: false,
+      hasBorders: false,
+      editable: true,
+      type: 'axis-label'
+    }));
+
+    // Current price indicator
+    const currentPriceLabel = new (window as any).fabric.Text(`${symbol}: $${lastPrice.toFixed(2)}`, {
+      left: margin.left + 20,
+      top: margin.top - 30,
+      fontSize: 16,
+      fill: lineProperties.color,
+      fontFamily: 'Inter, sans-serif',
+      fontWeight: 'bold',
+      selectable: false,
+      hasControls: false,
+      hasBorders: false,
+      editable: true,
+      type: 'price-indicator'
+    });
+
+    // Create a group with the chart line and all axis labels
+    const chartGroup = new (window as any).fabric.Group(
+      [fabricPath, currentPriceLabel, ...yAxisLabels, ...xAxisLabels], 
+      {
+        left: margin.left,
+        top: margin.top,
+        selectable: true,
+        hasControls: true,
+        hasBorders: true,
+        cornerColor: '#3b82f6',
+        cornerStyle: 'circle',
+        transparentCorners: false,
+        cornerSize: 8,
+        lockScalingX: false,
+        lockScalingY: false,
+      }
+    );
+
+    // Add custom properties for financial chart group
+    chartGroup.type = 'financial-chart-group';
+    chartGroup.symbol = symbol;
+    chartGroup.timeframe = timeframe;
 
     // Add event listeners for selection
-    fabricPath.on('selected', () => {
-      setSelectedChartLine(fabricPath);
-      console.log('Chart line selected');
+    chartGroup.on('selected', () => {
+      setSelectedChartLine(chartGroup);
+      console.log('Chart group selected');
     });
 
-    fabricPath.on('deselected', () => {
+    chartGroup.on('deselected', () => {
       setSelectedChartLine(null);
     });
 
+    // Enable text editing on double-click for axis labels
+    chartGroup.on('mousedblclick', (e) => {
+      const target = e.subTargets?.[0];
+      if (target && (target.type === 'axis-label' || target.type === 'price-indicator')) {
+        target.enterEditing();
+        target.selectAll();
+      }
+    });
+
     // Add to canvas
-    fabricCanvasRef.current.add(fabricPath);
+    fabricCanvasRef.current.add(chartGroup);
     fabricCanvasRef.current.renderAll();
 
-    // Auto-select the chart line
-    fabricCanvasRef.current.setActiveObject(fabricPath);
-    setSelectedChartLine(fabricPath);
+    // Auto-select the chart group
+    fabricCanvasRef.current.setActiveObject(chartGroup);
+    setSelectedChartLine(chartGroup);
   };
 
   const updateChartLineProperties = (property: string, value: any) => {
@@ -255,22 +340,41 @@ export function FinancialChartCanvas({ width = 800, height = 450 }: FinancialCha
     const newProperties = { ...lineProperties, [property]: value };
     setLineProperties(newProperties);
 
-    // Update the selected line immediately
-    switch (property) {
-      case 'strokeWidth':
-        selectedChartLine.set('strokeWidth', value);
-        break;
-      case 'opacity':
-        selectedChartLine.set('opacity', value);
-        break;
-      case 'color':
-        selectedChartLine.set('stroke', value);
-        break;
-      case 'smoothness':
-        // For smoothness, we would need to regenerate the path with different curve types
-        // This is a simplified version - in a full implementation, you'd regenerate the path
-        console.log('Smoothness changed to:', value);
-        break;
+    // Update the chart line within the group
+    if (selectedChartLine.type === 'financial-chart-group') {
+      const objects = selectedChartLine.getObjects();
+      const chartPath = objects.find((obj: any) => obj.type === 'path');
+      const priceIndicator = objects.find((obj: any) => obj.type === 'price-indicator');
+
+      switch (property) {
+        case 'strokeWidth':
+          if (chartPath) chartPath.set('strokeWidth', value);
+          break;
+        case 'opacity':
+          if (chartPath) chartPath.set('opacity', value);
+          break;
+        case 'color':
+          if (chartPath) chartPath.set('stroke', value);
+          if (priceIndicator) priceIndicator.set('fill', value);
+          break;
+        case 'smoothness':
+          console.log('Smoothness changed to:', value);
+          // In a full implementation, regenerate the path with different curve interpolation
+          break;
+      }
+    } else {
+      // Fallback for direct line objects
+      switch (property) {
+        case 'strokeWidth':
+          selectedChartLine.set('strokeWidth', value);
+          break;
+        case 'opacity':
+          selectedChartLine.set('opacity', value);
+          break;
+        case 'color':
+          selectedChartLine.set('stroke', value);
+          break;
+      }
     }
 
     fabricCanvasRef.current?.renderAll();
@@ -283,8 +387,23 @@ export function FinancialChartCanvas({ width = 800, height = 450 }: FinancialCha
       cloned.set({
         left: cloned.left + 20,
         top: cloned.top + 20,
-        stroke: '#f59e0b', // Different color for duplicate
       });
+      
+      // Update colors for the duplicate
+      if (cloned.type === 'financial-chart-group') {
+        const objects = cloned.getObjects();
+        const chartPath = objects.find((obj: any) => obj.type === 'path');
+        const priceIndicator = objects.find((obj: any) => obj.type === 'price-indicator');
+        
+        if (chartPath) chartPath.set('stroke', '#f59e0b');
+        if (priceIndicator) {
+          priceIndicator.set('fill', '#f59e0b');
+          priceIndicator.set('text', `${symbol} (Copy): $${(data[data.length - 1]?.close || 0).toFixed(2)}`);
+        }
+      } else {
+        cloned.set('stroke', '#f59e0b');
+      }
+      
       fabricCanvasRef.current?.add(cloned);
       fabricCanvasRef.current?.setActiveObject(cloned);
       setSelectedChartLine(cloned);
@@ -355,11 +474,13 @@ export function FinancialChartCanvas({ width = 800, height = 450 }: FinancialCha
         </div>
       </Card>
 
-      {/* Chart Line Properties Panel */}
+      {/* Chart Group Properties Panel */}
       {selectedChartLine && (
         <Card className="mb-4">
           <div className="p-4">
-            <h3 className="text-sm font-medium mb-4">Chart Line Properties</h3>
+            <h3 className="text-sm font-medium mb-4">
+              {selectedChartLine.type === 'financial-chart-group' ? 'Chart Group Properties' : 'Chart Line Properties'}
+            </h3>
             <div className="space-y-4">
               <div>
                 <Label className="text-xs">Line Thickness: {lineProperties.strokeWidth}px</Label>
@@ -411,6 +532,15 @@ export function FinancialChartCanvas({ width = 800, height = 450 }: FinancialCha
                 </div>
               </div>
             </div>
+
+            {selectedChartLine.type === 'financial-chart-group' && (
+              <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                <p className="text-xs text-blue-700 font-medium mb-1">Interactive Features:</p>
+                <p className="text-xs text-blue-600">• Double-click axis labels to edit text</p>
+                <p className="text-xs text-blue-600">• Drag to move chart and labels together</p>
+                <p className="text-xs text-blue-600">• Scale handles resize entire chart group</p>
+              </div>
+            )}
           </div>
         </Card>
       )}
