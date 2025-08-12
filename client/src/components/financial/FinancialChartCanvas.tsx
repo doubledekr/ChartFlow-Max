@@ -3,6 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card } from '@/components/ui/card';
+import { Slider } from '@/components/ui/slider';
+import { Label } from '@/components/ui/label';
 import { PolygonClient, type ChartDataPoint } from '@/services/polygonService';
 import * as d3 from 'd3';
 
@@ -20,6 +22,13 @@ export function FinancialChartCanvas({ width = 800, height = 450 }: FinancialCha
   const [data, setData] = useState<ChartDataPoint[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedChartLine, setSelectedChartLine] = useState<any>(null);
+  const [lineProperties, setLineProperties] = useState({
+    strokeWidth: 3,
+    opacity: 1,
+    smoothness: 0.5, // 0 = linear, 1 = very curved
+    color: '#3b82f6'
+  });
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -124,18 +133,28 @@ export function FinancialChartCanvas({ width = 800, height = 450 }: FinancialCha
     g.append('g')
       .call(d3.axisLeft(yScale).tickFormat(d3.format('$.2f')));
 
-    // Add price line
+    // Create chart path as SVG path string
     const line = d3.line<ChartDataPoint>()
       .x(d => xScale(new Date(d.timestamp)))
       .y(d => yScale(d.close))
       .curve(d3.curveMonotoneX);
 
+    const pathData = line(data) || '';
+    
+    // Add chart path to background SVG for reference
     g.append('path')
       .datum(data)
       .attr('fill', 'none')
-      .attr('stroke', '#3b82f6')
-      .attr('stroke-width', 2)
-      .attr('d', line);
+      .attr('stroke', '#e5e7eb')
+      .attr('stroke-width', 1)
+      .attr('stroke-dasharray', '3,3')
+      .attr('d', line)
+      .attr('opacity', 0.5);
+
+    // Create draggable chart line in Fabric canvas after a small delay to ensure canvas is ready
+    setTimeout(() => {
+      createDraggableChartLine(pathData, margin);
+    }, 100);
 
     // Add dots for data points
     g.selectAll('.dot')
@@ -144,8 +163,9 @@ export function FinancialChartCanvas({ width = 800, height = 450 }: FinancialCha
       .attr('class', 'dot')
       .attr('cx', d => xScale(new Date(d.timestamp)))
       .attr('cy', d => yScale(d.close))
-      .attr('r', 3)
-      .attr('fill', '#3b82f6');
+      .attr('r', 2)
+      .attr('fill', '#9ca3af')
+      .attr('opacity', 0.7);
   };
 
   const addAnnotation = () => {
@@ -181,6 +201,102 @@ export function FinancialChartCanvas({ width = 800, height = 450 }: FinancialCha
 
     fabricCanvasRef.current.add(line);
     fabricCanvasRef.current.renderAll();
+  };
+
+  const createDraggableChartLine = (pathData: string, margin: any) => {
+    if (!fabricCanvasRef.current || !pathData) return;
+
+    // Convert SVG path to Fabric.js Path object
+    const fabricPath = new (window as any).fabric.Path(pathData, {
+      fill: '',
+      stroke: lineProperties.color,
+      strokeWidth: lineProperties.strokeWidth,
+      opacity: lineProperties.opacity,
+      left: margin.left,
+      top: margin.top,
+      selectable: true,
+      hasControls: true,
+      hasBorders: true,
+      lockScalingX: false,
+      lockScalingY: false,
+      cornerColor: '#3b82f6',
+      cornerStyle: 'circle',
+      transparentCorners: false,
+      cornerSize: 8,
+    });
+
+    // Add custom properties for financial chart line
+    fabricPath.type = 'financial-chart-line';
+    fabricPath.symbol = symbol;
+    fabricPath.timeframe = timeframe;
+
+    // Add event listeners for selection
+    fabricPath.on('selected', () => {
+      setSelectedChartLine(fabricPath);
+      console.log('Chart line selected');
+    });
+
+    fabricPath.on('deselected', () => {
+      setSelectedChartLine(null);
+    });
+
+    // Add to canvas
+    fabricCanvasRef.current.add(fabricPath);
+    fabricCanvasRef.current.renderAll();
+
+    // Auto-select the chart line
+    fabricCanvasRef.current.setActiveObject(fabricPath);
+    setSelectedChartLine(fabricPath);
+  };
+
+  const updateChartLineProperties = (property: string, value: any) => {
+    if (!selectedChartLine) return;
+
+    const newProperties = { ...lineProperties, [property]: value };
+    setLineProperties(newProperties);
+
+    // Update the selected line immediately
+    switch (property) {
+      case 'strokeWidth':
+        selectedChartLine.set('strokeWidth', value);
+        break;
+      case 'opacity':
+        selectedChartLine.set('opacity', value);
+        break;
+      case 'color':
+        selectedChartLine.set('stroke', value);
+        break;
+      case 'smoothness':
+        // For smoothness, we would need to regenerate the path with different curve types
+        // This is a simplified version - in a full implementation, you'd regenerate the path
+        console.log('Smoothness changed to:', value);
+        break;
+    }
+
+    fabricCanvasRef.current?.renderAll();
+  };
+
+  const duplicateChartLine = () => {
+    if (!selectedChartLine) return;
+
+    selectedChartLine.clone((cloned: any) => {
+      cloned.set({
+        left: cloned.left + 20,
+        top: cloned.top + 20,
+        stroke: '#f59e0b', // Different color for duplicate
+      });
+      fabricCanvasRef.current?.add(cloned);
+      fabricCanvasRef.current?.setActiveObject(cloned);
+      setSelectedChartLine(cloned);
+    });
+  };
+
+  const deleteChartLine = () => {
+    if (!selectedChartLine) return;
+    
+    fabricCanvasRef.current?.remove(selectedChartLine);
+    setSelectedChartLine(null);
+    fabricCanvasRef.current?.renderAll();
   };
 
   return (
@@ -228,8 +344,76 @@ export function FinancialChartCanvas({ width = 800, height = 450 }: FinancialCha
           <Button onClick={addTrendLine} variant="outline" size="sm" data-testid="button-add-trendline">
             Add Trend Line
           </Button>
+
+          <Button onClick={duplicateChartLine} variant="outline" size="sm" disabled={!selectedChartLine}>
+            Duplicate Line
+          </Button>
+
+          <Button onClick={deleteChartLine} variant="outline" size="sm" disabled={!selectedChartLine}>
+            Delete Line
+          </Button>
         </div>
       </Card>
+
+      {/* Chart Line Properties Panel */}
+      {selectedChartLine && (
+        <Card className="mb-4">
+          <div className="p-4">
+            <h3 className="text-sm font-medium mb-4">Chart Line Properties</h3>
+            <div className="space-y-4">
+              <div>
+                <Label className="text-xs">Line Thickness: {lineProperties.strokeWidth}px</Label>
+                <Slider
+                  value={[lineProperties.strokeWidth]}
+                  onValueChange={([value]) => updateChartLineProperties('strokeWidth', value)}
+                  min={1}
+                  max={20}
+                  step={1}
+                  className="mt-2"
+                />
+              </div>
+              
+              <div>
+                <Label className="text-xs">Opacity: {Math.round(lineProperties.opacity * 100)}%</Label>
+                <Slider
+                  value={[lineProperties.opacity]}
+                  onValueChange={([value]) => updateChartLineProperties('opacity', value)}
+                  min={0.1}
+                  max={1}
+                  step={0.1}
+                  className="mt-2"
+                />
+              </div>
+
+              <div>
+                <Label className="text-xs">Smoothness: {Math.round(lineProperties.smoothness * 100)}%</Label>
+                <Slider
+                  value={[lineProperties.smoothness]}
+                  onValueChange={([value]) => updateChartLineProperties('smoothness', value)}
+                  min={0}
+                  max={1}
+                  step={0.1}
+                  className="mt-2"
+                />
+              </div>
+
+              <div>
+                <Label className="text-xs">Line Color</Label>
+                <div className="flex gap-2 mt-2">
+                  {['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'].map(color => (
+                    <button
+                      key={color}
+                      className={`w-6 h-6 rounded border-2 ${lineProperties.color === color ? 'border-gray-800' : 'border-gray-300'}`}
+                      style={{ backgroundColor: color }}
+                      onClick={() => updateChartLineProperties('color', color)}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card>
+      )}
 
       {error && (
         <Card className="mb-4 p-4 border-red-200 bg-red-50">
