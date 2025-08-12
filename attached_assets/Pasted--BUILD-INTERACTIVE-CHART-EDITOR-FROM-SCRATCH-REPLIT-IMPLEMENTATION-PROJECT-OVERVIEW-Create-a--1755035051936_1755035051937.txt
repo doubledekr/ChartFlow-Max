@@ -1,0 +1,2209 @@
+# BUILD INTERACTIVE CHART EDITOR FROM SCRATCH - REPLIT IMPLEMENTATION
+
+## PROJECT OVERVIEW
+Create a professional Canva/Photoshop-like interactive chart editor for financial data using Fabric.js + D3.js with Polygon.io as the data source. Users should be able to drag chart elements (titles, annotations, arrows), select them to edit properties in real-time, and create publication-quality financial charts.
+
+## TECHNICAL STACK
+- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
+- **Canvas Library**: Fabric.js v5.3.0 (for interactions)
+- **Chart Library**: D3.js v7.8.0 (for chart generation)
+- **Data Source**: Polygon.io API (for real stock data)
+- **State Management**: Zustand v4.4.0
+- **Animations**: GSAP v3.12.0
+- **Build Tool**: Vite (for fast development)
+
+## PHASE 1: PROJECT SETUP AND FOUNDATION
+
+### **1.1 Initialize Replit Project**
+```bash
+# Create new Node.js project in Replit
+npm init -y
+
+# Install core dependencies
+npm install fabric@5.3.0 d3@7.8.0 zustand@4.4.0 gsap@3.12.0
+npm install vite@4.4.0 --save-dev
+
+# Install additional utilities
+npm install axios@1.5.0 date-fns@2.30.0
+```
+
+### **1.2 Project Structure**
+```
+/
+├── index.html
+├── package.json
+├── vite.config.js
+├── src/
+│   ├── main.js
+│   ├── styles/
+│   │   ├── main.css
+│   │   ├── chart-editor.css
+│   │   └── property-panel.css
+│   ├── lib/
+│   │   ├── polygon-api.js
+│   │   ├── chart-objects/
+│   │   │   ├── ChartTitle.js
+│   │   │   ├── DataLine.js
+│   │   │   ├── AnnotationBox.js
+│   │   │   ├── TrendArrow.js
+│   │   │   └── PerformanceBadge.js
+│   │   ├── chart-generator/
+│   │   │   ├── D3ChartGenerator.js
+│   │   │   └── SVGToFabricConverter.js
+│   │   ├── interactions/
+│   │   │   ├── DragHandler.js
+│   │   │   ├── SelectionManager.js
+│   │   │   └── SnapToGrid.js
+│   │   └── store/
+│   │       └── chartEditorStore.js
+│   └── components/
+│       ├── ChartCanvas.js
+│       ├── PropertyPanel.js
+│       ├── Toolbar.js
+│       └── DataPanel.js
+```
+
+### **1.3 Vite Configuration**
+```javascript
+// vite.config.js
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  server: {
+    host: '0.0.0.0',
+    port: 3000
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: true
+  }
+});
+```
+
+### **1.4 HTML Foundation**
+```html
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Chart Editor</title>
+    <link rel="stylesheet" href="/src/styles/main.css">
+    <link rel="stylesheet" href="/src/styles/chart-editor.css">
+    <link rel="stylesheet" href="/src/styles/property-panel.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <div class="chart-editor">
+            <!-- Header Toolbar -->
+            <div class="editor-header">
+                <div class="toolbar" id="toolbar">
+                    <div class="toolbar-section">
+                        <h1>Interactive Chart Editor</h1>
+                    </div>
+                    <div class="toolbar-section">
+                        <button id="undoBtn" class="toolbar-btn">↶ Undo</button>
+                        <button id="redoBtn" class="toolbar-btn">↷ Redo</button>
+                        <button id="saveBtn" class="toolbar-btn">💾 Save</button>
+                        <button id="exportBtn" class="toolbar-btn">📤 Export</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Editor Body -->
+            <div class="editor-body">
+                <!-- Left Panel: Data & Elements -->
+                <div class="left-panel">
+                    <div class="panel-section">
+                        <h3>📊 Data Source</h3>
+                        <div id="dataPanel">
+                            <div class="input-group">
+                                <label>Stock Symbol</label>
+                                <input type="text" id="symbolInput" placeholder="AAPL" value="AAPL">
+                            </div>
+                            <div class="input-group">
+                                <label>Time Period</label>
+                                <select id="timePeriod">
+                                    <option value="1Y">1 Year</option>
+                                    <option value="6M">6 Months</option>
+                                    <option value="3M">3 Months</option>
+                                    <option value="1M">1 Month</option>
+                                </select>
+                            </div>
+                            <button id="loadDataBtn" class="primary-btn">Load Chart Data</button>
+                        </div>
+                    </div>
+
+                    <div class="panel-section">
+                        <h3>🎨 Elements</h3>
+                        <div id="elementLibrary">
+                            <button class="element-btn" data-element="title">📝 Title</button>
+                            <button class="element-btn" data-element="annotation">💬 Annotation</button>
+                            <button class="element-btn" data-element="arrow">➡️ Arrow</button>
+                            <button class="element-btn" data-element="badge">🏷️ Badge</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Center: Canvas Area -->
+                <div class="canvas-area">
+                    <div class="canvas-container">
+                        <canvas id="chartCanvas" width="800" height="600"></canvas>
+                        <div class="canvas-overlay" id="canvasOverlay">
+                            <!-- Grid overlay, rulers, etc. -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Panel: Properties -->
+                <div class="right-panel">
+                    <div class="panel-section">
+                        <h3>⚙️ Properties</h3>
+                        <div id="propertyPanel">
+                            <div class="no-selection">
+                                <p>Select an element to edit its properties</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+</body>
+</html>
+```
+
+## PHASE 2: POLYGON.IO INTEGRATION
+
+### **2.1 Polygon API Service**
+```javascript
+// src/lib/polygon-api.js
+class PolygonAPI {
+  constructor(apiKey) {
+    this.apiKey = apiKey || 'YOUR_POLYGON_API_KEY'; // Replace with actual key
+    this.baseURL = 'https://api.polygon.io';
+  }
+
+  async getStockData(symbol, timespan = '1', multiplier = 1, from, to) {
+    try {
+      const url = `${this.baseURL}/v2/aggs/ticker/${symbol}/range/${multiplier}/${timespan}/${from}/${to}?adjusted=true&sort=asc&apikey=${this.apiKey}`;
+      
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      if (data.status === 'OK' && data.results) {
+        return data.results.map(item => ({
+          date: new Date(item.t),
+          open: item.o,
+          high: item.h,
+          low: item.l,
+          close: item.c,
+          volume: item.v,
+          value: item.c // Use closing price as primary value
+        }));
+      } else {
+        throw new Error(`API Error: ${data.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Error fetching stock data:', error);
+      // Return sample data for development
+      return this.getSampleData(symbol);
+    }
+  }
+
+  async getStockDetails(symbol) {
+    try {
+      const url = `${this.baseURL}/v3/reference/tickers/${symbol}?apikey=${this.apiKey}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      return {
+        name: data.results?.name || symbol,
+        description: data.results?.description || '',
+        market: data.results?.market || 'stocks',
+        currency: data.results?.currency_name || 'USD'
+      };
+    } catch (error) {
+      console.error('Error fetching stock details:', error);
+      return {
+        name: symbol,
+        description: '',
+        market: 'stocks',
+        currency: 'USD'
+      };
+    }
+  }
+
+  // Sample data for development/fallback
+  getSampleData(symbol) {
+    const startDate = new Date();
+    startDate.setFullYear(startDate.getFullYear() - 1);
+    
+    const data = [];
+    let currentPrice = 150 + Math.random() * 100;
+    
+    for (let i = 0; i < 252; i++) { // ~1 year of trading days
+      const date = new Date(startDate);
+      date.setDate(date.getDate() + i);
+      
+      // Simulate price movement
+      const change = (Math.random() - 0.5) * 0.1;
+      currentPrice *= (1 + change);
+      
+      data.push({
+        date: date,
+        open: currentPrice * (0.99 + Math.random() * 0.02),
+        high: currentPrice * (1.01 + Math.random() * 0.02),
+        low: currentPrice * (0.97 + Math.random() * 0.02),
+        close: currentPrice,
+        volume: Math.floor(Math.random() * 10000000),
+        value: currentPrice
+      });
+    }
+    
+    return data;
+  }
+
+  // Helper method to get date ranges
+  getDateRange(period) {
+    const to = new Date();
+    const from = new Date();
+    
+    switch (period) {
+      case '1M':
+        from.setMonth(from.getMonth() - 1);
+        return { from: from.toISOString().split('T')[0], to: to.toISOString().split('T')[0] };
+      case '3M':
+        from.setMonth(from.getMonth() - 3);
+        return { from: from.toISOString().split('T')[0], to: to.toISOString().split('T')[0] };
+      case '6M':
+        from.setMonth(from.getMonth() - 6);
+        return { from: from.toISOString().split('T')[0], to: to.toISOString().split('T')[0] };
+      case '1Y':
+      default:
+        from.setFullYear(from.getFullYear() - 1);
+        return { from: from.toISOString().split('T')[0], to: to.toISOString().split('T')[0] };
+    }
+  }
+}
+
+export default PolygonAPI;
+```
+
+## PHASE 3: CUSTOM CHART OBJECTS
+
+### **3.1 Chart Title Object**
+```javascript
+// src/lib/chart-objects/ChartTitle.js
+import { fabric } from 'fabric';
+
+export class ChartTitle extends fabric.Textbox {
+  constructor(text, options = {}) {
+    super(text, {
+      width: 400,
+      fontSize: 32,
+      fontWeight: 'bold',
+      fontFamily: 'Inter, sans-serif',
+      fill: '#1F2937',
+      editable: true,
+      selectable: true,
+      hasControls: true,
+      hasBorders: true,
+      borderColor: '#3B82F6',
+      cornerColor: '#3B82F6',
+      cornerSize: 8,
+      transparentCorners: false,
+      lockRotation: true,
+      ...options
+    });
+
+    this.type = 'chart-title';
+    this.setupEventHandlers();
+  }
+
+  setupEventHandlers() {
+    this.on('editing:entered', () => {
+      this.hideBorders = true;
+      this.canvas?.renderAll();
+    });
+
+    this.on('editing:exited', () => {
+      this.hideBorders = false;
+      this.canvas?.renderAll();
+      // Trigger save state
+      if (this.canvas?.trigger) {
+        this.canvas.trigger('object:modified', { target: this });
+      }
+    });
+
+    this.on('selected', () => {
+      this.bringToFront();
+    });
+  }
+
+  // Custom rendering for better visual feedback
+  _renderControls(ctx, styleOverride) {
+    super._renderControls(ctx, styleOverride);
+    
+    if (this.isSelected && !this.isEditing) {
+      ctx.save();
+      ctx.strokeStyle = '#3B82F6';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+      ctx.strokeRect(
+        -this.width / 2 - 10,
+        -this.height / 2 - 10,
+        this.width + 20,
+        this.height + 20
+      );
+      ctx.restore();
+    }
+  }
+
+  toObject() {
+    return {
+      ...super.toObject(),
+      type: 'chart-title'
+    };
+  }
+}
+
+fabric.ChartTitle = ChartTitle;
+fabric.ChartTitle.fromObject = (object, callback) => {
+  callback(new ChartTitle(object.text, object));
+};
+```
+
+### **3.2 Annotation Box Object**
+```javascript
+// src/lib/chart-objects/AnnotationBox.js
+import { fabric } from 'fabric';
+
+export class AnnotationBox extends fabric.Group {
+  constructor(text, options = {}) {
+    const rect = new fabric.Rect({
+      width: 120,
+      height: 40,
+      fill: options.backgroundColor || '#DC2626',
+      rx: 4,
+      ry: 4,
+      originX: 'center',
+      originY: 'center'
+    });
+
+    const textObj = new fabric.Text(text, {
+      fontSize: 16,
+      fontWeight: 'bold',
+      fontFamily: 'Inter, sans-serif',
+      fill: 'white',
+      originX: 'center',
+      originY: 'center'
+    });
+
+    super([rect, textObj], {
+      selectable: true,
+      hasControls: true,
+      hasBorders: true,
+      borderColor: '#3B82F6',
+      cornerColor: '#3B82F6',
+      cornerSize: 8,
+      transparentCorners: false,
+      lockRotation: true,
+      ...options
+    });
+
+    this.type = 'annotation-box';
+    this.textObject = textObj;
+    this.rectObject = rect;
+    this.originalText = text;
+    
+    this.setupEventHandlers();
+  }
+
+  setupEventHandlers() {
+    this.on('mousedown', (e) => {
+      if (e.e.detail === 2) { // Double click
+        this.enterEditingMode();
+      }
+    });
+
+    this.on('selected', () => {
+      this.bringToFront();
+    });
+  }
+
+  enterEditingMode() {
+    const canvas = this.canvas;
+    if (!canvas) return;
+
+    // Create temporary textbox for editing
+    const tempText = new fabric.Textbox(this.textObject.text, {
+      left: this.left,
+      top: this.top,
+      fontSize: this.textObject.fontSize,
+      fontWeight: this.textObject.fontWeight,
+      fontFamily: this.textObject.fontFamily,
+      fill: this.textObject.fill,
+      width: this.rectObject.width - 10,
+      textAlign: 'center',
+      editable: true,
+      backgroundColor: 'rgba(255,255,255,0.9)',
+      padding: 5
+    });
+
+    canvas.add(tempText);
+    canvas.setActiveObject(tempText);
+    tempText.enterEditing();
+
+    // Handle editing completion
+    tempText.on('editing:exited', () => {
+      this.setText(tempText.text);
+      canvas.remove(tempText);
+      canvas.setActiveObject(this);
+      canvas.renderAll();
+    });
+  }
+
+  setText(newText) {
+    this.textObject.set('text', newText);
+    this.originalText = newText;
+    
+    // Adjust box width if needed
+    const textWidth = this.textObject.width;
+    if (textWidth > this.rectObject.width - 20) {
+      this.rectObject.set('width', textWidth + 20);
+    }
+    
+    this.canvas?.renderAll();
+  }
+
+  setBackgroundColor(color) {
+    this.rectObject.set('fill', color);
+    this.canvas?.renderAll();
+  }
+
+  toObject() {
+    return {
+      ...super.toObject(),
+      type: 'annotation-box',
+      originalText: this.originalText,
+      backgroundColor: this.rectObject.fill
+    };
+  }
+}
+
+fabric.AnnotationBox = AnnotationBox;
+fabric.AnnotationBox.fromObject = (object, callback) => {
+  callback(new AnnotationBox(object.originalText, object));
+};
+```
+
+### **3.3 Trend Arrow Object**
+```javascript
+// src/lib/chart-objects/TrendArrow.js
+import { fabric } from 'fabric';
+
+export class TrendArrow extends fabric.Group {
+  constructor(points, options = {}) {
+    const { start, end } = points;
+    
+    // Calculate arrow properties
+    const dx = end.x - start.x;
+    const dy = end.y - start.y;
+    const angle = Math.atan2(dy, dx);
+    const length = Math.sqrt(dx * dx + dy * dy);
+    
+    // Create arrow line
+    const line = new fabric.Line([0, 0, length - 20, 0], {
+      stroke: options.stroke || '#DC2626',
+      strokeWidth: options.strokeWidth || 3,
+      originX: 'left',
+      originY: 'center'
+    });
+
+    // Create arrowhead
+    const arrowHead = new fabric.Polygon([
+      { x: length - 20, y: -8 },
+      { x: length, y: 0 },
+      { x: length - 20, y: 8 }
+    ], {
+      fill: options.stroke || '#DC2626',
+      originX: 'left',
+      originY: 'center'
+    });
+
+    super([line, arrowHead], {
+      left: start.x,
+      top: start.y,
+      angle: angle * 180 / Math.PI,
+      selectable: true,
+      hasControls: true,
+      hasBorders: true,
+      borderColor: '#3B82F6',
+      cornerColor: '#3B82F6',
+      lockRotation: false,
+      ...options
+    });
+
+    this.type = 'trend-arrow';
+    this.startPoint = start;
+    this.endPoint = end;
+    this.lineObject = line;
+    this.arrowHeadObject = arrowHead;
+    
+    this.setupEventHandlers();
+  }
+
+  setupEventHandlers() {
+    this.on('selected', () => {
+      this.bringToFront();
+    });
+
+    this.on('modified', () => {
+      // Update internal points based on transformation
+      this.updateInternalPoints();
+    });
+  }
+
+  updateInternalPoints() {
+    const matrix = this.calcTransformMatrix();
+    const startTransformed = fabric.util.transformPoint(this.startPoint, matrix);
+    const endTransformed = fabric.util.transformPoint(this.endPoint, matrix);
+    
+    this.startPoint = startTransformed;
+    this.endPoint = endTransformed;
+  }
+
+  setColor(color) {
+    this.lineObject.set('stroke', color);
+    this.arrowHeadObject.set('fill', color);
+    this.canvas?.renderAll();
+  }
+
+  setThickness(thickness) {
+    this.lineObject.set('strokeWidth', thickness);
+    // Adjust arrowhead size proportionally
+    const scale = thickness / 3;
+    this.arrowHeadObject.set({
+      scaleX: scale,
+      scaleY: scale
+    });
+    this.canvas?.renderAll();
+  }
+
+  toObject() {
+    return {
+      ...super.toObject(),
+      type: 'trend-arrow',
+      startPoint: this.startPoint,
+      endPoint: this.endPoint
+    };
+  }
+}
+
+fabric.TrendArrow = TrendArrow;
+fabric.TrendArrow.fromObject = (object, callback) => {
+  callback(new TrendArrow(
+    { start: object.startPoint, end: object.endPoint },
+    object
+  ));
+};
+```
+
+### **3.4 Performance Badge Object**
+```javascript
+// src/lib/chart-objects/PerformanceBadge.js
+import { fabric } from 'fabric';
+
+export class PerformanceBadge extends fabric.Group {
+  constructor(text, options = {}) {
+    const badgeType = options.badgeType || 'gain'; // gain, loss, neutral
+    
+    // Define colors based on badge type
+    const colors = {
+      gain: { bg: '#059669', text: 'white' },
+      loss: { bg: '#DC2626', text: 'white' },
+      neutral: { bg: '#6B7280', text: 'white' },
+      info: { bg: '#2563EB', text: 'white' }
+    };
+    
+    const color = colors[badgeType] || colors.neutral;
+    
+    // Create rounded rectangle background
+    const rect = new fabric.Rect({
+      width: 100,
+      height: 30,
+      fill: color.bg,
+      rx: 15,
+      ry: 15,
+      originX: 'center',
+      originY: 'center'
+    });
+
+    // Create text
+    const textObj = new fabric.Text(text, {
+      fontSize: 14,
+      fontWeight: 'bold',
+      fontFamily: 'Inter, sans-serif',
+      fill: color.text,
+      originX: 'center',
+      originY: 'center'
+    });
+
+    super([rect, textObj], {
+      selectable: true,
+      hasControls: true,
+      hasBorders: true,
+      borderColor: '#3B82F6',
+      cornerColor: '#3B82F6',
+      cornerSize: 6,
+      transparentCorners: false,
+      lockRotation: true,
+      ...options
+    });
+
+    this.type = 'performance-badge';
+    this.badgeType = badgeType;
+    this.textObject = textObj;
+    this.rectObject = rect;
+    this.originalText = text;
+    
+    this.setupEventHandlers();
+  }
+
+  setupEventHandlers() {
+    this.on('mousedown', (e) => {
+      if (e.e.detail === 2) { // Double click
+        this.enterEditingMode();
+      }
+    });
+
+    this.on('selected', () => {
+      this.bringToFront();
+    });
+  }
+
+  enterEditingMode() {
+    const canvas = this.canvas;
+    if (!canvas) return;
+
+    const tempText = new fabric.Textbox(this.textObject.text, {
+      left: this.left,
+      top: this.top,
+      fontSize: this.textObject.fontSize,
+      fontWeight: this.textObject.fontWeight,
+      fontFamily: this.textObject.fontFamily,
+      fill: '#1F2937',
+      width: this.rectObject.width,
+      textAlign: 'center',
+      editable: true,
+      backgroundColor: 'rgba(255,255,255,0.9)',
+      padding: 5
+    });
+
+    canvas.add(tempText);
+    canvas.setActiveObject(tempText);
+    tempText.enterEditing();
+
+    tempText.on('editing:exited', () => {
+      this.setText(tempText.text);
+      canvas.remove(tempText);
+      canvas.setActiveObject(this);
+      canvas.renderAll();
+    });
+  }
+
+  setText(newText) {
+    this.textObject.set('text', newText);
+    this.originalText = newText;
+    
+    // Adjust badge width based on text
+    const textWidth = this.textObject.width;
+    const newWidth = Math.max(80, textWidth + 20);
+    this.rectObject.set('width', newWidth);
+    
+    this.canvas?.renderAll();
+  }
+
+  setBadgeType(type) {
+    const colors = {
+      gain: { bg: '#059669', text: 'white' },
+      loss: { bg: '#DC2626', text: 'white' },
+      neutral: { bg: '#6B7280', text: 'white' },
+      info: { bg: '#2563EB', text: 'white' }
+    };
+    
+    const color = colors[type] || colors.neutral;
+    this.badgeType = type;
+    this.rectObject.set('fill', color.bg);
+    this.textObject.set('fill', color.text);
+    this.canvas?.renderAll();
+  }
+
+  toObject() {
+    return {
+      ...super.toObject(),
+      type: 'performance-badge',
+      badgeType: this.badgeType,
+      originalText: this.originalText
+    };
+  }
+}
+
+fabric.PerformanceBadge = PerformanceBadge;
+fabric.PerformanceBadge.fromObject = (object, callback) => {
+  callback(new PerformanceBadge(object.originalText, object));
+};
+```
+
+## PHASE 4: D3 CHART GENERATOR
+
+### **4.1 D3 Chart Generator**
+```javascript
+// src/lib/chart-generator/D3ChartGenerator.js
+import * as d3 from 'd3';
+
+export class D3ChartGenerator {
+  static generateFinancialChart(data, config) {
+    const {
+      width = 800,
+      height = 600,
+      margin = { top: 80, right: 60, bottom: 80, left: 100 }
+    } = config;
+
+    const svg = d3.create('svg')
+      .attr('width', width)
+      .attr('height', height)
+      .attr('class', 'financial-chart');
+
+    // Create scales
+    const xScale = d3.scaleTime()
+      .domain(d3.extent(data, d => d.date))
+      .range([margin.left, width - margin.right]);
+
+    const yScale = d3.scaleLinear()
+      .domain(d3.extent(data, d => d.value))
+      .nice()
+      .range([height - margin.bottom, margin.top]);
+
+    // Add background
+    svg.append('rect')
+      .attr('width', width)
+      .attr('height', height)
+      .attr('fill', config.backgroundColor || '#ffffff')
+      .attr('class', 'chart-background');
+
+    // Add gridlines
+    this.addGridlines(svg, xScale, yScale, width, height, margin, config);
+
+    // Add axes
+    this.addAxes(svg, xScale, yScale, width, height, margin, config);
+
+    // Add data line
+    this.addDataLine(svg, data, xScale, yScale, config);
+
+    // Add chart border
+    svg.append('rect')
+      .attr('x', margin.left)
+      .attr('y', margin.top)
+      .attr('width', width - margin.left - margin.right)
+      .attr('height', height - margin.top - margin.bottom)
+      .attr('fill', 'none')
+      .attr('stroke', '#E5E7EB')
+      .attr('stroke-width', 1);
+
+    return svg.node();
+  }
+
+  static addGridlines(svg, xScale, yScale, width, height, margin, config) {
+    const gridColor = config.gridColor || '#F3F4F6';
+    const gridOpacity = config.gridOpacity || 0.7;
+
+    // Vertical gridlines
+    const xTicks = xScale.ticks(8);
+    svg.append('g')
+      .attr('class', 'grid vertical-grid')
+      .selectAll('line')
+      .data(xTicks)
+      .enter()
+      .append('line')
+      .attr('x1', d => xScale(d))
+      .attr('x2', d => xScale(d))
+      .attr('y1', margin.top)
+      .attr('y2', height - margin.bottom)
+      .attr('stroke', gridColor)
+      .attr('stroke-width', 1)
+      .attr('opacity', gridOpacity);
+
+    // Horizontal gridlines
+    const yTicks = yScale.ticks(6);
+    svg.append('g')
+      .attr('class', 'grid horizontal-grid')
+      .selectAll('line')
+      .data(yTicks)
+      .enter()
+      .append('line')
+      .attr('x1', margin.left)
+      .attr('x2', width - margin.right)
+      .attr('y1', d => yScale(d))
+      .attr('y2', d => yScale(d))
+      .attr('stroke', gridColor)
+      .attr('stroke-width', 1)
+      .attr('opacity', gridOpacity);
+  }
+
+  static addAxes(svg, xScale, yScale, width, height, margin, config) {
+    const axisColor = config.axisColor || '#6B7280';
+    const tickColor = config.tickColor || '#9CA3AF';
+
+    // X-axis
+    const xAxis = svg.append('g')
+      .attr('class', 'x-axis')
+      .attr('transform', `translate(0,${height - margin.bottom})`)
+      .call(d3.axisBottom(xScale)
+        .tickFormat(d3.timeFormat('%b %Y'))
+        .tickSize(0)
+        .tickPadding(15)
+        .ticks(8)
+      );
+
+    // Y-axis
+    const yAxis = svg.append('g')
+      .attr('class', 'y-axis')
+      .attr('transform', `translate(${margin.left},0)`)
+      .call(d3.axisLeft(yScale)
+        .tickFormat(d => `$${d.toFixed(0)}`)
+        .tickSize(0)
+        .tickPadding(15)
+        .ticks(6)
+      );
+
+    // Style axes
+    svg.selectAll('.domain').remove();
+    svg.selectAll('.tick text')
+      .attr('fill', tickColor)
+      .attr('font-family', 'Inter, sans-serif')
+      .attr('font-size', '12px')
+      .attr('font-weight', '500');
+
+    // Add axis labels
+    svg.append('text')
+      .attr('class', 'y-axis-label')
+      .attr('transform', 'rotate(-90)')
+      .attr('y', margin.left - 60)
+      .attr('x', -(height - margin.top - margin.bottom) / 2 - margin.top)
+      .attr('text-anchor', 'middle')
+      .attr('fill', axisColor)
+      .attr('font-family', 'Inter, sans-serif')
+      .attr('font-size', '14px')
+      .attr('font-weight', '500')
+      .text('Price ($)');
+  }
+
+  static addDataLine(svg, data, xScale, yScale, config) {
+    const lineColor = config.lineColor || '#1F2937';
+    const lineWidth = config.lineWidth || 2.5;
+    const curveType = config.curveType || 'cardinal';
+
+    // Define curve types
+    const curves = {
+      linear: d3.curveLinear,
+      cardinal: d3.curveCardinal,
+      monotone: d3.curveMonotoneX,
+      step: d3.curveStep
+    };
+
+    const line = d3.line()
+      .x(d => xScale(d.date))
+      .y(d => yScale(d.value))
+      .curve(curves[curveType] || d3.curveCardinal);
+
+    // Add gradient definition if needed
+    if (config.useGradient) {
+      const gradient = svg.append('defs')
+        .append('linearGradient')
+        .attr('id', 'line-gradient')
+        .attr('gradientUnits', 'userSpaceOnUse')
+        .attr('x1', 0).attr('y1', yScale.range()[1])
+        .attr('x2', 0).attr('y2', yScale.range()[0]);
+
+      gradient.append('stop')
+        .attr('offset', '0%')
+        .attr('stop-color', lineColor)
+        .attr('stop-opacity', 0.8);
+
+      gradient.append('stop')
+        .attr('offset', '100%')
+        .attr('stop-color', lineColor)
+        .attr('stop-opacity', 0.2);
+    }
+
+    // Add line path
+    const path = svg.append('path')
+      .datum(data)
+      .attr('class', 'data-line')
+      .attr('fill', 'none')
+      .attr('stroke', config.useGradient ? 'url(#line-gradient)' : lineColor)
+      .attr('stroke-width', lineWidth)
+      .attr('stroke-linecap', 'round')
+      .attr('stroke-linejoin', 'round')
+      .attr('d', line);
+
+    // Add area fill if specified
+    if (config.showAreaFill) {
+      const area = d3.area()
+        .x(d => xScale(d.date))
+        .y0(yScale.range()[0])
+        .y1(d => yScale(d.value))
+        .curve(curves[curveType] || d3.curveCardinal);
+
+      svg.append('path')
+        .datum(data)
+        .attr('class', 'area-fill')
+        .attr('fill', config.useGradient ? 'url(#line-gradient)' : lineColor)
+        .attr('opacity', 0.1)
+        .attr('d', area);
+    }
+
+    // Add data points if specified
+    if (config.showDataPoints) {
+      svg.selectAll('.data-point')
+        .data(data.filter((d, i) => i % Math.ceil(data.length / 20) === 0)) // Show every nth point
+        .enter()
+        .append('circle')
+        .attr('class', 'data-point')
+        .attr('cx', d => xScale(d.date))
+        .attr('cy', d => yScale(d.value))
+        .attr('r', 3)
+        .attr('fill', lineColor)
+        .attr('stroke', '#ffffff')
+        .attr('stroke-width', 2);
+    }
+
+    return path;
+  }
+
+  // Generate sample chart for testing
+  static generateSampleChart() {
+    const sampleData = [];
+    const startDate = new Date('2023-01-01');
+    let currentPrice = 150;
+
+    for (let i = 0; i < 252; i++) {
+      const date = new Date(startDate);
+      date.setDate(date.getDate() + i);
+      
+      currentPrice += (Math.random() - 0.5) * 5;
+      currentPrice = Math.max(50, Math.min(300, currentPrice));
+      
+      sampleData.push({
+        date: date,
+        value: currentPrice,
+        open: currentPrice * 0.99,
+        high: currentPrice * 1.02,
+        low: currentPrice * 0.98,
+        close: currentPrice,
+        volume: Math.floor(Math.random() * 1000000)
+      });
+    }
+
+    return this.generateFinancialChart(sampleData, {
+      width: 800,
+      height: 600,
+      lineColor: '#2563EB',
+      lineWidth: 2.5,
+      showDataPoints: false,
+      useGradient: false,
+      showAreaFill: false
+    });
+  }
+}
+```
+
+## PHASE 5: MAIN APPLICATION LOGIC
+
+### **5.1 Chart Editor Store**
+```javascript
+// src/lib/store/chartEditorStore.js
+import { create } from 'zustand';
+import { subscribeWithSelector } from 'zustand/middleware';
+
+export const useChartEditorStore = create(
+  subscribeWithSelector((set, get) => ({
+    // Chart data and configuration
+    chartData: [],
+    stockSymbol: 'AAPL',
+    stockDetails: null,
+    chartConfig: {
+      width: 800,
+      height: 600,
+      margin: { top: 80, right: 60, bottom: 80, left: 100 },
+      backgroundColor: '#ffffff',
+      lineColor: '#1F2937',
+      lineWidth: 2.5,
+      gridColor: '#F3F4F6',
+      axisColor: '#6B7280',
+      showDataPoints: false,
+      useGradient: false,
+      showAreaFill: false,
+      curveType: 'cardinal'
+    },
+
+    // Editor state
+    selectedElement: null,
+    canvas: null,
+    isGridVisible: true,
+    snapToGrid: true,
+    gridSize: 10,
+    isLoading: false,
+
+    // History for undo/redo
+    history: [],
+    historyIndex: -1,
+    maxHistorySize: 50,
+
+    // Actions
+    setChartData: (data) => set({ chartData: data }),
+    
+    setStockSymbol: (symbol) => set({ stockSymbol: symbol.toUpperCase() }),
+    
+    setStockDetails: (details) => set({ stockDetails: details }),
+    
+    setChartConfig: (config) => set((state) => ({
+      chartConfig: { ...state.chartConfig, ...config }
+    })),
+
+    setCanvas: (canvas) => set({ canvas }),
+
+    setLoading: (loading) => set({ isLoading: loading }),
+
+    selectElement: (element) => set({ selectedElement: element }),
+
+    updateElementProperties: (properties) => {
+      const { selectedElement, canvas } = get();
+      if (selectedElement && canvas) {
+        selectedElement.set(properties);
+        canvas.renderAll();
+        get().saveState();
+      }
+    },
+
+    addElement: (element) => {
+      const { canvas } = get();
+      if (canvas) {
+        canvas.add(element);
+        canvas.setActiveObject(element);
+        canvas.renderAll();
+        get().saveState();
+      }
+    },
+
+    removeSelectedElement: () => {
+      const { selectedElement, canvas } = get();
+      if (selectedElement && canvas) {
+        canvas.remove(selectedElement);
+        set({ selectedElement: null });
+        canvas.renderAll();
+        get().saveState();
+      }
+    },
+
+    duplicateSelectedElement: () => {
+      const { selectedElement, canvas } = get();
+      if (selectedElement && canvas) {
+        selectedElement.clone((cloned) => {
+          cloned.set({
+            left: selectedElement.left + 20,
+            top: selectedElement.top + 20
+          });
+          canvas.add(cloned);
+          canvas.setActiveObject(cloned);
+          canvas.renderAll();
+          get().saveState();
+        });
+      }
+    },
+
+    // Grid and snapping
+    toggleGrid: () => set((state) => ({ isGridVisible: !state.isGridVisible })),
+    toggleSnapToGrid: () => set((state) => ({ snapToGrid: !state.snapToGrid })),
+    setGridSize: (size) => set({ gridSize: size }),
+
+    // History management
+    saveState: () => {
+      const { canvas, history, historyIndex, maxHistorySize } = get();
+      if (!canvas) return;
+
+      const state = {
+        objects: canvas.toJSON(['type', 'originalText', 'badgeType', 'startPoint', 'endPoint']),
+        timestamp: Date.now()
+      };
+
+      const newHistory = history.slice(0, historyIndex + 1);
+      newHistory.push(state);
+
+      if (newHistory.length > maxHistorySize) {
+        newHistory.shift();
+      }
+
+      set({
+        history: newHistory,
+        historyIndex: newHistory.length - 1
+      });
+    },
+
+    undo: () => {
+      const { history, historyIndex, canvas } = get();
+      if (historyIndex > 0 && canvas) {
+        const previousState = history[historyIndex - 1];
+        canvas.loadFromJSON(previousState.objects, () => {
+          canvas.renderAll();
+          set({ 
+            historyIndex: historyIndex - 1,
+            selectedElement: null 
+          });
+        });
+      }
+    },
+
+    redo: () => {
+      const { history, historyIndex, canvas } = get();
+      if (historyIndex < history.length - 1 && canvas) {
+        const nextState = history[historyIndex + 1];
+        canvas.loadFromJSON(nextState.objects, () => {
+          canvas.renderAll();
+          set({ 
+            historyIndex: historyIndex + 1,
+            selectedElement: null 
+          });
+        });
+      }
+    },
+
+    // Export functionality
+    exportChart: (format = 'png', quality = 1) => {
+      const { canvas } = get();
+      if (!canvas) return null;
+
+      // Temporarily deselect all objects for clean export
+      canvas.discardActiveObject();
+      canvas.renderAll();
+
+      let result;
+      switch (format) {
+        case 'png':
+          result = canvas.toDataURL({ 
+            format: 'png', 
+            quality,
+            multiplier: quality >= 1 ? 2 : 1 // 2x for high quality
+          });
+          break;
+        case 'jpeg':
+          result = canvas.toDataURL({ format: 'jpeg', quality });
+          break;
+        case 'svg':
+          result = canvas.toSVG();
+          break;
+        case 'json':
+          result = JSON.stringify(canvas.toJSON(['type', 'originalText', 'badgeType', 'startPoint', 'endPoint']));
+          break;
+        default:
+          result = canvas.toDataURL({ format: 'png', quality });
+      }
+
+      return result;
+    },
+
+    // Template management
+    saveTemplate: (name) => {
+      const { canvas, chartConfig, stockSymbol } = get();
+      if (!canvas) return null;
+
+      const template = {
+        name,
+        symbol: stockSymbol,
+        config: chartConfig,
+        objects: canvas.toJSON(['type', 'originalText', 'badgeType', 'startPoint', 'endPoint']),
+        thumbnail: canvas.toDataURL({ format: 'png', quality: 0.5, multiplier: 0.5 }),
+        createdAt: Date.now()
+      };
+
+      const templates = JSON.parse(localStorage.getItem('chartTemplates') || '[]');
+      templates.push(template);
+      localStorage.setItem('chartTemplates', JSON.stringify(templates));
+
+      return template;
+    },
+
+    loadTemplate: (template) => {
+      const { canvas } = get();
+      if (!canvas) return;
+
+      set({ 
+        chartConfig: template.config,
+        stockSymbol: template.symbol || 'AAPL'
+      });
+      
+      canvas.loadFromJSON(template.objects, () => {
+        canvas.renderAll();
+        get().saveState();
+      });
+    }
+  }))
+);
+```
+
+### **5.2 Main Application**
+```javascript
+// src/main.js
+import { fabric } from 'fabric';
+import * as d3 from 'd3';
+import { gsap } from 'gsap';
+import PolygonAPI from './lib/polygon-api.js';
+import { D3ChartGenerator } from './lib/chart-generator/D3ChartGenerator.js';
+import { ChartTitle } from './lib/chart-objects/ChartTitle.js';
+import { AnnotationBox } from './lib/chart-objects/AnnotationBox.js';
+import { TrendArrow } from './lib/chart-objects/TrendArrow.js';
+import { PerformanceBadge } from './lib/chart-objects/PerformanceBadge.js';
+import { useChartEditorStore } from './lib/store/chartEditorStore.js';
+
+class ChartEditor {
+  constructor() {
+    this.canvas = null;
+    this.polygonAPI = new PolygonAPI();
+    this.store = useChartEditorStore.getState();
+    
+    this.init();
+  }
+
+  async init() {
+    this.setupCanvas();
+    this.setupEventListeners();
+    this.setupPropertyPanel();
+    
+    // Load initial chart
+    await this.loadInitialChart();
+    
+    console.log('Chart Editor initialized');
+  }
+
+  setupCanvas() {
+    this.canvas = new fabric.Canvas('chartCanvas', {
+      width: 800,
+      height: 600,
+      backgroundColor: '#ffffff',
+      selection: true,
+      preserveObjectStacking: true
+    });
+
+    // Store canvas reference
+    useChartEditorStore.getState().setCanvas(this.canvas);
+
+    // Setup canvas interactions
+    this.setupCanvasInteractions();
+    
+    // Setup grid
+    this.setupGrid();
+  }
+
+  setupCanvasInteractions() {
+    // Element selection
+    this.canvas.on('selection:created', (e) => {
+      const activeObject = e.selected[0];
+      useChartEditorStore.getState().selectElement(activeObject);
+      this.updatePropertyPanel(activeObject);
+      this.highlightSelectedElement(activeObject);
+    });
+
+    this.canvas.on('selection:updated', (e) => {
+      const activeObject = e.selected[0];
+      useChartEditorStore.getState().selectElement(activeObject);
+      this.updatePropertyPanel(activeObject);
+      this.highlightSelectedElement(activeObject);
+    });
+
+    this.canvas.on('selection:cleared', () => {
+      useChartEditorStore.getState().selectElement(null);
+      this.updatePropertyPanel(null);
+    });
+
+    // Object modification
+    this.canvas.on('object:modified', (e) => {
+      useChartEditorStore.getState().saveState();
+    });
+
+    // Drag with snap-to-grid
+    this.canvas.on('object:moving', (e) => {
+      if (useChartEditorStore.getState().snapToGrid) {
+        this.snapToGrid(e.target);
+      }
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey || e.metaKey) {
+        switch (e.key) {
+          case 'z':
+            e.preventDefault();
+            if (e.shiftKey) {
+              useChartEditorStore.getState().redo();
+            } else {
+              useChartEditorStore.getState().undo();
+            }
+            break;
+          case 'd':
+            e.preventDefault();
+            useChartEditorStore.getState().duplicateSelectedElement();
+            break;
+          case 's':
+            e.preventDefault();
+            this.saveTemplate();
+            break;
+        }
+      } else if (e.key === 'Delete' || e.key === 'Backspace') {
+        useChartEditorStore.getState().removeSelectedElement();
+      }
+    });
+  }
+
+  setupGrid() {
+    const gridSize = useChartEditorStore.getState().gridSize;
+    
+    // Create grid pattern
+    const grid = document.createElement('canvas');
+    grid.width = gridSize;
+    grid.height = gridSize;
+    const ctx = grid.getContext('2d');
+    
+    ctx.strokeStyle = '#E5E7EB';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(gridSize, 0);
+    ctx.moveTo(0, 0);
+    ctx.lineTo(0, gridSize);
+    ctx.stroke();
+    
+    // Apply grid as background
+    this.canvas.setBackgroundImage(
+      `url(${grid.toDataURL()})`,
+      this.canvas.renderAll.bind(this.canvas),
+      {
+        repeat: 'repeat',
+        opacity: useChartEditorStore.getState().isGridVisible ? 0.5 : 0
+      }
+    );
+  }
+
+  snapToGrid(obj) {
+    const gridSize = useChartEditorStore.getState().gridSize;
+    obj.set({
+      left: Math.round(obj.left / gridSize) * gridSize,
+      top: Math.round(obj.top / gridSize) * gridSize
+    });
+  }
+
+  highlightSelectedElement(element) {
+    // Add subtle animation to selected element
+    gsap.to(element, {
+      duration: 0.2,
+      scaleX: element.scaleX * 1.02,
+      scaleY: element.scaleY * 1.02,
+      ease: "power2.out",
+      yoyo: true,
+      repeat: 1
+    });
+  }
+
+  setupEventListeners() {
+    // Data loading
+    document.getElementById('loadDataBtn').addEventListener('click', () => {
+      this.loadChartData();
+    });
+
+    // Element library
+    document.querySelectorAll('.element-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const elementType = e.target.dataset.element;
+        this.addElement(elementType);
+      });
+    });
+
+    // Toolbar buttons
+    document.getElementById('undoBtn').addEventListener('click', () => {
+      useChartEditorStore.getState().undo();
+    });
+
+    document.getElementById('redoBtn').addEventListener('click', () => {
+      useChartEditorStore.getState().redo();
+    });
+
+    document.getElementById('saveBtn').addEventListener('click', () => {
+      this.saveTemplate();
+    });
+
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      this.exportChart();
+    });
+  }
+
+  async loadChartData() {
+    const symbol = document.getElementById('symbolInput').value.toUpperCase();
+    const period = document.getElementById('timePeriod').value;
+    
+    if (!symbol) return;
+
+    useChartEditorStore.getState().setLoading(true);
+    
+    try {
+      // Get date range
+      const { from, to } = this.polygonAPI.getDateRange(period);
+      
+      // Fetch stock data
+      const data = await this.polygonAPI.getStockData(symbol, 'day', 1, from, to);
+      const details = await this.polygonAPI.getStockDetails(symbol);
+      
+      // Update store
+      useChartEditorStore.getState().setChartData(data);
+      useChartEditorStore.getState().setStockSymbol(symbol);
+      useChartEditorStore.getState().setStockDetails(details);
+      
+      // Generate and load chart
+      await this.generateChart(data, symbol, details);
+      
+    } catch (error) {
+      console.error('Error loading chart data:', error);
+      alert('Error loading chart data. Using sample data.');
+      
+      // Load sample data as fallback
+      const sampleData = this.polygonAPI.getSampleData(symbol);
+      useChartEditorStore.getState().setChartData(sampleData);
+      await this.generateChart(sampleData, symbol, { name: symbol });
+    } finally {
+      useChartEditorStore.getState().setLoading(false);
+    }
+  }
+
+  async generateChart(data, symbol, details) {
+    // Clear existing chart elements (keep annotations)
+    const objects = this.canvas.getObjects();
+    objects.forEach(obj => {
+      if (obj.type === 'path' || obj.type === 'group' && obj.class === 'chart-element') {
+        this.canvas.remove(obj);
+      }
+    });
+
+    // Generate D3 chart
+    const config = {
+      ...useChartEditorStore.getState().chartConfig,
+      title: `${details.name || symbol} Stock Performance`,
+      subtitle: 'Daily closing prices'
+    };
+
+    const chartSVG = D3ChartGenerator.generateFinancialChart(data, config);
+    
+    // Convert SVG to Fabric objects
+    const svgString = new XMLSerializer().serializeToString(chartSVG);
+    
+    fabric.loadSVGFromString(svgString, (objects, options) => {
+      const chartGroup = new fabric.Group(objects, {
+        selectable: false,
+        evented: false,
+        class: 'chart-element'
+      });
+      
+      this.canvas.add(chartGroup);
+      chartGroup.sendToBack();
+      
+      // Add default title if none exists
+      if (!this.hasElementOfType('chart-title')) {
+        this.addChartTitle(`${details.name || symbol} Stock Performance`);
+      }
+      
+      this.canvas.renderAll();
+      useChartEditorStore.getState().saveState();
+    });
+  }
+
+  async loadInitialChart() {
+    // Load sample chart on startup
+    const sampleData = this.polygonAPI.getSampleData('AAPL');
+    useChartEditorStore.getState().setChartData(sampleData);
+    await this.generateChart(sampleData, 'AAPL', { name: 'Apple Inc.' });
+  }
+
+  hasElementOfType(type) {
+    return this.canvas.getObjects().some(obj => obj.type === type);
+  }
+
+  addElement(elementType) {
+    const canvasCenter = {
+      x: this.canvas.width / 2,
+      y: this.canvas.height / 2
+    };
+
+    let element;
+
+    switch (elementType) {
+      case 'title':
+        element = new ChartTitle('Chart Title', {
+          left: canvasCenter.x,
+          top: 50,
+          originX: 'center',
+          originY: 'center'
+        });
+        break;
+
+      case 'annotation':
+        element = new AnnotationBox('Annotation', {
+          left: canvasCenter.x,
+          top: canvasCenter.y,
+          originX: 'center',
+          originY: 'center'
+        });
+        break;
+
+      case 'arrow':
+        element = new TrendArrow(
+          {
+            start: { x: canvasCenter.x - 100, y: canvasCenter.y },
+            end: { x: canvasCenter.x + 100, y: canvasCenter.y - 50 }
+          },
+          {
+            stroke: '#DC2626',
+            strokeWidth: 3
+          }
+        );
+        break;
+
+      case 'badge':
+        element = new PerformanceBadge('13% GAIN', {
+          left: canvasCenter.x,
+          top: 100,
+          originX: 'center',
+          originY: 'center',
+          badgeType: 'gain'
+        });
+        break;
+
+      default:
+        return;
+    }
+
+    if (element) {
+      useChartEditorStore.getState().addElement(element);
+    }
+  }
+
+  addChartTitle(text) {
+    const title = new ChartTitle(text, {
+      left: this.canvas.width / 2,
+      top: 50,
+      originX: 'center',
+      originY: 'center',
+      fontSize: 28,
+      fontWeight: 'bold'
+    });
+
+    this.canvas.add(title);
+    this.canvas.renderAll();
+  }
+
+  setupPropertyPanel() {
+    // Property panel will be updated dynamically
+    this.updatePropertyPanel(null);
+  }
+
+  updatePropertyPanel(selectedElement) {
+    const panel = document.getElementById('propertyPanel');
+    
+    if (!selectedElement) {
+      panel.innerHTML = `
+        <div class="no-selection">
+          <p>Select an element to edit its properties</p>
+        </div>
+      `;
+      return;
+    }
+
+    let propertiesHTML = `
+      <div class="panel-header">
+        <h4>Properties</h4>
+        <span class="element-type">${selectedElement.type}</span>
+      </div>
+      <div class="property-sections">
+    `;
+
+    // Position & Size
+    propertiesHTML += `
+      <div class="property-section">
+        <h5>Position & Size</h5>
+        <div class="property-grid">
+          <div class="property-item">
+            <label>X</label>
+            <input type="number" id="prop-left" value="${Math.round(selectedElement.left || 0)}">
+          </div>
+          <div class="property-item">
+            <label>Y</label>
+            <input type="number" id="prop-top" value="${Math.round(selectedElement.top || 0)}">
+          </div>
+          <div class="property-item">
+            <label>Width</label>
+            <input type="number" id="prop-width" value="${Math.round(selectedElement.width || 0)}">
+          </div>
+          <div class="property-item">
+            <label>Height</label>
+            <input type="number" id="prop-height" value="${Math.round(selectedElement.height || 0)}">
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Typography (for text elements)
+    if (selectedElement.type === 'chart-title' || selectedElement.type === 'text') {
+      propertiesHTML += `
+        <div class="property-section">
+          <h5>Typography</h5>
+          <div class="property-item">
+            <label>Font Family</label>
+            <select id="prop-fontFamily">
+              <option value="Inter" ${selectedElement.fontFamily === 'Inter' ? 'selected' : ''}>Inter</option>
+              <option value="Playfair Display" ${selectedElement.fontFamily === 'Playfair Display' ? 'selected' : ''}>Playfair Display</option>
+              <option value="IBM Plex Sans" ${selectedElement.fontFamily === 'IBM Plex Sans' ? 'selected' : ''}>IBM Plex Sans</option>
+            </select>
+          </div>
+          <div class="property-item">
+            <label>Font Size</label>
+            <input type="range" id="prop-fontSize" min="8" max="72" value="${selectedElement.fontSize || 16}">
+            <span>${selectedElement.fontSize || 16}px</span>
+          </div>
+          <div class="property-item">
+            <label>Font Weight</label>
+            <select id="prop-fontWeight">
+              <option value="normal" ${selectedElement.fontWeight === 'normal' ? 'selected' : ''}>Normal</option>
+              <option value="bold" ${selectedElement.fontWeight === 'bold' ? 'selected' : ''}>Bold</option>
+              <option value="600" ${selectedElement.fontWeight === '600' ? 'selected' : ''}>Semi Bold</option>
+            </select>
+          </div>
+          <div class="property-item">
+            <label>Text Color</label>
+            <input type="color" id="prop-fill" value="${selectedElement.fill || '#000000'}">
+          </div>
+        </div>
+      `;
+    }
+
+    // Appearance
+    propertiesHTML += `
+      <div class="property-section">
+        <h5>Appearance</h5>
+    `;
+
+    if (selectedElement.fill !== undefined && selectedElement.type !== 'text' && selectedElement.type !== 'chart-title') {
+      propertiesHTML += `
+        <div class="property-item">
+          <label>Fill Color</label>
+          <input type="color" id="prop-fill" value="${selectedElement.fill || '#000000'}">
+        </div>
+      `;
+    }
+
+    if (selectedElement.stroke !== undefined) {
+      propertiesHTML += `
+        <div class="property-item">
+          <label>Stroke Color</label>
+          <input type="color" id="prop-stroke" value="${selectedElement.stroke || '#000000'}">
+        </div>
+        <div class="property-item">
+          <label>Stroke Width</label>
+          <input type="range" id="prop-strokeWidth" min="0" max="10" value="${selectedElement.strokeWidth || 1}">
+          <span>${selectedElement.strokeWidth || 1}px</span>
+        </div>
+      `;
+    }
+
+    propertiesHTML += `
+        <div class="property-item">
+          <label>Opacity</label>
+          <input type="range" id="prop-opacity" min="0" max="1" step="0.1" value="${selectedElement.opacity || 1}">
+          <span>${Math.round((selectedElement.opacity || 1) * 100)}%</span>
+        </div>
+      </div>
+    `;
+
+    // Element-specific properties
+    if (selectedElement.type === 'performance-badge') {
+      propertiesHTML += `
+        <div class="property-section">
+          <h5>Badge</h5>
+          <div class="property-item">
+            <label>Badge Type</label>
+            <select id="prop-badgeType">
+              <option value="gain" ${selectedElement.badgeType === 'gain' ? 'selected' : ''}>Gain</option>
+              <option value="loss" ${selectedElement.badgeType === 'loss' ? 'selected' : ''}>Loss</option>
+              <option value="neutral" ${selectedElement.badgeType === 'neutral' ? 'selected' : ''}>Neutral</option>
+              <option value="info" ${selectedElement.badgeType === 'info' ? 'selected' : ''}>Info</option>
+            </select>
+          </div>
+        </div>
+      `;
+    }
+
+    propertiesHTML += '</div>';
+    panel.innerHTML = propertiesHTML;
+
+    // Add event listeners for property changes
+    this.setupPropertyEventListeners(selectedElement);
+  }
+
+  setupPropertyEventListeners(selectedElement) {
+    const properties = [
+      'left', 'top', 'width', 'height', 'fontSize', 'fontFamily', 
+      'fontWeight', 'fill', 'stroke', 'strokeWidth', 'opacity'
+    ];
+
+    properties.forEach(prop => {
+      const input = document.getElementById(`prop-${prop}`);
+      if (input) {
+        input.addEventListener('input', (e) => {
+          let value = e.target.value;
+          
+          // Convert numeric values
+          if (['left', 'top', 'width', 'height', 'fontSize', 'strokeWidth'].includes(prop)) {
+            value = parseInt(value);
+          } else if (prop === 'opacity') {
+            value = parseFloat(value);
+          }
+
+          selectedElement.set(prop, value);
+          this.canvas.renderAll();
+
+          // Update display spans
+          const span = input.nextElementSibling;
+          if (span && span.tagName === 'SPAN') {
+            if (prop === 'opacity') {
+              span.textContent = `${Math.round(value * 100)}%`;
+            } else if (['fontSize', 'strokeWidth'].includes(prop)) {
+              span.textContent = `${value}px`;
+            }
+          }
+        });
+      }
+    });
+
+    // Special handling for badge type
+    const badgeTypeInput = document.getElementById('prop-badgeType');
+    if (badgeTypeInput && selectedElement.setBadgeType) {
+      badgeTypeInput.addEventListener('change', (e) => {
+        selectedElement.setBadgeType(e.target.value);
+      });
+    }
+  }
+
+  saveTemplate() {
+    const name = prompt('Enter template name:');
+    if (name) {
+      const template = useChartEditorStore.getState().saveTemplate(name);
+      if (template) {
+        alert('Template saved successfully!');
+      }
+    }
+  }
+
+  exportChart() {
+    const format = prompt('Export format (png, jpeg, svg):', 'png');
+    if (format) {
+      const dataURL = useChartEditorStore.getState().exportChart(format, 1);
+      if (dataURL) {
+        // Create download link
+        const link = document.createElement('a');
+        link.download = `chart.${format}`;
+        link.href = dataURL;
+        link.click();
+      }
+    }
+  }
+}
+
+// Initialize the application
+document.addEventListener('DOMContentLoaded', () => {
+  new ChartEditor();
+});
+```
+
+## PHASE 6: STYLING
+
+### **6.1 Main Styles**
+```css
+/* src/styles/main.css */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #f8fafc;
+  color: #1f2937;
+  overflow: hidden;
+}
+
+#app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-editor {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.editor-header {
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0 20px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.toolbar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toolbar h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.toolbar-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.toolbar-btn {
+  padding: 8px 16px;
+  border: 1px solid #d1d5db;
+  background: white;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toolbar-btn:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.primary-btn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.primary-btn:hover {
+  background: #2563eb;
+}
+
+.editor-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.left-panel, .right-panel {
+  width: 280px;
+  background: white;
+  border-right: 1px solid #e5e7eb;
+  overflow-y: auto;
+}
+
+.right-panel {
+  border-right: none;
+  border-left: 1px solid #e5e7eb;
+}
+
+.canvas-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  position: relative;
+}
+
+.canvas-container {
+  position: relative;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.canvas-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.panel-section {
+  padding: 20px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.panel-section h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #374151;
+}
+
+.input-group {
+  margin-bottom: 16px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #374151;
+}
+
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.element-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 8px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  border-radius: 6px;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.element-btn:hover {
+  background: #f9fafb;
+  border-color: #3b82f6;
+}
+
+.no-selection {
+  text-align: center;
+  color: #6b7280;
+  font-style: italic;
+  padding: 40px 20px;
+}
+```
+
+### **6.2 Property Panel Styles**
+```css
+/* src/styles/property-panel.css */
+.property-panel {
+  height: 100%;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.panel-header h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.element-type {
+  background: #eff6ff;
+  color: #1d4ed8;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.property-sections {
+  space-y: 20px;
+}
+
+.property-section {
+  margin-bottom: 24px;
+}
+
+.property-section h5 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.property-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.property-item {
+  margin-bottom: 12px;
+}
+
+.property-item label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.property-item input,
+.property-item select {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.property-item input[type="range"] {
+  margin-bottom: 4px;
+}
+
+.property-item input[type="color"] {
+  height: 32px;
+  padding: 2px;
+  border-radius: 4px;
+}
+
+.property-item span {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.property-item input:focus,
+.property-item select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+```
+
+## PHASE 7: PACKAGE.JSON AND STARTUP
+
+### **7.1 Package.json**
+```json
+{
+  "name": "interactive-chart-editor",
+  "version": "1.0.0",
+  "description": "Professional interactive chart editor with Fabric.js and D3.js",
+  "main": "src/main.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "vite --host 0.0.0.0 --port 3000"
+  },
+  "dependencies": {
+    "fabric": "^5.3.0",
+    "d3": "^7.8.0",
+    "zustand": "^4.4.0",
+    "gsap": "^3.12.0",
+    "axios": "^1.5.0",
+    "date-fns": "^2.30.0"
+  },
+  "devDependencies": {
+    "vite": "^4.4.0"
+  },
+  "keywords": [
+    "chart",
+    "editor",
+    "fabric.js",
+    "d3.js",
+    "interactive",
+    "financial",
+    "polygon.io"
+  ],
+  "author": "Chart Editor Team",
+  "license": "MIT"
+}
+```
+
+## IMPLEMENTATION INSTRUCTIONS
+
+### **Step 1: Setup**
+1. Create new Replit project (Node.js)
+2. Copy all files and folder structure exactly as shown
+3. Run `npm install` to install dependencies
+4. Get Polygon.io API key and update in `src/lib/polygon-api.js`
+
+### **Step 2: Development**
+1. Run `npm run dev` to start development server
+2. Open the application in browser
+3. Test basic functionality with sample data
+4. Add your Polygon.io API key for real data
+
+### **Step 3: Features to Test**
+1. **Data Loading**: Enter stock symbol (AAPL, TSLA, etc.) and load data
+2. **Element Creation**: Add titles, annotations, arrows, badges
+3. **Drag & Drop**: Move elements around the canvas
+4. **Property Editing**: Select elements and modify properties
+5. **Undo/Redo**: Test keyboard shortcuts (Ctrl+Z, Ctrl+Shift+Z)
+6. **Export**: Export charts as PNG, SVG, or JPEG
+
+### **Step 4: Customization**
+1. Modify color schemes in chart configuration
+2. Add new element types by extending the chart objects
+3. Customize the property panel for specific needs
+4. Add more chart types (bar charts, candlestick, etc.)
+
+This implementation provides a complete Canva/Photoshop-like interface for financial chart creation with professional quality output and intuitive interactions. The modular architecture makes it easy to extend with new features and chart types.
+
