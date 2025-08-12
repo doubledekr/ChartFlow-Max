@@ -111,16 +111,24 @@ export function ChartCanvas() {
         // Add a test element to verify drag and drop
         const testText = new fabric.Text('Click & Drag Me!', {
           left: 100,
-          top: 100,
-          fontSize: 20,
+          top: 50,
+          fontSize: 24,
           fill: '#ff6b6b',
+          fontWeight: 'bold',
           selectable: true,
           editable: false,
+          hasControls: true,
+          hasBorders: true,
+          lockRotation: false,
+          lockScalingX: false,
+          lockScalingY: false,
         });
         testText.chartElementId = 'test-element';
         canvas.add(testText);
+        canvas.renderAll();
         
-        console.log('Added test element to canvas');
+        console.log('Added test element to canvas:', testText);
+        console.log('Canvas objects count:', canvas.getObjects().length);
 
         return () => {
           if (canvas) {
@@ -419,7 +427,7 @@ export function ChartCanvas() {
               ref={svgRef}
               width="700"
               height="340"
-              className="absolute top-8 left-8"
+              className="absolute top-8 left-8 pointer-events-none"
               style={{ zIndex: 1 }}
             />
             
@@ -453,7 +461,7 @@ export function ChartCanvas() {
                 canvasMode === 'interactive' && 'canvas-interactive',
                 canvasMode === 'dragging' && 'canvas-interactive'
               )}
-              style={{ zIndex: 5 }}
+              style={{ zIndex: 15 }}
               data-testid="fabric-canvas"
             />
           </div>
