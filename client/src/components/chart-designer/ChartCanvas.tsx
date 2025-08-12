@@ -32,11 +32,14 @@ export function ChartCanvas() {
   // Initialize Fabric.js canvas
   useEffect(() => {
     if (canvasRef.current && !fabricCanvas) {
-      const canvas = new fabric.Canvas(canvasRef.current, {
-        width: 800,
-        height: 450,
-        backgroundColor: 'transparent',
-      });
+      try {
+        const canvas = new fabric.Canvas(canvasRef.current, {
+          width: 800,
+          height: 450,
+          backgroundColor: 'transparent',
+          selection: true,
+          preserveObjectStacking: true,
+        });
 
       canvas.on('selection:created', (e: any) => {
         const activeObject = e.target;
@@ -91,12 +94,17 @@ export function ChartCanvas() {
       canvas.moveCursor = 'grabbing';
       canvas.freeDrawingCursor = 'crosshair';
 
-      setFabricCanvas(canvas);
-      setCanvasInstance(canvas);
+        setFabricCanvas(canvas);
+        setCanvasInstance(canvas);
 
-      return () => {
-        canvas.dispose();
-      };
+        return () => {
+          if (canvas) {
+            canvas.dispose();
+          }
+        };
+      } catch (error) {
+        console.error('Failed to initialize Fabric.js canvas:', error);
+      }
     }
   }, []);
 
@@ -228,10 +236,12 @@ export function ChartCanvas() {
           fabricObject = new fabric.Text(element.content, {
             left: element.x,
             top: element.y,
-            fontSize: element.style.fontSize,
-            fontWeight: element.style.fontWeight,
-            fontFamily: element.style.fontFamily,
-            fill: element.style.color,
+            fontSize: element.style.fontSize || 24,
+            fontWeight: element.style.fontWeight || 'normal',
+            fontFamily: element.style.fontFamily || 'Arial',
+            fill: element.style.color || '#000000',
+            selectable: true,
+            editable: false,
           });
           break;
         
@@ -258,6 +268,7 @@ export function ChartCanvas() {
           fabricObject = new fabric.Group([fabricObject, annotationText], {
             left: element.x,
             top: element.y,
+            selectable: true,
           });
           break;
           
@@ -284,22 +295,28 @@ export function ChartCanvas() {
           fabricObject = new fabric.Group([fabricObject, badgeText], {
             left: element.x,
             top: element.y,
+            selectable: true,
           });
           break;
           
         default:
-          fabricObject = new fabric.Text(element.content, {
+          fabricObject = new fabric.Text(element.content || 'Text', {
             left: element.x,
             top: element.y,
-            fontSize: element.style.fontSize,
-            fontWeight: element.style.fontWeight,
-            fontFamily: element.style.fontFamily,
-            fill: element.style.color,
+            fontSize: element.style.fontSize || 16,
+            fontWeight: element.style.fontWeight || 'normal',
+            fontFamily: element.style.fontFamily || 'Arial',
+            fill: element.style.color || '#000000',
+            selectable: true,
+            editable: false,
           });
       }
 
       if (fabricObject) {
         fabricObject.chartElementId = element.id;
+        fabricObject.selectable = true;
+        fabricObject.moveCursor = 'move';
+        fabricObject.hoverCursor = 'move';
         fabricCanvas.add(fabricObject);
       }
     });
