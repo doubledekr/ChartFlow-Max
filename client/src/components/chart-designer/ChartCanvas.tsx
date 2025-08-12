@@ -31,6 +31,7 @@ export function ChartCanvas() {
   // Initialize Fabric.js canvas
   useEffect(() => {
     if (canvasRef.current && !fabricCanvas) {
+      console.log('Initializing Fabric.js canvas');
       try {
         const canvas = new fabric.Canvas(canvasRef.current, {
           width: 800,
@@ -39,8 +40,11 @@ export function ChartCanvas() {
           selection: true,
           preserveObjectStacking: true,
         });
+        
+        console.log('Fabric canvas created:', canvas);
 
       canvas.on('selection:created', (e: any) => {
+        console.log('Selection created:', e.target);
         const activeObject = e.target;
         if (activeObject && activeObject.chartElementId) {
           const element = config.elements.find(el => el.id === activeObject.chartElementId);
@@ -72,6 +76,7 @@ export function ChartCanvas() {
       });
 
       canvas.on('mouse:over', (e: any) => {
+        console.log('Mouse over:', e.target);
         if (e.target && e.target.chartElementId) {
           setCanvasMode('interactive');
           canvas.defaultCursor = 'move';
@@ -79,11 +84,18 @@ export function ChartCanvas() {
       });
 
       canvas.on('mouse:out', (e: any) => {
+        console.log('Mouse out:', e.target);
         if (e.target && e.target.chartElementId) {
           if (!canvas.getActiveObject()) {
             setCanvasMode('default');
             canvas.defaultCursor = 'crosshair';
           }
+        }
+      });
+      
+      canvas.on('mouse:move', (e: any) => {
+        if (e.target) {
+          console.log('Mouse move over element');
         }
       });
 
@@ -95,6 +107,20 @@ export function ChartCanvas() {
 
         setFabricCanvas(canvas);
         setCanvasInstance(canvas);
+
+        // Add a test element to verify drag and drop
+        const testText = new fabric.Text('Click & Drag Me!', {
+          left: 100,
+          top: 100,
+          fontSize: 20,
+          fill: '#ff6b6b',
+          selectable: true,
+          editable: false,
+        });
+        testText.chartElementId = 'test-element';
+        canvas.add(testText);
+        
+        console.log('Added test element to canvas');
 
         return () => {
           if (canvas) {

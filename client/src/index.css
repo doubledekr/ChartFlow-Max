@@ -171,27 +171,36 @@
   }
 
   .canvas-interactive {
-    cursor: grab;
+    cursor: grab !important;
   }
 
   .canvas-interactive:hover {
-    cursor: grab;
+    cursor: grab !important;
   }
 
   .canvas-interactive:active {
-    cursor: grabbing;
+    cursor: grabbing !important;
   }
 
   .canvas-element-hover {
-    cursor: move;
+    cursor: move !important;
   }
 
   .canvas-element-selected {
-    cursor: move;
+    cursor: move !important;
   }
 
   .canvas-default {
-    cursor: crosshair;
+    cursor: crosshair !important;
+  }
+  
+  /* Fabric.js canvas cursor override */
+  .upper-canvas {
+    cursor: crosshair !important;
+  }
+  
+  .upper-canvas:hover {
+    cursor: crosshair !important;
   }
 
   .line-style-btn {
