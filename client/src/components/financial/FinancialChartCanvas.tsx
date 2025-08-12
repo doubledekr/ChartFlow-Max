@@ -141,27 +141,28 @@ export function FinancialChartCanvas({
     g.append('g')
       .call(d3.axisLeft(yScale).tickFormat(d3.format('$.2f')));
 
-    // Create chart path as SVG path string
+    // Create chart path with dynamic smoothing based on smoothness parameter
+    let curveType;
+    if (lineProperties.smoothness < 0.2) {
+      curveType = d3.curveLinear;
+    } else if (lineProperties.smoothness < 0.5) {
+      curveType = d3.curveMonotoneX;
+    } else if (lineProperties.smoothness < 0.8) {
+      curveType = d3.curveCatmullRom.alpha(0.5);
+    } else {
+      curveType = d3.curveBasis;
+    }
+
     const line = d3.line<ChartDataPoint>()
       .x(d => xScale(new Date(d.timestamp)))
       .y(d => yScale(d.close))
-      .curve(d3.curveMonotoneX);
+      .curve(curveType);
 
     const pathData = line(data) || '';
-    
-    // Add chart path to background SVG for reference
-    g.append('path')
-      .datum(data)
-      .attr('fill', 'none')
-      .attr('stroke', '#e5e7eb')
-      .attr('stroke-width', 1)
-      .attr('stroke-dasharray', '3,3')
-      .attr('d', line)
-      .attr('opacity', 0.5);
 
-    // Create draggable chart line in Fabric canvas after a small delay to ensure canvas is ready
+    // Create draggable chart group with axis text conversion
     setTimeout(() => {
-      createDraggableChartLine(pathData, margin);
+      createDraggableChartGroup(pathData, margin, xScale, yScale, chartWidth, chartHeight);
     }, 100);
 
     // Add dots for data points
@@ -211,7 +212,14 @@ export function FinancialChartCanvas({
     fabricCanvasRef.current.renderAll();
   };
 
-  const createDraggableChartLine = (pathData: string, margin: any) => {
+  const createDraggableChartGroup = (
+    pathData: string, 
+    margin: any, 
+    xScale: any, 
+    yScale: any, 
+    chartWidth: number, 
+    chartHeight: number
+  ) => {
     if (!fabricCanvasRef.current || !pathData || data.length === 0) return;
 
     // Convert SVG path to Fabric.js Path object
@@ -227,73 +235,95 @@ export function FinancialChartCanvas({
       hasBorders: false,
     });
 
-    // Create axis labels that follow the chart data
-    const firstPrice = data[0]?.close || 0;
-    const lastPrice = data[data.length - 1]?.close || 0;
-    const highPrice = Math.max(...data.map(d => d.high));
-    const lowPrice = Math.min(...data.map(d => d.low));
+    // Convert D3 axis data to Fabric.js text objects
+    const yTicks = yScale.ticks(6);
+    const xTicks = xScale.ticks(5);
 
-    // Y-axis price labels (left side)
-    const yAxisLabels = [
-      { price: highPrice, y: margin.top + 20 },
-      { price: (highPrice + lowPrice) / 2, y: margin.top + height / 2 },
-      { price: lowPrice, y: height - margin.bottom - 20 }
-    ].map(({ price, y }) => new (window as any).fabric.Text(`$${price.toFixed(2)}`, {
-      left: 10,
-      top: y,
-      fontSize: 12,
-      fill: '#6b7280',
-      fontFamily: 'Inter, sans-serif',
+    // Y-axis price labels (left side) - converted from D3 axis
+    const yAxisLabels = yTicks.map((price: number, index: number) => new (window as any).fabric.Text(
+      `$${price.toFixed(2)}`, 
+      {
+        left: 15,
+        top: yScale(price) - 6,
+        fontSize: 12,
+        fill: '#6b7280',
+        fontFamily: 'Inter, sans-serif',
+        selectable: false,
+        hasControls: false,
+        hasBorders: false,
+        editable: true,
+        type: 'y-axis-label',
+        originalValue: price
+      }
+    ));
+
+    // X-axis date labels (bottom) - converted from D3 axis
+    const xAxisLabels = xTicks.map((date: Date, index: number) => new (window as any).fabric.Text(
+      date.toLocaleDateString('en-US', { 
+        month: 'short', 
+        year: 'numeric' 
+      }), 
+      {
+        left: xScale(date) - 20,
+        top: chartHeight + 25,
+        fontSize: 12,
+        fill: '#6b7280',
+        fontFamily: 'Inter, sans-serif',
+        selectable: false,
+        hasControls: false,
+        hasBorders: false,
+        editable: true,
+        type: 'x-axis-label',
+        originalValue: date
+      }
+    ));
+
+    // Create axis lines as Fabric.js vectors
+    const yAxisLine = new (window as any).fabric.Line([0, 0, 0, chartHeight], {
+      stroke: '#d1d5db',
+      strokeWidth: 1,
       selectable: false,
-      hasControls: false,
-      hasBorders: false,
-      editable: true,
-      type: 'axis-label'
-    }));
-
-    // X-axis date labels (bottom)
-    const startDate = new Date(data[0]?.timestamp || Date.now());
-    const endDate = new Date(data[data.length - 1]?.timestamp || Date.now());
-    const midDate = new Date((startDate.getTime() + endDate.getTime()) / 2);
-
-    const xAxisLabels = [
-      { date: startDate, x: margin.left + 20 },
-      { date: midDate, x: margin.left + width / 2 },
-      { date: endDate, x: width - margin.right - 80 }
-    ].map(({ date, x }) => new (window as any).fabric.Text(date.toLocaleDateString('en-US', { 
-      month: 'short', 
-      year: 'numeric' 
-    }), {
-      left: x,
-      top: height - margin.bottom + 20,
-      fontSize: 12,
-      fill: '#6b7280',
-      fontFamily: 'Inter, sans-serif',
-      selectable: false,
-      hasControls: false,
-      hasBorders: false,
-      editable: true,
-      type: 'axis-label'
-    }));
-
-    // Current price indicator
-    const currentPriceLabel = new (window as any).fabric.Text(`${symbol}: $${lastPrice.toFixed(2)}`, {
-      left: margin.left + 20,
-      top: margin.top - 30,
-      fontSize: 16,
-      fill: lineProperties.color,
-      fontFamily: 'Inter, sans-serif',
-      fontWeight: 'bold',
-      selectable: false,
-      hasControls: false,
-      hasBorders: false,
-      editable: true,
-      type: 'price-indicator'
+      evented: false,
+      type: 'axis-line'
     });
 
-    // Create a group with the chart line and all axis labels
+    const xAxisLine = new (window as any).fabric.Line([0, chartHeight, chartWidth, chartHeight], {
+      stroke: '#d1d5db',
+      strokeWidth: 1,
+      selectable: false,
+      evented: false,
+      type: 'axis-line'
+    });
+
+    // Current price indicator
+    const currentPrice = data[data.length - 1]?.close || 0;
+    const currentPriceLabel = new (window as any).fabric.Text(
+      `${symbol}: $${currentPrice.toFixed(2)}`, 
+      {
+        left: 20,
+        top: -30,
+        fontSize: 16,
+        fill: lineProperties.color,
+        fontFamily: 'Inter, sans-serif',
+        fontWeight: 'bold',
+        selectable: false,
+        hasControls: false,
+        hasBorders: false,
+        editable: true,
+        type: 'price-indicator'
+      }
+    );
+
+    // Create a comprehensive group with chart line, axis elements, and labels
     const chartGroup = new (window as any).fabric.Group(
-      [fabricPath, currentPriceLabel, ...yAxisLabels, ...xAxisLabels], 
+      [
+        yAxisLine,
+        xAxisLine,
+        fabricPath,
+        currentPriceLabel,
+        ...yAxisLabels,
+        ...xAxisLabels
+      ], 
       {
         left: margin.left,
         top: margin.top,
@@ -383,7 +413,10 @@ export function FinancialChartCanvas({
           break;
         case 'smoothness':
           console.log('Smoothness changed to:', value);
-          // In a full implementation, regenerate the path with different curve interpolation
+          // Regenerate the chart with new smoothness
+          if (data.length > 0) {
+            setTimeout(() => renderChart(), 100);
+          }
           break;
       }
     } else {
