@@ -35,7 +35,7 @@ export function ElementPropertiesPanel({
     );
   }
 
-  const isChartGroup = properties.type === 'financial-chart-group' || properties.type === 'financial-chart-line';
+  const isChartGroup = properties.type === 'financial-chart-group' || properties.type === 'financial-chart-line' || properties.type === 'chartline';
   const elementType = properties.type;
   const isTextElement = ['title', 'annotation', 'price-label'].includes(elementType);
   const isShapeElement = ['rectangle', 'circle', 'triangle', 'star', 'target', 'alert', 'highlight'].includes(elementType);
@@ -57,7 +57,7 @@ export function ElementPropertiesPanel({
               <Move className="h-4 w-4 text-gray-600" />
             )}
             <h3 className="text-sm font-medium">
-              {isChartGroup ? 'Financial Chart Line' : 
+              {isChartGroup || elementType === 'chartline' ? 'Financial Chart Line' : 
                elementType === 'y-axis-labels' ? 'Y-Axis Labels' : 
                elementType === 'x-axis-labels' ? 'X-Axis Labels' :
                elementType === 'y-axis-line' ? 'Y-Axis Line' :
@@ -254,15 +254,17 @@ export function ElementPropertiesPanel({
           )}
 
           {/* Y-axis label properties */}
-          {elementType === 'y-axis-labels' && properties.properties && (
+          {(elementType === 'y-axis-labels' || elementType === 'x-axis-labels') && properties.properties && (
             <>
               <div className="mb-4">
-                <Label className="text-sm font-medium">Y-Axis Labels (Price Numbers)</Label>
+                <Label className="text-sm font-medium">
+                  {elementType === 'y-axis-labels' ? 'Y-Axis Labels (Price Numbers)' : 'X-Axis Labels (Dates)'}
+                </Label>
               </div>
               <div>
-                <Label className="text-xs">Font Size: {properties.properties.fontSize}px</Label>
+                <Label className="text-xs">Font Size: {properties.properties.fontSize || 12}px</Label>
                 <Slider
-                  value={[properties.properties.fontSize]}
+                  value={[properties.properties.fontSize || 12]}
                   onValueChange={([value]) => onUpdateProperty('fontSize', value)}
                   min={8}
                   max={24}
@@ -317,66 +319,193 @@ export function ElementPropertiesPanel({
             </>
           )}
 
-          {/* X-axis label properties */}
-          {elementType === 'x-axis-labels' && properties.properties && (
+          {/* Text element properties */}
+          {isTextElement && properties.properties && (
             <>
               <div className="mb-4">
-                <Label className="text-sm font-medium">X-Axis Labels (Dates)</Label>
+                <Label className="text-sm font-medium">Text Properties</Label>
               </div>
+              
+              {/* Text Content */}
               <div>
-                <Label className="text-xs">Font Size: {properties.properties.fontSize}px</Label>
+                <Label className="text-xs">Text Content</Label>
+                <input
+                  type="text"
+                  value={properties.properties.text || selectedElement?.text || ''}
+                  onChange={(e) => onUpdateProperty('text', e.target.value)}
+                  className="w-full mt-2 px-3 py-2 border border-gray-300 rounded-md text-sm"
+                  placeholder="Enter text..."
+                />
+              </div>
+
+              {/* Font Size */}
+              <div>
+                <Label className="text-xs">Font Size: {properties.properties.fontSize || 16}px</Label>
                 <Slider
-                  value={[properties.properties.fontSize]}
+                  value={[properties.properties.fontSize || 16]}
                   onValueChange={([value]) => onUpdateProperty('fontSize', value)}
                   min={8}
-                  max={24}
+                  max={72}
                   step={1}
                   className="mt-2"
                 />
               </div>
-              
+
+              {/* Text Color */}
               <div>
-                <Label className="text-xs">Font Color</Label>
+                <Label className="text-xs">Text Color</Label>
                 <div className="mt-2 flex gap-2">
                   <input
                     type="color"
-                    value={properties.properties.fill}
+                    value={properties.properties.fill || '#000000'}
+                    onChange={(e) => onUpdateProperty('fill', e.target.value)}
+                    className="w-12 h-8 rounded border border-gray-300 cursor-pointer"
+                  />
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Shape element properties */}
+          {isShapeElement && properties.properties && (
+            <>
+              <div className="mb-4">
+                <Label className="text-sm font-medium">Shape Properties</Label>
+              </div>
+              
+              {/* Fill Color */}
+              <div>
+                <Label className="text-xs">Fill Color</Label>
+                <div className="mt-2 flex gap-2">
+                  <input
+                    type="color"
+                    value={properties.properties.fill || '#3b82f6'}
                     onChange={(e) => onUpdateProperty('fill', e.target.value)}
                     className="w-12 h-8 rounded border border-gray-300 cursor-pointer"
                   />
                 </div>
               </div>
 
+              {/* Stroke Color */}
               <div>
-                <Label className="text-xs">Font Family</Label>
-                <Select value={properties.properties.fontFamily} onValueChange={(value) => onUpdateProperty('fontFamily', value)}>
-                  <SelectTrigger className="mt-2">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Inter, sans-serif">Inter</SelectItem>
-                    <SelectItem value="Arial, sans-serif">Arial</SelectItem>
-                    <SelectItem value="Helvetica, sans-serif">Helvetica</SelectItem>
-                    <SelectItem value="Times New Roman, serif">Times New Roman</SelectItem>
-                    <SelectItem value="Georgia, serif">Georgia</SelectItem>
-                    <SelectItem value="Courier New, monospace">Courier New</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label className="text-xs">Border Color</Label>
+                <div className="mt-2 flex gap-2">
+                  <input
+                    type="color"
+                    value={properties.properties.stroke || '#000000'}
+                    onChange={(e) => onUpdateProperty('stroke', e.target.value)}
+                    className="w-12 h-8 rounded border border-gray-300 cursor-pointer"
+                  />
+                </div>
               </div>
 
+              {/* Stroke Width */}
               <div>
-                <Label className="text-xs">Font Weight</Label>
-                <Select value={properties.properties.fontWeight} onValueChange={(value) => onUpdateProperty('fontWeight', value)}>
-                  <SelectTrigger className="mt-2">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="normal">Normal</SelectItem>
-                    <SelectItem value="bold">Bold</SelectItem>
-                    <SelectItem value="600">Semi Bold</SelectItem>
-                    <SelectItem value="300">Light</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label className="text-xs">Border Width: {properties.properties.strokeWidth || 2}px</Label>
+                <Slider
+                  value={[properties.properties.strokeWidth || 2]}
+                  onValueChange={([value]) => onUpdateProperty('strokeWidth', value)}
+                  min={0}
+                  max={10}
+                  step={1}
+                  className="mt-2"
+                />
+              </div>
+
+              {/* Opacity */}
+              <div>
+                <Label className="text-xs">Opacity: {Math.round((properties.properties.opacity || 1) * 100)}%</Label>
+                <Slider
+                  value={[properties.properties.opacity || 1]}
+                  onValueChange={([value]) => onUpdateProperty('opacity', value)}
+                  min={0.1}
+                  max={1}
+                  step={0.1}
+                  className="mt-2"
+                />
+              </div>
+            </>
+          )}
+
+          {/* Line element properties */}
+          {isLineElement && properties.properties && (
+            <>
+              <div className="mb-4">
+                <Label className="text-sm font-medium">Line Properties</Label>
+              </div>
+              
+              {/* Line Color */}
+              <div>
+                <Label className="text-xs">Line Color</Label>
+                <div className="mt-2 flex gap-2">
+                  <input
+                    type="color"
+                    value={properties.properties.stroke || '#3b82f6'}
+                    onChange={(e) => onUpdateProperty('stroke', e.target.value)}
+                    className="w-12 h-8 rounded border border-gray-300 cursor-pointer"
+                  />
+                </div>
+              </div>
+
+              {/* Line Width */}
+              <div>
+                <Label className="text-xs">Line Width: {properties.properties.strokeWidth || 2}px</Label>
+                <Slider
+                  value={[properties.properties.strokeWidth || 2]}
+                  onValueChange={([value]) => onUpdateProperty('strokeWidth', value)}
+                  min={1}
+                  max={10}
+                  step={1}
+                  className="mt-2"
+                />
+              </div>
+            </>
+          )}
+
+          {/* Universal Position Controls */}
+          {properties.properties && (
+            <>
+              <div className="mb-4 pt-4 border-t border-gray-200">
+                <Label className="text-sm font-medium">Position & Transform</Label>
+              </div>
+              
+              {/* Position */}
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <Label className="text-xs">X: {Math.round(properties.properties.left || 0)}</Label>
+                  <Slider
+                    value={[properties.properties.left || 0]}
+                    onValueChange={([value]) => onUpdateProperty('left', value)}
+                    min={0}
+                    max={1000}
+                    step={1}
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs">Y: {Math.round(properties.properties.top || 0)}</Label>
+                  <Slider
+                    value={[properties.properties.top || 0]}
+                    onValueChange={([value]) => onUpdateProperty('top', value)}
+                    min={0}
+                    max={600}
+                    step={1}
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+
+              {/* Rotation */}
+              <div>
+                <Label className="text-xs">Rotation: {Math.round(properties.properties.angle || 0)}°</Label>
+                <Slider
+                  value={[properties.properties.angle || 0]}
+                  onValueChange={([value]) => onUpdateProperty('angle', value)}
+                  min={-180}
+                  max={180}
+                  step={1}
+                  className="mt-2"
+                />
               </div>
             </>
           )}
