@@ -556,16 +556,17 @@ export function FinancialChartCanvas({
 
     // Set up deselection handler - but only clear when other elements are selected
     const handleDeselection = () => {
-      // Don't clear selectedChartLine if we're switching between chart elements
-      setTimeout(() => {
-        const activeObject = fabricCanvasRef.current?.getActiveObject();
-        if (!activeObject || activeObject.type !== 'financial-chart-line') {
-          setSelectedChartLine(null);
-          if (onElementSelect) {
-            onElementSelect(null, null);
-          }
-        }
-      }, 10); // Small delay to check if another chart element was selected
+      // Don't clear selection immediately - let the new selection take precedence
+      console.log('handleDeselection called - ignoring to prevent clearing axis text selection');
+      // setTimeout(() => {
+      //   const activeObject = fabricCanvasRef.current?.getActiveObject();
+      //   if (!activeObject || activeObject.type !== 'financial-chart-line') {
+      //     setSelectedChartLine(null);
+      //     if (onElementSelect) {
+      //       onElementSelect(null, null);
+      //     }
+      //   }
+      // }, 10); // Small delay to check if another chart element was selected
     };
 
     chartLine.on('deselected', () => {
