@@ -1196,10 +1196,14 @@ export function FinancialChartCanvas({
           type: 'financial-chart-line',
           symbol,
           properties: {
+            ...lineProperties,
             strokeWidth: fabricPath.strokeWidth,
             opacity: fabricPath.opacity,
             color: fabricPath.stroke,
-            visible: fabricPath.visible
+            visible: fabricPath.visible,
+            left: fabricPath.left,
+            top: fabricPath.top,
+            angle: fabricPath.angle
           }
         });
       }

@@ -76,8 +76,8 @@ export function ElementPropertiesPanel({
     );
   }
 
-  const isChartGroup = properties.type === 'financial-chart-group' || properties.type === 'financial-chart-line' || properties.type === 'chartline';
-  const elementType = properties.type;
+  const isChartGroup = properties.type === 'financial-chart-group' || properties.type === 'financial-chart-line' || properties.type === 'chartline' || selectedElement?.type === 'financial-chart-line';
+  const elementType = selectedElement?.type === 'financial-chart-line' ? 'financial-chart-line' : properties.type;
   const isMultiSelection = elementType === 'multi-selection';
   const isTextElement = ['title', 'annotation', 'price-label', 'source-attribution'].includes(elementType);
   const isShapeElement = ['rectangle', 'circle', 'triangle', 'star', 'target', 'alert', 'highlight'].includes(elementType);
