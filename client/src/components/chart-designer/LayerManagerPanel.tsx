@@ -303,43 +303,38 @@ export function LayerManagerPanel({ canvas, selectedElement, onElementSelect }: 
         const firstObj = canvas.getObjects().find((o: any) => (o.id || `layer_${canvas.getObjects().indexOf(o)}`) === firstChild.id);
         const newVisibility = firstObj ? !firstObj.visible : true;
         
+        // Update all child objects visibility
         layer.children.forEach(childLayer => {
           const obj = canvas.getObjects().find((o: any) => (o.id || `layer_${canvas.getObjects().indexOf(o)}`) === childLayer.id);
           if (obj) {
             obj.set('visible', newVisibility);
           }
+          // Update child layer state too
+          childLayer.visible = newVisibility;
         });
+        
+        // Update the group layer state
+        layer.visible = newVisibility;
+        
+        // Update layers state directly to preserve groups
+        setLayers(prev => prev.map(l => l.id === layerId ? { ...l, visible: newVisibility } : l));
       }
     } else {
       // Toggle single layer visibility - check the actual object visibility
       const obj = canvas.getObjects().find((o: any) => (o.id || `layer_${canvas.getObjects().indexOf(o)}`) === layerId);
       if (obj) {
-        obj.set('visible', !obj.visible);
+        const newVisibility = !obj.visible;
+        obj.set('visible', newVisibility);
+        
+        // Update layer state
+        layer.visible = newVisibility;
+        
+        // Update layers state directly to preserve groups
+        setLayers(prev => prev.map(l => l.id === layerId ? { ...l, visible: newVisibility } : l));
       }
     }
 
     canvas.renderAll();
-    
-    // Force update layers to reflect new visibility state
-    setTimeout(() => {
-      const updateLayers = () => {
-        const objects = canvas.getObjects();
-        const layerItems: LayerItem[] = objects.map((obj: any, index: number) => ({
-          id: obj.id || `layer_${index}`,
-          name: getLayerName(obj),
-          type: obj.type || obj.elementType || 'object',
-          visible: obj.visible !== false,
-          locked: !obj.selectable,
-          opacity: obj.opacity || 1,
-          zIndex: index,
-          symbol: obj.symbol,
-          color: obj.stroke || obj.fill || '#3b82f6'
-        }));
-        const groupedLayers = groupChartLinesBySymbol(layerItems);
-        setLayers(groupedLayers);
-      };
-      updateLayers();
-    }, 100);
   };
 
   const toggleLayerLock = (layerId: string) => {
@@ -350,19 +345,36 @@ export function LayerManagerPanel({ canvas, selectedElement, onElementSelect }: 
 
     if (layer.isGroup && layer.children) {
       // Toggle group lock
+      const newLockState = !layer.locked;
+      
       layer.children.forEach(childLayer => {
         const obj = canvas.getObjects().find((o: any) => (o.id || `layer_${canvas.getObjects().indexOf(o)}`) === childLayer.id);
         if (obj) {
-          obj.set('selectable', layer.locked);
-          obj.set('evented', layer.locked);
+          obj.set('selectable', !newLockState);
+          obj.set('evented', !newLockState);
         }
+        // Update child layer state
+        childLayer.locked = newLockState;
       });
+      
+      // Update the group layer state
+      layer.locked = newLockState;
+      
+      // Update layers state directly to preserve groups
+      setLayers(prev => prev.map(l => l.id === layerId ? { ...l, locked: newLockState } : l));
     } else {
       // Toggle single layer lock
       const obj = canvas.getObjects().find((o: any) => (o.id || `layer_${canvas.getObjects().indexOf(o)}`) === layerId);
       if (obj) {
-        obj.set('selectable', layer.locked);
-        obj.set('evented', layer.locked);
+        const newLockState = !layer.locked;
+        obj.set('selectable', !newLockState);
+        obj.set('evented', !newLockState);
+        
+        // Update layer state
+        layer.locked = newLockState;
+        
+        // Update layers state directly to preserve groups
+        setLayers(prev => prev.map(l => l.id === layerId ? { ...l, locked: newLockState } : l));
       }
     }
 
