@@ -23,8 +23,8 @@ interface FinancialChartCanvasProps {
 export function FinancialChartCanvas({ 
   width = 900, 
   height = 500, 
-  symbol: propSymbol = 'AAPL',
-  timeframe: propTimeframe = '1Y',
+  symbol = 'AAPL',
+  timeframe = '1Y',
   onElementSelect,
   onCanvasReady,
   onCanvasChange,
@@ -32,20 +32,11 @@ export function FinancialChartCanvas({
   onLoadDataRef
 }: FinancialChartCanvasProps) {
   
-  // Update symbol and timeframe when props change
-  useEffect(() => {
-    console.log(`📊 FinancialChartCanvas - useEffect: propSymbol="${propSymbol}", propTimeframe="${propTimeframe}"`);
-    setSymbol(propSymbol);
-    setTimeframe(propTimeframe);
-  }, [propSymbol, propTimeframe]);
-
   // Expose update function to parent component
   const updateChartLinePropertiesRef = useRef<(property: string, value: any) => void>();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<any>(null);
   const svgRef = useRef<SVGSVGElement>(null);
-  const [symbol, setSymbol] = useState(propSymbol);
-  const [timeframe, setTimeframe] = useState(propTimeframe);
   const [data, setData] = useState<ChartDataPoint[]>([]);
   const [multiSymbolData, setMultiSymbolData] = useState<any>(null);
   const [isMultiSymbol, setIsMultiSymbol] = useState(false);
@@ -60,6 +51,14 @@ export function FinancialChartCanvas({
     visible: true,
     strokeDashArray: null as number[] | null
   });
+
+  // Load data when symbol or timeframe changes
+  useEffect(() => {
+    console.log(`📊 FinancialChartCanvas - Received props: symbol="${symbol}", timeframe="${timeframe}"`);
+    if (symbol) {
+      loadStockData();
+    }
+  }, [symbol, timeframe]);
 
   useEffect(() => {
     if (!fabricCanvasRef.current && canvasRef.current) {
@@ -248,15 +247,13 @@ export function FinancialChartCanvas({
     setError(null);
     
     try {
-      // Use propSymbol directly to avoid state sync issues
-      const currentSymbol = propSymbol;
-      console.log(`📊 FinancialChartCanvas.loadStockData - using propSymbol: "${currentSymbol}", timeframe: ${propTimeframe}`);
+      console.log(`📊 Loading data for symbol: ${symbol}, timeframe: ${timeframe}`);
       
       // Check if symbol contains multiple tickers (comma separated after processing in DataSourcePanel)
-      const symbolsArray = currentSymbol.split(',').map(s => s.trim()).filter(s => s.length > 0);
+      const symbolsArray = symbol.split(',').map(s => s.trim()).filter(s => s.length > 0);
       const isMultiSymbolRequest = symbolsArray.length > 1;
       
-      const response = await fetch(`/api/stocks/${encodeURIComponent(currentSymbol)}/${propTimeframe}`);
+      const response = await fetch(`/api/stocks/${encodeURIComponent(symbol)}/${timeframe}`);
       if (!response.ok) throw new Error('Failed to fetch stock data');
       
       const stockData = await response.json();
@@ -271,7 +268,7 @@ export function FinancialChartCanvas({
         setIsMultiSymbol(true);
         setData(stockData.combinedData || stockData.data || []); // Use combined data for Y-axis calculation
       } else {
-        console.log(`📊 Loading single symbol data: ${currentSymbol}`);
+        console.log(`📊 Loading single symbol data: ${symbol}`);
         setMultiSymbolData(null);
         setIsMultiSymbol(false);
         setData(stockData);
@@ -321,7 +318,7 @@ export function FinancialChartCanvas({
       let yMin, yMax;
       
       // For multiple symbols with very different ranges, use adaptive scaling
-      if (propSymbol.includes(',') || propSymbol.includes(' ')) {
+      if (symbol.includes(',') || symbol.includes(' ')) {
         // Multiple symbols detected - use percentage-based padding for better visualization
         const paddingPercent = Math.max(0.1, Math.min(0.2, priceRange / averagePrice * 0.1));
         const padding = priceRange * paddingPercent;
@@ -367,7 +364,7 @@ export function FinancialChartCanvas({
         .domain([yMin, yMax])
         .range([chartHeight, 0]);
       
-      console.log(`📊 Y-axis scaling: Symbol(s): ${propSymbol}, Range: $${yMin.toFixed(2)} - $${yMax.toFixed(2)}, Data points: ${chartData.length}`);
+      console.log(`📊 Y-axis scaling: Symbol(s): ${symbol}, Range: $${yMin.toFixed(2)} - $${yMax.toFixed(2)}, Data points: ${chartData.length}`);
       
       return { yMin, yMax, yScale };
     };
@@ -1387,7 +1384,7 @@ export function FinancialChartCanvas({
       return ticks.length > 0 ? ticks : [yMin, yMax];
     };
     
-    const yTicks = generateOptimalTicks(calculatedYMin, calculatedYMax, 6);
+    const yTicks = generateOptimalTicks(yMin, yMax, 6);
     const xTicks = xScale.ticks(5);
 
     // Enhanced Y-axis price labels with smart formatting
@@ -1404,7 +1401,7 @@ export function FinancialChartCanvas({
       }
     };
     
-    const priceRange = calculatedYMax - calculatedYMin;
+    const priceRange = yMax - yMin;
     const yAxisLabels = yTicks.map((price: number, index: number) => new (window as any).fabric.Text(
       formatPrice(price, priceRange), {
         left: chartStartX - 80, // Move further left to avoid overlap
