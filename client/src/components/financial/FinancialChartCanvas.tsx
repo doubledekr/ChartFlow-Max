@@ -537,11 +537,11 @@ export function FinancialChartCanvas({
       .domain([calculatedYMin, calculatedYMax])
       .range([chartHeight, 0]);
     
-    // Create Y-axis labels with proper positioning
+    // Create Y-axis labels with proper positioning - avoid overlap with axis line
     const yTicks = yScale.ticks(5);
     const yAxisLabels = yTicks.map((price: number) => new (window as any).fabric.Text(
       `$${price.toFixed(2)}`, {
-        left: chartStartX - 45,
+        left: chartStartX - 55, // Move further left to avoid overlap
         top: margin.top + yScale(price) - 6,
         fontSize: 11,
         fontFamily: 'Inter, sans-serif',
@@ -558,7 +558,7 @@ export function FinancialChartCanvas({
     const xAxisLabels = xTicks.map((date: Date) => new (window as any).fabric.Text(
       date.toLocaleDateString('en-US', { month: 'short', day: '2-digit' }), {
         left: chartStartX + xScale(date) - 20,
-        top: margin.top + chartHeight + 15,
+        top: margin.top + chartHeight + 10, // Closer to axis line
         fontSize: 11,
         fontFamily: 'Inter, sans-serif',
         fill: '#666666',
@@ -569,11 +569,11 @@ export function FinancialChartCanvas({
       }
     ));
     
-    // Create axis lines with proper positioning
+    // Create axis lines with proper positioning - make sure they meet at corner
     const yAxisLine = new (window as any).fabric.Line([
-      chartStartX - 5, 
+      chartStartX, 
       margin.top, 
-      chartStartX - 5, 
+      chartStartX, 
       margin.top + chartHeight
     ], {
       stroke: '#666666',
@@ -586,9 +586,9 @@ export function FinancialChartCanvas({
     
     const xAxisLine = new (window as any).fabric.Line([
       chartStartX, 
-      margin.top + chartHeight + 5, 
+      margin.top + chartHeight, 
       chartStartX + chartWidth, 
-      margin.top + chartHeight + 5
+      margin.top + chartHeight
     ], {
       stroke: '#666666',
       strokeWidth: 1,
@@ -1335,14 +1335,14 @@ export function FinancialChartCanvas({
       
       // Generate ticks
       const ticks = [];
-      let tickValue = Math.ceil(calculatedYMin / stepSize) * stepSize;
+      let tickValue = Math.ceil(yMin / stepSize) * stepSize;
       
-      while (tickValue <= calculatedYMax && ticks.length < 8) {
+      while (tickValue <= yMax && ticks.length < 8) {
         ticks.push(tickValue);
         tickValue += stepSize;
       }
       
-      return ticks.length > 0 ? ticks : [calculatedYMin, calculatedYMax];
+      return ticks.length > 0 ? ticks : [yMin, yMax];
     };
     
     const yTicks = generateOptimalTicks(calculatedYMin, calculatedYMax, 6);
