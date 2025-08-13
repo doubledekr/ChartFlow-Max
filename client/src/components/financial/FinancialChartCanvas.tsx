@@ -958,6 +958,72 @@ export function FinancialChartCanvas({
       }
     });
 
+    // Define X-axis update function
+    const xAxisUpdateFunction = (property: string, value: any) => {
+      console.log(`🔧 Updating X-axis line: ${property} = ${value}`);
+      if (property === 'strokeWidth') xAxisLine.set('strokeWidth', value);
+      if (property === 'opacity') xAxisLine.set('opacity', value);
+      if (property === 'color') xAxisLine.set('stroke', value);
+      if (property === 'visible') xAxisLine.set('visible', value);
+      if (property === 'gridLinesVisible') {
+        console.log('🔧 CANVAS: X-Grid line visibility toggle triggered:', value);
+        const xGridLines = (fabricCanvasRef.current as any)?.xGridLines || [];
+        console.log('🔧 CANVAS: X Grid Lines stored:', xGridLines.length);
+        
+        if (value) {
+          // Remove existing vertical grid lines first
+          const existingGridLines = fabricCanvasRef.current?.getObjects().filter((obj: any) => 
+            obj.type === 'x-grid-line' || obj.type === 'test-x-grid-line');
+          console.log('🔧 CANVAS: Removing existing X grid lines:', existingGridLines.length);
+          existingGridLines.forEach((gridLine: any) => {
+            fabricCanvasRef.current?.remove(gridLine);
+          });
+          
+          // Create fresh vertical grid lines with absolute coordinates
+          console.log('🔧 CANVAS: Creating fresh vertical grid lines:', xGridLines.length);
+          
+          // Create actual vertical grid lines
+          xGridLines.forEach((gridLine: any, index: number) => {
+            console.log(`🔧 CANVAS: Original X grid line ${index}:`, gridLine.left, gridLine.top, gridLine.width);
+            
+            // Create a new grid line with absolute coordinates
+            // Use the stored grid line's position but create fresh coordinates
+            const xPos = gridLine.left + (gridLine.width / 2); // X position from stored grid line center
+            const chartStartY = 120;   // Chart starts at Y=120
+            const chartEndY = 400;     // Chart ends at Y=400
+            
+            const freshGridLine = new (window as any).fabric.Line(
+              [xPos, chartStartY, xPos, chartEndY], 
+              {
+                stroke: '#e5e7eb',
+                strokeWidth: 1,
+                opacity: 0.8,
+                selectable: false,
+                evented: false,
+                type: 'x-grid-line'
+              }
+            );
+            
+            console.log(`🔧 CANVAS: Created fresh X grid line at X=${xPos} from Y=${chartStartY} to Y=${chartEndY}`);
+            fabricCanvasRef.current?.add(freshGridLine);
+          });
+        } else {
+          // Remove vertical grid lines from canvas
+          const existingGridLines = fabricCanvasRef.current?.getObjects().filter((obj: any) => 
+            obj.type === 'x-grid-line' || obj.type === 'test-x-grid-line');
+          console.log('🔧 CANVAS: Removing X grid lines:', existingGridLines.length);
+          existingGridLines.forEach((gridLine: any) => {
+            fabricCanvasRef.current?.remove(gridLine);
+          });
+        }
+      }
+      fabricCanvasRef.current?.renderAll();
+      console.log(`Updated ${property} to ${value} for X-axis line`);
+    };
+
+    // Store updateFunction directly on the xAxisLine object
+    xAxisLine.updateFunction = xAxisUpdateFunction;
+
     // Set up event handlers for X-axis line with grid line controls
     xAxisLine.on('selected', () => {
       console.log('X-axis line selected');
@@ -971,67 +1037,7 @@ export function FinancialChartCanvas({
             visible: true,
             gridLinesVisible: false
           },
-          updateFunction: (property: string, value: any) => {
-            console.log(`🔧 Updating X-axis line: ${property} = ${value}`);
-            if (property === 'strokeWidth') xAxisLine.set('strokeWidth', value);
-            if (property === 'opacity') xAxisLine.set('opacity', value);
-            if (property === 'color') xAxisLine.set('stroke', value);
-            if (property === 'visible') xAxisLine.set('visible', value);
-            if (property === 'gridLinesVisible') {
-              console.log('🔧 CANVAS: X-Grid line visibility toggle triggered:', value);
-              const xGridLines = (fabricCanvasRef.current as any)?.xGridLines || [];
-              console.log('🔧 CANVAS: X Grid Lines stored:', xGridLines.length);
-              
-              if (value) {
-                // Remove existing vertical grid lines first
-                const existingGridLines = fabricCanvasRef.current?.getObjects().filter((obj: any) => 
-                  obj.type === 'x-grid-line' || obj.type === 'test-x-grid-line');
-                console.log('🔧 CANVAS: Removing existing X grid lines:', existingGridLines.length);
-                existingGridLines.forEach((gridLine: any) => {
-                  fabricCanvasRef.current?.remove(gridLine);
-                });
-                
-                // Create fresh vertical grid lines with absolute coordinates
-                console.log('🔧 CANVAS: Creating fresh vertical grid lines:', xGridLines.length);
-                
-                // Create actual vertical grid lines
-                xGridLines.forEach((gridLine: any, index: number) => {
-                  console.log(`🔧 CANVAS: Original X grid line ${index}:`, gridLine.left, gridLine.top, gridLine.width);
-                  
-                  // Create a new grid line with absolute coordinates
-                  // Use the stored grid line's position but create fresh coordinates
-                  const xPos = gridLine.left + (gridLine.width / 2); // X position from stored grid line center
-                  const chartStartY = 120;   // Chart starts at Y=120
-                  const chartEndY = 400;     // Chart ends at Y=400
-                  
-                  const freshGridLine = new (window as any).fabric.Line(
-                    [xPos, chartStartY, xPos, chartEndY], 
-                    {
-                      stroke: '#e5e7eb',
-                      strokeWidth: 1,
-                      opacity: 0.8,
-                      selectable: false,
-                      evented: false,
-                      type: 'x-grid-line'
-                    }
-                  );
-                  
-                  console.log(`🔧 CANVAS: Created fresh X grid line at X=${xPos} from Y=${chartStartY} to Y=${chartEndY}`);
-                  fabricCanvasRef.current?.add(freshGridLine);
-                });
-              } else {
-                // Remove vertical grid lines from canvas
-                const existingGridLines = fabricCanvasRef.current?.getObjects().filter((obj: any) => 
-                  obj.type === 'x-grid-line' || obj.type === 'test-x-grid-line');
-                console.log('🔧 CANVAS: Removing X grid lines:', existingGridLines.length);
-                existingGridLines.forEach((gridLine: any) => {
-                  fabricCanvasRef.current?.remove(gridLine);
-                });
-              }
-            }
-            fabricCanvasRef.current?.renderAll();
-            console.log(`Updated ${property} to ${value} for X-axis line`);
-          }
+          updateFunction: xAxisUpdateFunction
         });
       }
     });
