@@ -37,6 +37,11 @@ export default function ChartDesigner() {
   }>>([]);
   const [chartSymbol, setChartSymbol] = useState('AAPL');
   const [chartTimeframe, setChartTimeframe] = useState('1Y');
+  
+  const handleSymbolChange = (symbol: string) => {
+    console.log(`chart-designer.tsx - handleSymbolChange: "${symbol}"`);
+    setChartSymbol(symbol);
+  };
   const chartUpdateRef = useRef<((property: string, value: any) => void) | null>(null);
   const loadDataRef = useRef<(() => void) | null>(null);
   const { toast } = useToast();
@@ -645,7 +650,7 @@ export default function ChartDesigner() {
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             <DataSourcePanel 
               onDataUpdate={handleDataUpdate}
-              onSymbolChange={setChartSymbol}
+              onSymbolChange={handleSymbolChange}
               onTimeframeChange={setChartTimeframe}
               onLoadData={() => {
                 if (loadDataRef.current) {

@@ -26,6 +26,7 @@ export function DataSourcePanel({ onDataUpdate, onSymbolChange, onTimeframeChang
     const symbolsArray = upperValue.split(/[,\s]+/).map(s => s.trim()).filter(s => s.length > 0);
     const formattedSymbol = symbolsArray.join(', ');
     
+    console.log(`DataSourcePanel - handleSymbolChange: input="${value}", formatted="${formattedSymbol}"`);
     onSymbolChange?.(formattedSymbol);
   };
 
