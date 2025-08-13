@@ -991,37 +991,32 @@ export function FinancialChartCanvas({
                   fabricCanvasRef.current?.remove(gridLine);
                 });
                 
-                // Create vertical grid lines
-                console.log('🔧 CANVAS: Creating vertical grid lines');
-                console.log('🔧 CANVAS: Sample X grid line data:', xGridLines[0]);
-                
-                // Create one bright blue test line for vertical grids
-                const testLineVertical = new (window as any).fabric.Line([400, 120, 400, 400], {
-                  stroke: '#0000ff',
-                  strokeWidth: 3,
-                  opacity: 1,
-                  selectable: true,
-                  evented: true,
-                  type: 'test-x-grid-line'
-                });
-                
-                console.log('🔧 CANVAS: Adding bright blue test line at X=400');
-                fabricCanvasRef.current?.add(testLineVertical);
+                // Create fresh vertical grid lines with absolute coordinates
+                console.log('🔧 CANVAS: Creating fresh vertical grid lines:', xGridLines.length);
                 
                 // Create actual vertical grid lines
                 xGridLines.forEach((gridLine: any, index: number) => {
-                  console.log(`🔧 CANVAS: X grid line ${index} data:`, gridLine.left, gridLine.width, gridLine.top);
-                  const xPos = gridLine.left + (gridLine.width / 2); // Center of the grid line
-                  const freshGridLine = new (window as any).fabric.Line([xPos, 120, xPos, 400], {
-                    stroke: '#e5e7eb',
-                    strokeWidth: 1,
-                    opacity: 0.8,
-                    selectable: false,
-                    evented: false,
-                    type: 'x-grid-line'
-                  });
+                  console.log(`🔧 CANVAS: Original X grid line ${index}:`, gridLine.left, gridLine.top, gridLine.width);
                   
-                  console.log(`🔧 CANVAS: Created X grid line ${index} at X=${xPos}`);
+                  // Create a new grid line with absolute coordinates
+                  // Use the stored grid line's position but create fresh coordinates
+                  const xPos = gridLine.left + (gridLine.width / 2); // X position from stored grid line center
+                  const chartStartY = 120;   // Chart starts at Y=120
+                  const chartEndY = 400;     // Chart ends at Y=400
+                  
+                  const freshGridLine = new (window as any).fabric.Line(
+                    [xPos, chartStartY, xPos, chartEndY], 
+                    {
+                      stroke: '#e5e7eb',
+                      strokeWidth: 1,
+                      opacity: 0.8,
+                      selectable: false,
+                      evented: false,
+                      type: 'x-grid-line'
+                    }
+                  );
+                  
+                  console.log(`🔧 CANVAS: Created fresh X grid line at X=${xPos} from Y=${chartStartY} to Y=${chartEndY}`);
                   fabricCanvasRef.current?.add(freshGridLine);
                 });
               } else {
