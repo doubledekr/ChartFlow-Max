@@ -32,7 +32,7 @@ export function LineStylingPanel() {
     updateConfig({ lineStyle: style });
   };
 
-  const handlePointStyleChange = (style: string) => {
+  const handlePointStyleChange = (style: 'none' | 'circle' | 'square' | 'triangle' | 'diamond' | 'cross') => {
     updateConfig({ pointStyle: style });
   };
 

@@ -89,6 +89,25 @@ export const polygonCache = pgTable("polygon_cache", {
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
 
+// Custom logos table
+export const customLogos = pgTable("custom_logos", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  name: varchar("name").notNull(),
+  fileName: varchar("file_name").notNull(),
+  fileUrl: varchar("file_url").notNull(),
+  fileSize: integer("file_size").notNull(),
+  mimeType: varchar("mime_type").notNull(),
+  position: varchar("position").notNull().default("top-right"),
+  size: varchar("size").notNull().default("medium"),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export type CustomLogo = typeof customLogos.$inferSelect;
+export type InsertCustomLogo = typeof customLogos.$inferInsert;
+
 // Custom fonts table for user-uploaded fonts
 export const customFonts = pgTable("custom_fonts", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),

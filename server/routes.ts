@@ -8,11 +8,18 @@ import {
   insertChartInstanceSchema,
   insertExportPresetSchema,
   customFonts,
+  customLogos,
 } from "@shared/schema";
 import { ObjectStorageService, ObjectNotFoundError } from "./objectStorage";
 import { createInsertSchema } from "drizzle-zod";
 
 const insertCustomFontSchema = createInsertSchema(customFonts).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+const insertCustomLogoSchema = createInsertSchema(customLogos).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
@@ -301,6 +308,102 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Font file not found" });
       }
       res.status(500).json({ message: "Failed to serve font" });
+    }
+  });
+
+  // Logo management routes
+  app.get("/api/logos", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const logos = await storage.getUserCustomLogos(userId);
+      res.json(logos);
+    } catch (error) {
+      console.error("Error fetching logos:", error);
+      res.status(500).json({ message: "Failed to fetch logos" });
+    }
+  });
+
+  app.post("/api/logos/upload", isAuthenticated, async (req: any, res) => {
+    try {
+      const objectStorageService = new ObjectStorageService();
+      const uploadURL = await objectStorageService.getLogoUploadURL();
+      res.json({ uploadURL });
+    } catch (error) {
+      console.error("Error getting logo upload URL:", error);
+      res.status(500).json({ message: "Failed to get upload URL" });
+    }
+  });
+
+  app.post("/api/logos", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const logoData = insertCustomLogoSchema.parse({
+        ...req.body,
+        userId,
+      });
+      
+      const logo = await storage.createCustomLogo(logoData);
+      res.json(logo);
+    } catch (error) {
+      console.error("Error creating custom logo:", error);
+      res.status(500).json({ message: "Failed to create custom logo" });
+    }
+  });
+
+  app.get("/api/logos/:id", async (req, res) => {
+    try {
+      const logo = await storage.getCustomLogo(req.params.id);
+      if (!logo) {
+        return res.status(404).json({ message: "Logo not found" });
+      }
+      res.json(logo);
+    } catch (error) {
+      console.error("Error fetching logo:", error);
+      res.status(500).json({ message: "Failed to fetch logo" });
+    }
+  });
+
+  app.delete("/api/logos/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const logo = await storage.getCustomLogo(req.params.id);
+      
+      if (!logo) {
+        return res.status(404).json({ message: "Logo not found" });
+      }
+      
+      if (logo.userId !== userId) {
+        return res.status(403).json({ message: "Not authorized to delete this logo" });
+      }
+      
+      await storage.deleteCustomLogo(req.params.id);
+      res.json({ message: "Logo deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting logo:", error);
+      res.status(500).json({ message: "Failed to delete logo" });
+    }
+  });
+
+  app.get("/logos/:logoId", async (req, res) => {
+    try {
+      const logo = await storage.getCustomLogo(req.params.logoId);
+      if (!logo) {
+        return res.status(404).json({ message: "Logo not found" });
+      }
+
+      const objectStorageService = new ObjectStorageService();
+      const logoFile = await objectStorageService.getLogoFile(logo.fileUrl);
+      
+      res.setHeader('Content-Type', logo.mimeType);
+      res.setHeader('Cache-Control', 'public, max-age=31536000'); // 1 year cache
+      
+      await objectStorageService.downloadObject(logoFile, res);
+    } catch (error) {
+      console.error("Error serving logo:", error);
+      if (error instanceof ObjectNotFoundError) {
+        return res.status(404).json({ message: "Logo file not found" });
+      }
+      res.status(500).json({ message: "Failed to serve logo" });
     }
   });
 

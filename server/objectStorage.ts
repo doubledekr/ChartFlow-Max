@@ -71,6 +71,52 @@ export class ObjectStorageService {
     });
   }
 
+  // Gets the upload URL for a logo file.
+  async getLogoUploadURL(): Promise<string> {
+    const privateObjectDir = this.getPrivateObjectDir();
+    if (!privateObjectDir) {
+      throw new Error(
+        "PRIVATE_OBJECT_DIR not set. Create a bucket in 'Object Storage' " +
+          "tool and set PRIVATE_OBJECT_DIR env var."
+      );
+    }
+
+    const logoId = randomUUID();
+    const fullPath = `${privateObjectDir}/logos/${logoId}`;
+
+    const { bucketName, objectName } = parseObjectPath(fullPath);
+
+    // Sign URL for PUT method with TTL
+    return signObjectURL({
+      bucketName,
+      objectName,
+      method: "PUT",
+      ttlSec: 900,
+    });
+  }
+
+  // Gets the logo file from the logo URL.
+  async getLogoFile(logoUrl: string): Promise<File> {
+    if (!logoUrl.startsWith("https://storage.googleapis.com/")) {
+      throw new ObjectNotFoundError();
+    }
+
+    // Extract the path from the URL
+    const url = new URL(logoUrl);
+    const objectPath = url.pathname;
+
+    const { bucketName, objectName } = parseObjectPath(objectPath);
+    const bucket = objectStorageClient.bucket(bucketName);
+    const logoFile = bucket.file(objectName);
+    
+    const [exists] = await logoFile.exists();
+    if (!exists) {
+      throw new ObjectNotFoundError();
+    }
+    
+    return logoFile;
+  }
+
   // Downloads an object to the response.
   async downloadObject(file: File, res: Response, cacheTtlSec: number = 3600) {
     try {

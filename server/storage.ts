@@ -6,6 +6,7 @@ import {
   polygonCache,
   customFonts,
   fontUsage,
+  customLogos,
   type User,
   type UpsertUser,
   type ChartTemplate,
@@ -20,6 +21,8 @@ import {
   type InsertCustomFont,
   type FontUsage,
   type InsertFontUsage,
+  type CustomLogo,
+  type InsertCustomLogo,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, lt, gt, or } from "drizzle-orm";
@@ -65,6 +68,13 @@ export interface IStorage {
   // Font usage tracking
   trackFontUsage(usage: InsertFontUsage): Promise<void>;
   getFontUsageStats(fontFamily: string): Promise<FontUsage[]>;
+  
+  // Logo operations
+  createCustomLogo(logo: InsertCustomLogo): Promise<CustomLogo>;
+  getCustomLogo(id: string): Promise<CustomLogo | undefined>;
+  getUserCustomLogos(userId: string): Promise<CustomLogo[]>;
+  updateCustomLogo(id: string, updates: Partial<InsertCustomLogo>): Promise<CustomLogo>;
+  deleteCustomLogo(id: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -260,6 +270,37 @@ export class DatabaseStorage implements IStorage {
       .from(fontUsage)
       .where(eq(fontUsage.fontFamily, fontFamily))
       .orderBy(desc(fontUsage.lastUsed));
+  }
+
+  // Logo operations
+  async createCustomLogo(logo: InsertCustomLogo): Promise<CustomLogo> {
+    const [created] = await db.insert(customLogos).values(logo).returning();
+    return created;
+  }
+
+  async getCustomLogo(id: string): Promise<CustomLogo | undefined> {
+    const [logo] = await db.select().from(customLogos).where(eq(customLogos.id, id));
+    return logo;
+  }
+
+  async getUserCustomLogos(userId: string): Promise<CustomLogo[]> {
+    return await db.select()
+      .from(customLogos)
+      .where(eq(customLogos.userId, userId))
+      .orderBy(desc(customLogos.createdAt));
+  }
+
+  async updateCustomLogo(id: string, updates: Partial<InsertCustomLogo>): Promise<CustomLogo> {
+    const [updated] = await db
+      .update(customLogos)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(customLogos.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteCustomLogo(id: string): Promise<void> {
+    await db.delete(customLogos).where(eq(customLogos.id, id));
   }
 }
 

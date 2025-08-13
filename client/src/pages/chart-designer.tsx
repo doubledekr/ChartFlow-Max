@@ -8,6 +8,7 @@ import { LineStylingPanel } from '@/components/chart-designer/LineStylingPanel';
 import { TypographyPanel } from '@/components/chart-designer/TypographyPanel';
 import { AxisFormattingPanel } from '@/components/chart-designer/AxisFormattingPanel';
 import { ElementLibraryPanel } from '@/components/chart-designer/ElementLibraryPanel';
+import { LogoPanel } from '@/components/chart-designer/LogoPanel';
 import { FinancialChartCanvas } from '@/components/financial';
 import { TemplateManager, InstanceManager } from '@/components/templates';
 import { ElementPropertiesPanel } from '@/components/chart-designer/ElementPropertiesPanel';
@@ -221,6 +222,7 @@ export default function ChartDesigner() {
             <GradientEffectsPanel />
             <LineStylingPanel />
             <TypographyPanel />
+            <LogoPanel />
             <AxisFormattingPanel />
             <ElementLibraryPanel />
           </div>
