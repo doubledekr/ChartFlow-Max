@@ -205,15 +205,15 @@ export function FinancialChartCanvas({
   ) => {
     if (!fabricCanvasRef.current || !pathData || data.length === 0) return;
 
-    // Convert SVG path to Fabric.js Path object with proper styling
+    // Convert SVG path to Fabric.js Path object with proper styling and positioning
     const fabricPath = new (window as any).fabric.Path(pathData, {
       fill: '',
       stroke: lineProperties.color,
       strokeWidth: lineProperties.strokeWidth,
       opacity: lineProperties.opacity,
-      left: 0,
-      top: 0,
-      selectable: false, // Will be part of group
+      left: margin.left,  // Position relative to margin like axis elements
+      top: margin.top,    // Position relative to margin like axis elements  
+      selectable: false,
       hasControls: false,
       hasBorders: false,
       strokeLineCap: 'round',
@@ -385,7 +385,7 @@ export function FinancialChartCanvas({
     // Create draggable chart line as standalone Path (no Group wrapper)
     const chartLine = fabricPath;
     
-    // Set the path properties without changing its generated coordinates
+    // Set the path properties and make it selectable
     chartLine.set({
       strokeWidth: lineProperties.strokeWidth,
       stroke: lineProperties.color,
@@ -404,13 +404,6 @@ export function FinancialChartCanvas({
       symbol,
       timeframe,
       properties: lineProperties
-    });
-    
-    // Position the path correctly after it's been created with proper coordinates
-    const pathBounds = chartLine.getBoundingRect();
-    chartLine.set({
-      left: chartStartX - pathBounds.width/2,  // Center the path horizontally
-      top: 120                                 // Fixed vertical position
     });
 
     // Add all elements to canvas for independent selection
