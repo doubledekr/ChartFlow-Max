@@ -908,9 +908,11 @@ export function FinancialChartCanvas({
             console.log(`🔧 CANVAS: Grid line position:`, gridLine.left, gridLine.top, 'width:', gridLine.width, 'height:', gridLine.height);
             
             // Create a new grid line object with proper positioning
-            const newGridLine = new fabric.Line([gridLine.x1, gridLine.y1, gridLine.x2, gridLine.y2], {
-              left: gridLine.left,
-              top: gridLine.top,
+            // Grid line coordinates need to be absolute: from chart start (140) to chart end (820)
+            const chartStart = 140; // Chart starts at x=140 (margin.left + yAxis offset)
+            const chartEnd = 820;   // Chart ends at x=820 (140 + 680 chart width)
+            
+            const newGridLine = new fabric.Line([chartStart, gridLine.top, chartEnd, gridLine.top], {
               stroke: gridLine.stroke,
               strokeWidth: gridLine.strokeWidth,
               opacity: gridLine.opacity,
