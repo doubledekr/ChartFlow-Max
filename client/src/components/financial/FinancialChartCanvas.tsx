@@ -319,16 +319,16 @@ export function FinancialChartCanvas({
       
       // For multiple symbols with very different ranges, use adaptive scaling
       if (symbol.includes(',') || symbol.includes(' ')) {
-        // Multiple symbols - analyze price distribution for smarter bounds
+        // Multiple symbols - use more aggressive percentile filtering for tighter bounds
         const sortedPrices = allPrices.sort((a, b) => a - b);
-        const p5 = sortedPrices[Math.floor(sortedPrices.length * 0.05)]; // 5th percentile
-        const p95 = sortedPrices[Math.floor(sortedPrices.length * 0.95)]; // 95th percentile
+        const p10 = sortedPrices[Math.floor(sortedPrices.length * 0.10)]; // 10th percentile
+        const p90 = sortedPrices[Math.floor(sortedPrices.length * 0.90)]; // 90th percentile
         
-        // Use percentile-based bounds to exclude extreme outliers
-        yMin = Math.max(rawMin, p5 - (p95 - p5) * 0.02); // Allow 2% below 5th percentile
-        yMax = Math.min(rawMax, p95 + (p95 - p5) * 0.02); // Allow 2% above 95th percentile
+        // Use tighter percentile bounds to exclude more outliers and get closer to main data range
+        yMin = p10; // Start at 10th percentile (more aggressive)
+        yMax = p90; // End at 90th percentile (more aggressive)
         
-        console.log(`📊 Multi-symbol percentile analysis: P5=${p5.toFixed(2)}, P95=${p95.toFixed(2)}, Raw=${rawMin.toFixed(2)}-${rawMax.toFixed(2)}, Final=${yMin.toFixed(2)}-${yMax.toFixed(2)}`);
+        console.log(`📊 Multi-symbol percentile analysis: P10=${p10.toFixed(2)}, P90=${p90.toFixed(2)}, Raw=${rawMin.toFixed(2)}-${rawMax.toFixed(2)}, Final=${yMin.toFixed(2)}-${yMax.toFixed(2)}`);
       } else {
         // Single symbol - use tiny padding for readability
         const padding = priceRange * 0.01; // 1% padding
