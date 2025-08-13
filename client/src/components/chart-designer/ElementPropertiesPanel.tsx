@@ -642,13 +642,24 @@ export function ElementPropertiesPanel({
                 <h4 className="text-sm font-semibold text-gray-800">Related Axis Line</h4>
                 
                 <div>
-                  <Label className="text-xs">Line Thickness: 1px</Label>
+                  <Label className="text-xs">Line Thickness: {properties.properties.yAxisLineStroke || properties.properties.xAxisLineStroke || 1}px</Label>
                   <Slider
-                    value={[1]}
+                    value={[properties.properties.yAxisLineStroke || properties.properties.xAxisLineStroke || 1]}
                     onValueChange={([value]) => {
                       // Update the corresponding axis line thickness
                       const property = elementType === 'y-axis-labels' ? 'yAxisLineStroke' : 'xAxisLineStroke';
                       onUpdateProperty(property, value);
+                      
+                      // Also find and update the actual axis line element on canvas
+                      const canvas = (window as any).fabricCanvas;
+                      if (canvas) {
+                        const axisLineType = elementType === 'y-axis-labels' ? 'y-axis-line' : 'x-axis-line';
+                        const axisLineElements = canvas.getObjects().filter((obj: any) => obj.type === axisLineType);
+                        axisLineElements.forEach((axisLine: any) => {
+                          axisLine.set('strokeWidth', value);
+                          canvas.renderAll();
+                        });
+                      }
                     }}
                     min={0.5}
                     max={5}
@@ -662,16 +673,27 @@ export function ElementPropertiesPanel({
                   <div className="mt-2 flex gap-2">
                     <input
                       type="color"
-                      value="#d1d5db"
+                      value={properties.properties.yAxisLineColor || properties.properties.xAxisLineColor || "#d1d5db"}
                       onChange={(e) => {
                         const property = elementType === 'y-axis-labels' ? 'yAxisLineColor' : 'xAxisLineColor';
                         onUpdateProperty(property, e.target.value);
+                        
+                        // Also find and update the actual axis line element on canvas
+                        const canvas = (window as any).fabricCanvas;
+                        if (canvas) {
+                          const axisLineType = elementType === 'y-axis-labels' ? 'y-axis-line' : 'x-axis-line';
+                          const axisLineElements = canvas.getObjects().filter((obj: any) => obj.type === axisLineType);
+                          axisLineElements.forEach((axisLine: any) => {
+                            axisLine.set('stroke', e.target.value);
+                            canvas.renderAll();
+                          });
+                        }
                       }}
                       className="w-12 h-8 rounded border border-gray-300 cursor-pointer"
                     />
                     <input
                       type="text"
-                      value="#d1d5db"
+                      value={properties.properties.yAxisLineColor || properties.properties.xAxisLineColor || "#d1d5db"}
                       onChange={(e) => {
                         const property = elementType === 'y-axis-labels' ? 'yAxisLineColor' : 'xAxisLineColor';
                         onUpdateProperty(property, e.target.value);
@@ -682,6 +704,17 @@ export function ElementPropertiesPanel({
                         if (normalizedValue.match(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/)) {
                           const property = elementType === 'y-axis-labels' ? 'yAxisLineColor' : 'xAxisLineColor';
                           onUpdateProperty(property, normalizedValue.toUpperCase());
+                          
+                          // Also find and update the actual axis line element on canvas
+                          const canvas = (window as any).fabricCanvas;
+                          if (canvas) {
+                            const axisLineType = elementType === 'y-axis-labels' ? 'y-axis-line' : 'x-axis-line';
+                            const axisLineElements = canvas.getObjects().filter((obj: any) => obj.type === axisLineType);
+                            axisLineElements.forEach((axisLine: any) => {
+                              axisLine.set('stroke', normalizedValue.toUpperCase());
+                              canvas.renderAll();
+                            });
+                          }
                         }
                       }}
                       placeholder="#D1D5DB"
@@ -693,9 +726,29 @@ export function ElementPropertiesPanel({
                 
                 <div>
                   <Label className="text-xs">Line Style</Label>
-                  <Select value="solid" onValueChange={(value) => {
+                  <Select value={properties.properties.yAxisLineStyle || properties.properties.xAxisLineStyle || "solid"} onValueChange={(value) => {
                     const property = elementType === 'y-axis-labels' ? 'yAxisLineStyle' : 'xAxisLineStyle';
                     onUpdateProperty(property, value);
+                    
+                    // Also find and update the actual axis line element on canvas
+                    const canvas = (window as any).fabricCanvas;
+                    if (canvas) {
+                      let dashArray = [];
+                      switch (value) {
+                        case 'dashed': dashArray = [5, 5]; break;
+                        case 'dotted': dashArray = [2, 2]; break;
+                        case 'dash-dot': dashArray = [10, 5, 2, 5]; break;
+                        case 'long-dash': dashArray = [15, 5]; break;
+                        default: dashArray = []; break;
+                      }
+                      
+                      const axisLineType = elementType === 'y-axis-labels' ? 'y-axis-line' : 'x-axis-line';
+                      const axisLineElements = canvas.getObjects().filter((obj: any) => obj.type === axisLineType);
+                      axisLineElements.forEach((axisLine: any) => {
+                        axisLine.set('strokeDashArray', dashArray);
+                        canvas.renderAll();
+                      });
+                    }
                   }}>
                     <SelectTrigger className="mt-2">
                       <SelectValue />
@@ -711,12 +764,23 @@ export function ElementPropertiesPanel({
                 </div>
                 
                 <div>
-                  <Label className="text-xs">Line Opacity: 100%</Label>
+                  <Label className="text-xs">Line Opacity: {Math.round((properties.properties.yAxisLineOpacity || properties.properties.xAxisLineOpacity || 1) * 100)}%</Label>
                   <Slider
-                    value={[1]}
+                    value={[properties.properties.yAxisLineOpacity || properties.properties.xAxisLineOpacity || 1]}
                     onValueChange={([value]) => {
                       const property = elementType === 'y-axis-labels' ? 'yAxisLineOpacity' : 'xAxisLineOpacity';
                       onUpdateProperty(property, value);
+                      
+                      // Also find and update the actual axis line element on canvas
+                      const canvas = (window as any).fabricCanvas;
+                      if (canvas) {
+                        const axisLineType = elementType === 'y-axis-labels' ? 'y-axis-line' : 'x-axis-line';
+                        const axisLineElements = canvas.getObjects().filter((obj: any) => obj.type === axisLineType);
+                        axisLineElements.forEach((axisLine: any) => {
+                          axisLine.set('opacity', value);
+                          canvas.renderAll();
+                        });
+                      }
                     }}
                     min={0}
                     max={1}

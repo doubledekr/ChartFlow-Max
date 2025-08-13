@@ -55,6 +55,9 @@ export function FinancialChartCanvas({
       });
 
       fabricCanvasRef.current = canvas;
+      
+      // Make canvas globally accessible for axis line controls
+      (window as any).fabricCanvas = canvas;
 
       // Add some default interactive elements
       const title = new (window as any).fabric.Text('Financial Chart', {
