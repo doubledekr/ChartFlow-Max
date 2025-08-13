@@ -905,6 +905,7 @@ export function FinancialChartCanvas({
         .curve(getCurveType(currentProperties.smoothness));
 
       const pathData = line(data) || '';
+      console.log('📊 Generated path data with smoothness:', currentProperties.smoothness, 'Path length:', pathData.length);
 
       // Create draggable chart group with all elements and updated properties
       createDraggableChartGroupWithProperties(pathData, margin, xScale, yScale, chartWidth, chartHeight, currentProperties);
