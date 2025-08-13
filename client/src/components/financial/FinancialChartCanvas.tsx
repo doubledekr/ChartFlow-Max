@@ -1042,11 +1042,56 @@ export function FinancialChartCanvas({
       }
     });
 
+    // Create source attribution text at bottom right
+    const sourceText = new (window as any).fabric.Text('Source: Polygon.io', {
+      left: chartStartX + chartWidth - 80, // Position at bottom right
+      top: margin.top + chartHeight + 35, // Below the X-axis labels
+      fontSize: 9,
+      fontFamily: 'Inter, sans-serif',
+      fill: '#9ca3af', // Light gray color
+      selectable: true,
+      hasControls: false,
+      hasBorders: true,
+      type: 'source-attribution',
+      elementType: 'source-attribution'
+    });
+
+    // Add selection handler for source attribution
+    sourceText.on('selected', () => {
+      console.log('Source attribution selected');
+      if (onElementSelect) {
+        onElementSelect(sourceText, {
+          type: 'source-attribution',
+          properties: {
+            fontSize: sourceText.fontSize,
+            fill: sourceText.fill,
+            fontFamily: sourceText.fontFamily,
+            fontWeight: sourceText.fontWeight || 'normal',
+            text: sourceText.text,
+            left: sourceText.left,
+            top: sourceText.top,
+            angle: sourceText.angle || 0
+          },
+          updateFunction: (property: string, value: any) => {
+            console.log(`Updating source attribution: ${property} = ${value}`);
+            if (property === 'fontSize') sourceText.set('fontSize', value);
+            if (property === 'fill') sourceText.set('fill', value);
+            if (property === 'fontFamily') sourceText.set('fontFamily', value);
+            if (property === 'fontWeight') sourceText.set('fontWeight', value);
+            if (property === 'text') sourceText.set('text', value);
+            if (property === 'visible') sourceText.set('visible', value);
+            fabricCanvasRef.current?.renderAll();
+          }
+        });
+      }
+    });
+
     // Add all axis elements
     fabricCanvasRef.current.add(yAxisLine);
     fabricCanvasRef.current.add(xAxisLine);
     fabricCanvasRef.current.add(yAxisLabelsGroup);
     fabricCanvasRef.current.add(xAxisLabelsGroup);
+    fabricCanvasRef.current.add(sourceText);
   };
 
   const createDraggableChartLineOnly = (pathData: string, margin: any, xScale: any, yScale: any, chartWidth: number, chartHeight: number) => {

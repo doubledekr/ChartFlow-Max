@@ -79,7 +79,7 @@ export function ElementPropertiesPanel({
   const isChartGroup = properties.type === 'financial-chart-group' || properties.type === 'financial-chart-line' || properties.type === 'chartline';
   const elementType = properties.type;
   const isMultiSelection = elementType === 'multi-selection';
-  const isTextElement = ['title', 'annotation', 'price-label'].includes(elementType);
+  const isTextElement = ['title', 'annotation', 'price-label', 'source-attribution'].includes(elementType);
   const isShapeElement = ['rectangle', 'circle', 'triangle', 'star', 'target', 'alert', 'highlight'].includes(elementType);
   const isLineElement = ['trend-line', 'arrow-up', 'arrow-down'].includes(elementType);
   const isDeletable = !['chartline', 'y-axis-line', 'x-axis-line', 'y-axis-labels', 'x-axis-labels'].includes(elementType);
@@ -108,6 +108,7 @@ export function ElementPropertiesPanel({
                elementType === 'title' ? 'Title Text' :
                elementType === 'annotation' ? 'Annotation' :
                elementType === 'price-label' ? 'Price Label' :
+               elementType === 'source-attribution' ? 'Data Source Attribution' :
                elementType === 'rectangle' ? 'Rectangle' :
                elementType === 'circle' ? 'Circle' :
                elementType === 'triangle' ? 'Triangle' :
