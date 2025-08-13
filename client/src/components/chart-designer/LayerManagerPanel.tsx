@@ -372,28 +372,22 @@ export function LayerManagerPanel({ canvas, selectedElement, onElementSelect }: 
     if (obj && obj.selectable) {
       // Handle multi-selection with Shift key
       if (event?.shiftKey) {
-        const currentSelection = canvas.getActiveObjects();
-        const isAlreadySelected = currentSelection.includes(obj);
+        const isAlreadyMultiSelected = multiSelectedLayers.includes(layerId);
         
-        if (isAlreadySelected) {
-          // Remove from selection
-          const newSelection = currentSelection.filter((o: any) => o !== obj);
-          if (newSelection.length > 1) {
-            canvas.setActiveObject(new (window as any).fabric.ActiveSelection(newSelection, { canvas }));
-          } else if (newSelection.length === 1) {
-            canvas.setActiveObject(newSelection[0]);
-          } else {
-            canvas.discardActiveObject();
-          }
+        if (isAlreadyMultiSelected) {
+          // Remove from multi-selection
           setMultiSelectedLayers(prev => prev.filter(id => id !== layerId));
+          console.log('Removed from multi-selection:', layerId);
         } else {
-          // Add to selection
-          const newSelection = [...currentSelection, obj];
-          canvas.setActiveObject(new (window as any).fabric.ActiveSelection(newSelection, { canvas }));
+          // Add to multi-selection
           setMultiSelectedLayers(prev => [...prev, layerId]);
+          console.log('Added to multi-selection:', layerId);
         }
+        
+        // Also select on canvas for visual feedback
+        canvas.setActiveObject(obj);
       } else {
-        // Single selection
+        // Single selection - clear multi-selection
         canvas.setActiveObject(obj);
         setMultiSelectedLayers([]);
         
@@ -741,17 +735,17 @@ export function LayerManagerPanel({ canvas, selectedElement, onElementSelect }: 
             variant="ghost"
             size="sm"
             onClick={() => {
-              const selectedIds = multiSelectedLayers.length > 1 
-                ? multiSelectedLayers 
-                : selectedElement ? [(selectedElement.id || `layer_${canvas?.getObjects().indexOf(selectedElement)}`)] : [];
+              console.log('Group button clicked - multiSelectedLayers:', multiSelectedLayers);
               
-              if (selectedIds.length >= 2) {
+              if (multiSelectedLayers.length >= 2) {
                 const groupName = prompt('Enter group name:', 'New Group');
                 if (groupName) {
-                  createLayerGroup(selectedIds, groupName);
+                  console.log('Creating group with layers:', multiSelectedLayers);
+                  createLayerGroup(multiSelectedLayers, groupName);
+                  setMultiSelectedLayers([]); // Clear selection after grouping
                 }
               } else {
-                alert('Select at least 2 layers to create a group');
+                alert(`Use Shift+Click to select multiple layers first. Currently selected: ${multiSelectedLayers.length} layers`);
               }
             }}
             className="w-8 h-8 p-0"
