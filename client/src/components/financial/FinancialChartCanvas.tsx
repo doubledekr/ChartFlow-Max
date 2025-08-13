@@ -912,7 +912,7 @@ export function FinancialChartCanvas({
             const chartStart = 140; // Chart starts at x=140 (margin.left + yAxis offset)
             const chartEnd = 820;   // Chart ends at x=820 (140 + 680 chart width)
             
-            const newGridLine = new fabric.Line([chartStart, gridLine.top, chartEnd, gridLine.top], {
+            const newGridLine = new (window as any).fabric.Line([chartStart, gridLine.top, chartEnd, gridLine.top], {
               stroke: gridLine.stroke,
               strokeWidth: gridLine.strokeWidth,
               opacity: gridLine.opacity,
