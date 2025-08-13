@@ -253,10 +253,13 @@ export function FinancialChartCanvas({
       const symbolsArray = symbol.split(',').map(s => s.trim()).filter(s => s.length > 0);
       const isMultiSymbolRequest = symbolsArray.length > 1;
       
-      const response = await fetch(`/api/stocks/${symbol}/${timeframe}`);
+      const response = await fetch(`/api/stocks/${encodeURIComponent(symbol)}/${timeframe}`);
       if (!response.ok) throw new Error('Failed to fetch stock data');
       
       const stockData = await response.json();
+      
+      console.log(`📊 API Response: isMultiSymbol=${stockData.isMultiSymbol}, isMultiSymbolRequest=${isMultiSymbolRequest}`);
+      console.log(`📊 stockData.symbols:`, stockData.symbols);
       
       // Handle multi-symbol or single symbol response
       if (stockData.isMultiSymbol || isMultiSymbolRequest) {
