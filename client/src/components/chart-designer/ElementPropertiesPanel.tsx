@@ -8,6 +8,47 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { TrendingUp, Move, Edit3, Trash2, Eye, EyeOff, RotateCw, Palette } from 'lucide-react';
 
+// Helper functions for line styling
+const getCurveStyleFromSmoothness = (smoothness: number) => {
+  if (smoothness <= 0.2) return 'linear';
+  if (smoothness <= 0.4) return 'low-curve';
+  if (smoothness <= 0.6) return 'medium-curve';
+  if (smoothness <= 0.8) return 'smooth-curve';
+  return 'very-smooth';
+};
+
+const getCurveSmoothnessValue = (style: string) => {
+  switch (style) {
+    case 'linear': return 0.1;
+    case 'low-curve': return 0.3;
+    case 'medium-curve': return 0.5;
+    case 'smooth-curve': return 0.7;
+    case 'very-smooth': return 0.9;
+    default: return 0.5;
+  }
+};
+
+const getLinePatternFromDashArray = (dashArray: number[] | null) => {
+  if (!dashArray || dashArray.length === 0) return 'solid';
+  const pattern = dashArray.join(',');
+  if (pattern === '5,5') return 'dashed';
+  if (pattern === '2,2') return 'dotted';
+  if (pattern === '8,3,2,3') return 'dash-dot';
+  if (pattern === '12,4') return 'long-dash';
+  return 'solid';
+};
+
+const getStrokeDashArray = (pattern: string): number[] | null => {
+  switch (pattern) {
+    case 'solid': return null;
+    case 'dashed': return [5, 5];
+    case 'dotted': return [2, 2];
+    case 'dash-dot': return [8, 3, 2, 3];
+    case 'long-dash': return [12, 4];
+    default: return null;
+  }
+};
+
 interface ElementPropertiesPanelProps {
   selectedElement: any;
   properties: any;
@@ -101,109 +142,289 @@ export function ElementPropertiesPanel({
           {/* Chart line properties - only show when chart line is selected */}
           {(elementType === 'chartline' || elementType === 'financial-chart-line') && properties.properties && (
             <>
-              <div>
-                <Label className="text-xs">Line Thickness: {properties.properties.strokeWidth}px</Label>
-                <Slider
-                  value={[properties.properties.strokeWidth]}
-                  onValueChange={([value]) => onUpdateProperty('strokeWidth', value)}
-                  min={1}
-                  max={20}
-                  step={1}
-                  className="mt-2"
-                />
-              </div>
-              
-              <div>
-                <Label className="text-xs">Opacity: {Math.round(properties.properties.opacity * 100)}%</Label>
-                <Slider
-                  value={[properties.properties.opacity]}
-                  onValueChange={([value]) => onUpdateProperty('opacity', value)}
-                  min={0.1}
-                  max={1}
-                  step={0.1}
-                  className="mt-2"
-                />
-              </div>
-
-              <div>
-                <Label className="text-xs">Smoothness: {Math.round(properties.properties.smoothness * 100)}%</Label>
-                <Slider
-                  value={[properties.properties.smoothness]}
-                  onValueChange={([value]) => onUpdateProperty('smoothness', value)}
-                  min={0}
-                  max={1}
-                  step={0.1}
-                  className="mt-2"
-                />
-              </div>
-
-              <div>
-                <Label className="text-xs">Line Color</Label>
-                <div className="flex gap-2 mt-2 flex-wrap">
-                  {['#000000', '#ffffff', '#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'].map(color => (
-                    <button
-                      key={color}
-                      className={`w-6 h-6 rounded border-2 transition-all ${
-                        properties.properties.color === color 
-                          ? 'border-gray-800 scale-110' 
-                          : 'border-gray-300 hover:border-gray-400'
-                      } ${color === '#ffffff' ? 'border-gray-400' : ''}`}
-                      style={{ backgroundColor: color }}
-                      onClick={() => onUpdateProperty('color', color)}
-                      title={color === '#000000' ? 'Black' : color === '#ffffff' ? 'White' : color}
-                    />
-                  ))}
+              {/* Line Style Section */}
+              <div className="space-y-4">
+                <h4 className="text-sm font-semibold text-gray-800 border-b pb-2">Line Style</h4>
+                
+                <div>
+                  <Label className="text-xs">Line Thickness: {properties.properties.strokeWidth}px</Label>
+                  <Slider
+                    value={[properties.properties.strokeWidth]}
+                    onValueChange={([value]) => onUpdateProperty('strokeWidth', value)}
+                    min={1}
+                    max={20}
+                    step={1}
+                    className="mt-2"
+                  />
                 </div>
-                <div className="mt-3">
-                  <Label className="text-xs">Custom Color (Hex)</Label>
-                  <div className="flex gap-2 mt-2">
-                    <input
-                      type="color"
-                      value={properties.properties.color}
-                      onChange={(e) => onUpdateProperty('color', e.target.value)}
-                      className="w-10 h-8 rounded border border-gray-300 cursor-pointer"
-                      title="Color picker"
-                    />
-                    <input
-                      type="text"
-                      value={properties.properties.color}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        // Allow input while typing, validate on blur
-                        if (value.match(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/)) {
-                          onUpdateProperty('color', value);
-                        }
-                      }}
-                      onBlur={(e) => {
-                        const value = e.target.value;
-                        // Validate and correct format on blur
-                        if (value.match(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/)) {
-                          onUpdateProperty('color', value.toUpperCase());
-                        } else {
-                          // Reset to current color if invalid
-                          e.target.value = properties.properties.color;
-                        }
-                      }}
-                      placeholder="#3B82F6"
-                      className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded font-mono"
-                      pattern="^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$"
-                      title="Enter hex color code (e.g., #3B82F6)"
-                    />
+                
+                <div>
+                  <Label className="text-xs">Opacity: {Math.round(properties.properties.opacity * 100)}%</Label>
+                  <Slider
+                    value={[properties.properties.opacity]}
+                    onValueChange={([value]) => onUpdateProperty('opacity', value)}
+                    min={0.1}
+                    max={1}
+                    step={0.1}
+                    className="mt-2"
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-xs">Curve Style</Label>
+                  <Select 
+                    value={getCurveStyleFromSmoothness(properties.properties.smoothness)} 
+                    onValueChange={(value) => onUpdateProperty('smoothness', getCurveSmoothnessValue(value))}
+                  >
+                    <SelectTrigger className="mt-2">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="linear">Linear (Sharp Angles)</SelectItem>
+                      <SelectItem value="low-curve">Low Curve</SelectItem>
+                      <SelectItem value="medium-curve">Medium Curve</SelectItem>
+                      <SelectItem value="smooth-curve">Smooth Curve</SelectItem>
+                      <SelectItem value="very-smooth">Very Smooth</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label className="text-xs">Line Pattern</Label>
+                  <Select 
+                    value={getLinePatternFromDashArray(properties.properties.strokeDashArray)} 
+                    onValueChange={(value) => onUpdateProperty('strokeDashArray', getStrokeDashArray(value))}
+                  >
+                    <SelectTrigger className="mt-2">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="solid">Solid Line</SelectItem>
+                      <SelectItem value="dashed">Dashed Line</SelectItem>
+                      <SelectItem value="dotted">Dotted Line</SelectItem>
+                      <SelectItem value="dash-dot">Dash-Dot Line</SelectItem>
+                      <SelectItem value="long-dash">Long Dash Line</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label className="text-xs">Line Caps</Label>
+                  <Select 
+                    value={properties.properties.strokeLineCap || 'round'} 
+                    onValueChange={(value) => onUpdateProperty('strokeLineCap', value)}
+                  >
+                    <SelectTrigger className="mt-2">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="round">Rounded Caps</SelectItem>
+                      <SelectItem value="square">Square Caps</SelectItem>
+                      <SelectItem value="butt">Flat Caps</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Point Markers Section */}
+              <div className="space-y-4">
+                <h4 className="text-sm font-semibold text-gray-800 border-b pb-2">Point Markers</h4>
+                
+                <div>
+                  <Label className="text-xs">Show Data Points</Label>
+                  <Button
+                    variant={properties.properties.showMarkers !== false ? "default" : "outline"}
+                    size="sm"
+                    className="w-full mt-1"
+                    onClick={() => onUpdateProperty('showMarkers', properties.properties.showMarkers === false)}
+                  >
+                    {properties.properties.showMarkers !== false ? 'Show Points' : 'Hide Points'}
+                  </Button>
+                </div>
+
+                {properties.properties.showMarkers !== false && (
+                  <>
+                    <div>
+                      <Label className="text-xs">Marker Style</Label>
+                      <Select 
+                        value={properties.properties.markerStyle || 'circle'} 
+                        onValueChange={(value) => onUpdateProperty('markerStyle', value)}
+                      >
+                        <SelectTrigger className="mt-2">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="circle">Circle</SelectItem>
+                          <SelectItem value="square">Square</SelectItem>
+                          <SelectItem value="diamond">Diamond</SelectItem>
+                          <SelectItem value="triangle">Triangle</SelectItem>
+                          <SelectItem value="cross">Cross</SelectItem>
+                          <SelectItem value="plus">Plus</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label className="text-xs">Marker Size: {properties.properties.markerSize || 4}px</Label>
+                      <Slider
+                        value={[properties.properties.markerSize || 4]}
+                        onValueChange={([value]) => onUpdateProperty('markerSize', value)}
+                        min={2}
+                        max={12}
+                        step={1}
+                        className="mt-2"
+                      />
+                    </div>
+
+                    <div>
+                      <Label className="text-xs">Marker Frequency</Label>
+                      <Select 
+                        value={properties.properties.markerFrequency || 'all'} 
+                        onValueChange={(value) => onUpdateProperty('markerFrequency', value)}
+                      >
+                        <SelectTrigger className="mt-2">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Points</SelectItem>
+                          <SelectItem value="every-2">Every 2nd Point</SelectItem>
+                          <SelectItem value="every-5">Every 5th Point</SelectItem>
+                          <SelectItem value="every-10">Every 10th Point</SelectItem>
+                          <SelectItem value="endpoints">Start & End Only</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Junction Dots Section */}
+              <div className="space-y-4">
+                <h4 className="text-sm font-semibold text-gray-800 border-b pb-2">Junction Effects</h4>
+                
+                <div>
+                  <Label className="text-xs">Junction Dots</Label>
+                  <Button
+                    variant={properties.properties.showJunctions !== false ? "default" : "outline"}
+                    size="sm"
+                    className="w-full mt-1"
+                    onClick={() => onUpdateProperty('showJunctions', properties.properties.showJunctions === false)}
+                  >
+                    {properties.properties.showJunctions !== false ? 'Show Junctions' : 'Hide Junctions'}
+                  </Button>
+                </div>
+
+                {properties.properties.showJunctions !== false && (
+                  <>
+                    <div>
+                      <Label className="text-xs">Junction Size: {properties.properties.junctionSize || 3}px</Label>
+                      <Slider
+                        value={[properties.properties.junctionSize || 3]}
+                        onValueChange={([value]) => onUpdateProperty('junctionSize', value)}
+                        min={1}
+                        max={8}
+                        step={1}
+                        className="mt-2"
+                      />
+                    </div>
+
+                    <div>
+                      <Label className="text-xs">Junction Color</Label>
+                      <div className="flex gap-2 mt-2">
+                        <input
+                          type="color"
+                          value={properties.properties.junctionColor || properties.properties.color}
+                          onChange={(e) => onUpdateProperty('junctionColor', e.target.value)}
+                          className="w-10 h-8 rounded border border-gray-300 cursor-pointer"
+                          title="Junction color picker"
+                        />
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1 text-xs"
+                          onClick={() => onUpdateProperty('junctionColor', properties.properties.color)}
+                        >
+                          Match Line
+                        </Button>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Color Section */}
+              <div className="space-y-4">
+                <h4 className="text-sm font-semibold text-gray-800 border-b pb-2">Color</h4>
+                
+                <div>
+                  <Label className="text-xs">Line Color</Label>
+                  <div className="flex gap-2 mt-2 flex-wrap">
+                    {['#000000', '#ffffff', '#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'].map(color => (
+                      <button
+                        key={color}
+                        className={`w-6 h-6 rounded border-2 transition-all ${
+                          properties.properties.color === color 
+                            ? 'border-gray-800 scale-110' 
+                            : 'border-gray-300 hover:border-gray-400'
+                        } ${color === '#ffffff' ? 'border-gray-400' : ''}`}
+                        style={{ backgroundColor: color }}
+                        onClick={() => onUpdateProperty('color', color)}
+                        title={color === '#000000' ? 'Black' : color === '#ffffff' ? 'White' : color}
+                      />
+                    ))}
+                  </div>
+                  <div className="mt-3">
+                    <Label className="text-xs">Custom Color (Hex)</Label>
+                    <div className="flex gap-2 mt-2">
+                      <input
+                        type="color"
+                        value={properties.properties.color}
+                        onChange={(e) => onUpdateProperty('color', e.target.value)}
+                        className="w-10 h-8 rounded border border-gray-300 cursor-pointer"
+                        title="Color picker"
+                      />
+                      <input
+                        type="text"
+                        value={properties.properties.color}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value.match(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/)) {
+                            onUpdateProperty('color', value);
+                          }
+                        }}
+                        onBlur={(e) => {
+                          const value = e.target.value;
+                          if (value.match(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/)) {
+                            onUpdateProperty('color', value.toUpperCase());
+                          } else {
+                            e.target.value = properties.properties.color;
+                          }
+                        }}
+                        placeholder="#3B82F6"
+                        className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded font-mono"
+                        pattern="^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$"
+                        title="Enter hex color code (e.g., #3B82F6)"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Visibility toggle for chart line */}
-              <div>
-                <Label className="text-xs">Visibility</Label>
-                <Button
-                  variant={properties.properties.visible !== false ? "default" : "outline"}
-                  size="sm"
-                  className="w-full mt-1"
-                  onClick={() => onUpdateProperty('visible', properties.properties.visible === false)}
-                >
-                  {properties.properties.visible !== false ? 'Visible' : 'Hidden'}
-                </Button>
+              {/* Visibility Section */}
+              <div className="space-y-4">
+                <h4 className="text-sm font-semibold text-gray-800 border-b pb-2">Visibility</h4>
+                
+                <div>
+                  <Label className="text-xs">Show/Hide Line</Label>
+                  <Button
+                    variant={properties.properties.visible !== false ? "default" : "outline"}
+                    size="sm"
+                    className="w-full mt-1"
+                    onClick={() => onUpdateProperty('visible', properties.properties.visible === false)}
+                  >
+                    {properties.properties.visible !== false ? 'Visible' : 'Hidden'}
+                  </Button>
+                </div>
               </div>
             </>
           )}
