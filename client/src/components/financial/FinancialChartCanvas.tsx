@@ -453,6 +453,12 @@ export function FinancialChartCanvas({
       if (onElementSelect) {
         onElementSelect(yAxisGroup, {
           type: 'y-axis-labels',
+          properties: { 
+            fontSize: 11, 
+            fill: '#666666', 
+            fontFamily: 'Inter, sans-serif', 
+            fontWeight: 'normal' 
+          },
           updateFunction: (property: string, value: any) => {
             const objects = yAxisGroup.getObjects();
             objects.forEach((obj: any) => {
@@ -473,6 +479,12 @@ export function FinancialChartCanvas({
       if (onElementSelect) {
         onElementSelect(xAxisGroup, {
           type: 'x-axis-labels',
+          properties: { 
+            fontSize: 11, 
+            fill: '#666666', 
+            fontFamily: 'Inter, sans-serif', 
+            fontWeight: 'normal' 
+          },
           updateFunction: (property: string, value: any) => {
             const objects = xAxisGroup.getObjects();
             objects.forEach((obj: any) => {
