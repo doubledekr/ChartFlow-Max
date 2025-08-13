@@ -349,70 +349,7 @@ export function ElementPropertiesPanel({
           </div>
         )}
 
-        {/* Axis Labels Properties */}
-        {(elementType === 'y-axis-labels' || elementType === 'x-axis-labels') && (
-          <div className="space-y-3">
-            <div className="text-sm font-medium">
-              {elementType === 'y-axis-labels' ? 'Y-Axis Labels' : 'X-Axis Labels'}
-            </div>
-            <div className="space-y-2">
-              <div>
-                <Label className="text-xs text-gray-600">Font Size</Label>
-                <Slider
-                  value={[properties?.fontSize || 12]}
-                  onValueChange={(value) => onUpdateProperty('fontSize', value[0])}
-                  min={8}
-                  max={24}
-                  step={1}
-                  className="mt-1"
-                />
-                <span className="text-xs text-gray-500">{properties?.fontSize || 12}px</span>
-              </div>
-              
-              <div>
-                <Label className="text-xs text-gray-600">Color</Label>
-                <div className="flex gap-2 mt-1">
-                  <input 
-                    type="color" 
-                    value={properties?.fill || '#666666'}
-                    onChange={(e) => onUpdateProperty('fill', e.target.value)}
-                    className="w-8 h-6 rounded border"
-                  />
-                  <span className="text-xs text-gray-500 self-center">{properties?.fill || '#666666'}</span>
-                </div>
-              </div>
 
-              <div>
-                <Label className="text-xs text-gray-600">Font Weight</Label>
-                <Select value={properties?.fontWeight || 'normal'} onValueChange={(value) => onUpdateProperty('fontWeight', value)}>
-                  <SelectTrigger className="h-8 text-xs">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="normal">Normal</SelectItem>
-                    <SelectItem value="bold">Bold</SelectItem>
-                    <SelectItem value="lighter">Light</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label className="text-xs text-gray-600">Font Family</Label>
-                <Select value={properties?.fontFamily || 'Inter, sans-serif'} onValueChange={(value) => onUpdateProperty('fontFamily', value)}>
-                  <SelectTrigger className="h-8 text-xs">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Inter, sans-serif">Inter</SelectItem>
-                    <SelectItem value="Arial, sans-serif">Arial</SelectItem>
-                    <SelectItem value="Times New Roman, serif">Times New Roman</SelectItem>
-                    <SelectItem value="Courier New, monospace">Courier New</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </Card>
   );
