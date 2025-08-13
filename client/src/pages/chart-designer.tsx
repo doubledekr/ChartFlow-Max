@@ -181,6 +181,55 @@ export default function ChartDesigner() {
     }
   };
 
+  // Enhanced property update handler that works with all element types
+  const handleUpdateProperty = (property: string, value: any) => {
+    if (!selectedElement || !fabricCanvas) return;
+
+    try {
+      // Set the property on the selected element
+      selectedElement.set(property, value);
+      
+      // For text content changes, update the text property specifically
+      if (property === 'text') {
+        selectedElement.set('text', value);
+      }
+      
+      // For axis labels, we need to update all items in the group
+      if (elementProperties?.type === 'y-axis-labels' || elementProperties?.type === 'x-axis-labels') {
+        if (selectedElement._objects) {
+          selectedElement._objects.forEach((obj: any) => {
+            obj.set(property, value);
+          });
+        }
+      }
+      
+      // Trigger canvas re-render
+      fabricCanvas.renderAll();
+      
+      // Update the properties state to reflect changes
+      setElementProperties(prev => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          properties: {
+            ...prev.properties,
+            [property]: value
+          }
+        };
+      });
+
+      // Save state for undo/redo
+      saveCanvasState();
+    } catch (error) {
+      console.error('Error updating property:', error);
+      toast({
+        title: "Update Failed",
+        description: "Could not update element property",
+        variant: "destructive",
+      });
+    }
+  };
+
   // Helper function to setup event handlers for canvas objects
   const setupObjectEventHandlers = (obj: any) => {
     obj.on('selected', () => {
@@ -216,6 +265,247 @@ export default function ChartDesigner() {
         setHistoryIndex(0);
       }
     }, 100);
+  };
+
+  // Handle adding new elements from ElementLibraryPanel
+  const handleAddElement = (elementConfig: { type: string }) => {
+    if (!fabricCanvas) return;
+
+    let newElement: any;
+    const randomX = 200 + Math.random() * 300;
+    const randomY = 150 + Math.random() * 200;
+
+    switch (elementConfig.type) {
+      case 'title':
+        newElement = new (window as any).fabric.Text('Chart Title', {
+          left: randomX,
+          top: randomY,
+          fontFamily: 'Inter, sans-serif',
+          fontSize: 24,
+          fontWeight: 'bold',
+          fill: '#1f2937',
+          elementType: 'title'
+        });
+        break;
+
+      case 'annotation':
+        newElement = new (window as any).fabric.Text('Important Note', {
+          left: randomX,
+          top: randomY,
+          fontFamily: 'Inter, sans-serif',
+          fontSize: 12,
+          fill: '#ffffff',
+          backgroundColor: 'rgba(239, 68, 68, 0.9)',
+          padding: 8,
+          elementType: 'annotation'
+        });
+        break;
+
+      case 'price-label':
+        newElement = new (window as any).fabric.Text('$125.50', {
+          left: randomX,
+          top: randomY,
+          fontFamily: 'Inter, sans-serif',
+          fontSize: 14,
+          fontWeight: 'bold',
+          fill: '#ffffff',
+          backgroundColor: 'rgba(16, 185, 129, 0.9)',
+          padding: 6,
+          elementType: 'price-label'
+        });
+        break;
+
+      case 'rectangle':
+        newElement = new (window as any).fabric.Rect({
+          left: randomX,
+          top: randomY,
+          width: 100,
+          height: 60,
+          fill: 'rgba(59, 130, 246, 0.2)',
+          stroke: '#3b82f6',
+          strokeWidth: 2,
+          elementType: 'rectangle'
+        });
+        break;
+
+      case 'circle':
+        newElement = new (window as any).fabric.Circle({
+          left: randomX,
+          top: randomY,
+          radius: 30,
+          fill: 'rgba(168, 85, 247, 0.2)',
+          stroke: '#a855f7',
+          strokeWidth: 2,
+          elementType: 'circle'
+        });
+        break;
+
+      case 'triangle':
+        newElement = new (window as any).fabric.Triangle({
+          left: randomX,
+          top: randomY,
+          width: 60,
+          height: 60,
+          fill: 'rgba(245, 158, 11, 0.2)',
+          stroke: '#f59e0b',
+          strokeWidth: 2,
+          elementType: 'triangle'
+        });
+        break;
+
+      case 'star':
+        // Create a simple star shape using polygon
+        const starPoints = [];
+        const spikes = 5;
+        const outerRadius = 30;
+        const innerRadius = 15;
+        for (let i = 0; i < spikes * 2; i++) {
+          const radius = i % 2 === 0 ? outerRadius : innerRadius;
+          const angle = (i * Math.PI) / spikes;
+          starPoints.push({
+            x: Math.cos(angle) * radius,
+            y: Math.sin(angle) * radius
+          });
+        }
+        newElement = new (window as any).fabric.Polygon(starPoints, {
+          left: randomX,
+          top: randomY,
+          fill: 'rgba(251, 191, 36, 0.3)',
+          stroke: '#fbbf24',
+          strokeWidth: 2,
+          elementType: 'star'
+        });
+        break;
+
+      case 'trend-line':
+        newElement = new (window as any).fabric.Line([0, 0, 150, -50], {
+          left: randomX,
+          top: randomY,
+          stroke: '#f59e0b',
+          strokeWidth: 3,
+          strokeDashArray: [5, 5],
+          elementType: 'trend-line'
+        });
+        break;
+
+      case 'arrow-up':
+        newElement = new (window as any).fabric.Triangle({
+          left: randomX,
+          top: randomY,
+          width: 20,
+          height: 30,
+          fill: '#10b981',
+          angle: 0,
+          elementType: 'arrow-up'
+        });
+        break;
+
+      case 'arrow-down':
+        newElement = new (window as any).fabric.Triangle({
+          left: randomX,
+          top: randomY,
+          width: 20,
+          height: 30,
+          fill: '#ef4444',
+          angle: 180,
+          elementType: 'arrow-down'
+        });
+        break;
+
+      case 'target':
+        newElement = new (window as any).fabric.Circle({
+          left: randomX,
+          top: randomY,
+          radius: 25,
+          fill: 'transparent',
+          stroke: '#8b5cf6',
+          strokeWidth: 3,
+          strokeDashArray: [8, 4],
+          elementType: 'target'
+        });
+        break;
+
+      case 'alert':
+        newElement = new (window as any).fabric.Circle({
+          left: randomX,
+          top: randomY,
+          radius: 15,
+          fill: '#fbbf24',
+          stroke: '#f59e0b',
+          strokeWidth: 2,
+          elementType: 'alert'
+        });
+        break;
+
+      case 'highlight':
+        newElement = new (window as any).fabric.Rect({
+          left: randomX,
+          top: randomY,
+          width: 120,
+          height: 40,
+          fill: 'rgba(252, 211, 77, 0.3)',
+          stroke: '#fbbf24',
+          strokeWidth: 1,
+          strokeDashArray: [3, 3],
+          elementType: 'highlight'
+        });
+        break;
+
+      default:
+        console.log('Unknown element type:', elementConfig.type);
+        return;
+    }
+
+    if (newElement) {
+      // Make all new elements selectable
+      newElement.set({
+        selectable: true,
+        hasControls: true,
+        hasBorders: true
+      });
+
+      fabricCanvas.add(newElement);
+      fabricCanvas.setActiveObject(newElement);
+      fabricCanvas.renderAll();
+
+      // Trigger canvas change for undo/redo
+      saveCanvasState();
+
+      toast({
+        title: "Element Added",
+        description: `${elementConfig.type} added to canvas`,
+      });
+    }
+  };
+
+  // Handle element deletion
+  const handleDeleteElement = () => {
+    if (!fabricCanvas || !selectedElement) return;
+
+    try {
+      fabricCanvas.remove(selectedElement);
+      fabricCanvas.discardActiveObject();
+      fabricCanvas.renderAll();
+      
+      // Clear selection
+      setSelectedElement(null);
+      setElementProperties(null);
+      
+      // Save state for undo/redo
+      saveCanvasState();
+
+      toast({
+        title: "Element Deleted",
+        description: "Element removed from canvas",
+      });
+    } catch (error) {
+      console.error('Error deleting element:', error);
+      toast({
+        title: "Delete Failed",
+        description: "Could not delete element",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -298,7 +588,8 @@ export default function ChartDesigner() {
             <ElementPropertiesPanel 
               selectedElement={selectedElement}
               properties={elementProperties}
-              onUpdateProperty={handlePropertyUpdate}
+              onUpdateProperty={handleUpdateProperty}
+              onDeleteElement={handleDeleteElement}
             />
             
             <ColorPalettePanel />
@@ -307,7 +598,7 @@ export default function ChartDesigner() {
             <TypographyPanel />
             <LogoPanel />
             <AxisFormattingPanel />
-            <ElementLibraryPanel />
+            <ElementLibraryPanel onAddElement={handleAddElement} />
           </div>
         </div>
 

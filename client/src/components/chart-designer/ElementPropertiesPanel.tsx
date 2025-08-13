@@ -3,19 +3,23 @@ import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { TrendingUp, Move, Edit3 } from 'lucide-react';
+import { TrendingUp, Move, Edit3, Trash2, Eye, EyeOff, RotateCw, Palette } from 'lucide-react';
 
 interface ElementPropertiesPanelProps {
   selectedElement: any;
   properties: any;
   onUpdateProperty: (property: string, value: any) => void;
+  onDeleteElement?: () => void;
 }
 
 export function ElementPropertiesPanel({ 
   selectedElement, 
   properties, 
-  onUpdateProperty 
+  onUpdateProperty,
+  onDeleteElement
 }: ElementPropertiesPanelProps) {
   console.log('ElementPropertiesPanel - selectedElement:', selectedElement);
   console.log('ElementPropertiesPanel - properties:', properties);
@@ -33,6 +37,10 @@ export function ElementPropertiesPanel({
 
   const isChartGroup = properties.type === 'financial-chart-group' || properties.type === 'financial-chart-line';
   const elementType = properties.type;
+  const isTextElement = ['title', 'annotation', 'price-label'].includes(elementType);
+  const isShapeElement = ['rectangle', 'circle', 'triangle', 'star', 'target', 'alert', 'highlight'].includes(elementType);
+  const isLineElement = ['trend-line', 'arrow-up', 'arrow-down'].includes(elementType);
+  const isDeletable = !['chartline', 'y-axis-line', 'x-axis-line', 'y-axis-labels', 'x-axis-labels'].includes(elementType);
   
   console.log('ElementPropertiesPanel - elementType:', elementType);
   console.log('ElementPropertiesPanel - isChartGroup:', isChartGroup);
@@ -41,23 +49,51 @@ export function ElementPropertiesPanel({
   return (
     <Card>
       <div className="p-4">
-        <div className="flex items-center gap-2 mb-4">
-          {isChartGroup ? (
-            <TrendingUp className="h-4 w-4 text-blue-600" />
-          ) : (
-            <Move className="h-4 w-4 text-gray-600" />
-          )}
-          <h3 className="text-sm font-medium">
-            {isChartGroup ? 'Financial Chart Line' : 
-             elementType === 'y-axis-labels' ? 'Y-Axis Labels' : 
-             elementType === 'x-axis-labels' ? 'X-Axis Labels' :
-             elementType === 'y-axis-line' ? 'Y-Axis Line' :
-             elementType === 'x-axis-line' ? 'X-Axis Line' : 'Chart Element'}
-          </h3>
-          {isChartGroup && (
-            <Badge variant="outline" className="text-xs">
-              {properties.symbol} · {properties.timeframe}
-            </Badge>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            {isChartGroup ? (
+              <TrendingUp className="h-4 w-4 text-blue-600" />
+            ) : (
+              <Move className="h-4 w-4 text-gray-600" />
+            )}
+            <h3 className="text-sm font-medium">
+              {isChartGroup ? 'Financial Chart Line' : 
+               elementType === 'y-axis-labels' ? 'Y-Axis Labels' : 
+               elementType === 'x-axis-labels' ? 'X-Axis Labels' :
+               elementType === 'y-axis-line' ? 'Y-Axis Line' :
+               elementType === 'x-axis-line' ? 'X-Axis Line' :
+               elementType === 'title' ? 'Title Text' :
+               elementType === 'annotation' ? 'Annotation' :
+               elementType === 'price-label' ? 'Price Label' :
+               elementType === 'rectangle' ? 'Rectangle' :
+               elementType === 'circle' ? 'Circle' :
+               elementType === 'triangle' ? 'Triangle' :
+               elementType === 'star' ? 'Star' :
+               elementType === 'trend-line' ? 'Trend Line' :
+               elementType === 'arrow-up' ? 'Up Arrow' :
+               elementType === 'arrow-down' ? 'Down Arrow' :
+               elementType === 'target' ? 'Price Target' :
+               elementType === 'alert' ? 'Alert Marker' :
+               elementType === 'highlight' ? 'Highlight Box' : 'Element'}
+            </h3>
+            {isChartGroup && (
+              <Badge variant="outline" className="text-xs">
+                {properties.symbol} · {properties.timeframe}
+              </Badge>
+            )}
+          </div>
+          
+          {/* Delete button for user-added elements */}
+          {isDeletable && onDeleteElement && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onDeleteElement}
+              className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+              data-testid="button-delete-element"
+            >
+              <Trash2 size={14} />
+            </Button>
           )}
         </div>
 
