@@ -847,6 +847,7 @@ export function FinancialChartCanvas({
   const renderChartWithProperties = (overrideProperties: any = null) => {
     const currentProperties = overrideProperties || lineProperties;
     console.log('🔄 renderChartWithProperties called with:', currentProperties);
+    console.log('🔄 Current smoothness value:', currentProperties.smoothness);
     
     if (!fabricCanvasRef.current || data.length === 0) return;
     
