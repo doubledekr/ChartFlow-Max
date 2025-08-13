@@ -1799,21 +1799,31 @@ export function FinancialChartCanvas({
       const getCurveType = (smoothness: number) => {
         console.log('🎯 REGENERATION - getCurveType called with smoothness:', smoothness);
         let curve;
-        if (smoothness <= 0.2) {
-          curve = d3.curveLinear; // Very angular, sharp lines
-          console.log('📐 REGENERATION - Using linear curve');
-        } else if (smoothness <= 0.4) {
-          curve = d3.curveCardinal.tension(0.2); // Slightly curved
-          console.log('📈 REGENERATION - Using cardinal curve with low tension');
-        } else if (smoothness <= 0.6) {
-          curve = d3.curveCardinal.tension(0.5); // Moderately curved
-          console.log('📈 REGENERATION - Using cardinal curve with medium tension');
-        } else if (smoothness <= 0.8) {
-          curve = d3.curveCatmullRom.alpha(0.3); // Smooth curves
-          console.log('🌊 REGENERATION - Using catmull-rom curve with low alpha');
+        
+        if (smoothness <= 0.1) {
+          // Step interpolation for very precise financial data
+          curve = d3.curveStepAfter;
+          console.log('📊 REGENERATION - Using step-after curve for precise data points');
+        } else if (smoothness <= 0.3) {
+          // Monotone interpolation - prevents overshooting, ideal for financial data
+          curve = d3.curveMonotoneX;
+          console.log('📈 REGENERATION - Using monotone-X curve for clean financial lines');
+        } else if (smoothness <= 0.5) {
+          // Natural spline - smooth but respects data trends
+          curve = d3.curveNatural;
+          console.log('🌿 REGENERATION - Using natural spline curve for balanced smoothness');
+        } else if (smoothness <= 0.7) {
+          // Cardinal spline with financial-optimized tension
+          curve = d3.curveCardinal.tension(0.3);
+          console.log('📈 REGENERATION - Using cardinal curve with optimized tension');
+        } else if (smoothness <= 0.85) {
+          // Catmull-Rom with moderate alpha for trend visualization
+          curve = d3.curveCatmullRom.alpha(0.5);
+          console.log('🌊 REGENERATION - Using catmull-rom curve with balanced alpha');
         } else {
-          curve = d3.curveCatmullRom.alpha(0.8); // Very smooth, flowing curves
-          console.log('🌊 REGENERATION - Using catmull-rom curve with high alpha');
+          // Basis spline for maximum smoothness in trend analysis
+          curve = d3.curveBasis;
+          console.log('🌊 REGENERATION - Using basis spline for maximum trend smoothness');
         }
         return curve;
       };
