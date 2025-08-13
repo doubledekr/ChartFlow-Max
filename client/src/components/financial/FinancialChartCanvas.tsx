@@ -15,8 +15,8 @@ interface FinancialChartCanvasProps {
 }
 
 export function FinancialChartCanvas({ 
-  width = 800, 
-  height = 450, 
+  width = 900, 
+  height = 500, 
   onElementSelect 
 }: FinancialChartCanvasProps) {
   
@@ -118,9 +118,9 @@ export function FinancialChartCanvas({
 
     if (data.length === 0) return;
 
-    const margin = { top: 100, right: 80, bottom: 60, left: 80 };
-    const chartWidth = width - margin.left - margin.right;
-    const chartHeight = height - margin.top - margin.bottom;
+    const margin = { top: 60, right: 60, bottom: 80, left: 80 };
+    const chartWidth = Math.min(width - margin.left - margin.right, 600); // Fit within 16:9 bounds
+    const chartHeight = Math.min(height - margin.top - margin.bottom, 300); // Fit within 16:9 bounds
 
     const xScale = d3.scaleTime()
       .domain(d3.extent(data, d => new Date(d.timestamp)) as [Date, Date])
@@ -281,22 +281,23 @@ export function FinancialChartCanvas({
     });
 
     // Chart title without current price
-    const chartTitleLabel = new (window as any).fabric.Text(
-      `${symbol} - ${timeframe}`, 
-      {
-        left: 20,
-        top: -30,
-        fontSize: 16,
-        fill: lineProperties.color,
-        fontFamily: 'Inter, sans-serif',
-        fontWeight: 'bold',
-        selectable: false,
-        hasControls: false,
-        hasBorders: false,
-        editable: true,
-        type: 'chart-title'
-      }
-    );
+    // Remove chart title - user doesn't want ticker/duration text
+    // const chartTitleLabel = new (window as any).fabric.Text(
+    //   `${symbol} - ${timeframe}`, 
+    //   {
+    //     left: 20,
+    //     top: -30,
+    //     fontSize: 16,
+    //     fill: lineProperties.color,
+    //     fontFamily: 'Inter, sans-serif',
+    //     fontWeight: 'bold',
+    //     selectable: false,
+    //     hasControls: false,
+    //     hasBorders: false,
+    //     editable: true,
+    //     type: 'chart-title'
+    //   }
+    // );
 
     // Add axis elements as separate selectable objects
     yAxisLine.set({
@@ -338,19 +339,18 @@ export function FinancialChartCanvas({
 
     // Don't add groups separately - they'll be part of the complete chart group
 
-    // Create comprehensive chart system with all components
+    // Create comprehensive chart system with proper z-order and 16:9 positioning
     const completeChartGroup = new (window as any).fabric.Group(
       [
-        yAxisLine,
-        xAxisLine,
-        fabricPath,
-        chartTitleLabel,
-        yAxisGroup,
-        xAxisGroup
+        yAxisLine,   // Bottom layer
+        xAxisLine,   // Bottom layer
+        yAxisGroup,  // Middle layer
+        xAxisGroup,  // Middle layer  
+        fabricPath   // Top layer - line above axes
       ], 
       {
-        left: margin.left,
-        top: margin.top,
+        left: 80,  // Center within canvas bounds
+        top: 60,   // Center within canvas bounds
         selectable: true,
         hasControls: true,
         hasBorders: true,
