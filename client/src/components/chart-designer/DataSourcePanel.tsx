@@ -11,9 +11,10 @@ interface DataSourcePanelProps {
   onDataUpdate: () => void;
   onSymbolChange?: (symbol: string) => void;
   onTimeframeChange?: (timeframe: string) => void;
+  onLoadData?: () => void;
 }
 
-export function DataSourcePanel({ onDataUpdate, onSymbolChange, onTimeframeChange }: DataSourcePanelProps) {
+export function DataSourcePanel({ onDataUpdate, onSymbolChange, onTimeframeChange, onLoadData }: DataSourcePanelProps) {
   const { config, updateConfig } = useChartDesigner();
   const { loading, refreshData } = useChartData(config.symbol, config.period);
 
@@ -29,7 +30,11 @@ export function DataSourcePanel({ onDataUpdate, onSymbolChange, onTimeframeChang
   };
 
   const handleLoadData = () => {
-    refreshData();
+    if (onLoadData) {
+      onLoadData();
+    } else {
+      refreshData();
+    }
     onDataUpdate();
   };
 

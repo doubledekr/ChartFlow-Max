@@ -38,6 +38,7 @@ export default function ChartDesigner() {
   const [chartSymbol, setChartSymbol] = useState('AAPL');
   const [chartTimeframe, setChartTimeframe] = useState('1Y');
   const chartUpdateRef = useRef<((property: string, value: any) => void) | null>(null);
+  const loadDataRef = useRef<(() => void) | null>(null);
   const { toast } = useToast();
 
   const handleDataUpdate = () => {
@@ -646,6 +647,11 @@ export default function ChartDesigner() {
               onDataUpdate={handleDataUpdate}
               onSymbolChange={setChartSymbol}
               onTimeframeChange={setChartTimeframe}
+              onLoadData={() => {
+                if (loadDataRef.current) {
+                  loadDataRef.current();
+                }
+              }}
             />
             
             {/* Element Properties Panel */}
@@ -676,6 +682,9 @@ export default function ChartDesigner() {
             onCanvasChange={saveCanvasState}
             onChartUpdateRef={(updateFn) => {
               chartUpdateRef.current = updateFn;
+            }}
+            onLoadDataRef={(loadFn) => {
+              loadDataRef.current = loadFn;
             }}
           />
         </div>

@@ -17,6 +17,7 @@ interface FinancialChartCanvasProps {
   onCanvasReady?: (canvas: any) => void;
   onCanvasChange?: () => void;
   onChartUpdateRef?: (updateFn: (property: string, value: any) => void) => void;
+  onLoadDataRef?: (loadFn: () => void) => void;
 }
 
 export function FinancialChartCanvas({ 
@@ -27,7 +28,8 @@ export function FinancialChartCanvas({
   onElementSelect,
   onCanvasReady,
   onCanvasChange,
-  onChartUpdateRef
+  onChartUpdateRef,
+  onLoadDataRef
 }: FinancialChartCanvasProps) {
   
   // Update symbol and timeframe when props change
@@ -109,6 +111,11 @@ export function FinancialChartCanvas({
       // Expose the chart update function to parent
       if (onChartUpdateRef) {
         onChartUpdateRef(updateChartLineProperties);
+      }
+      
+      // Expose load data function to parent
+      if (onLoadDataRef) {
+        onLoadDataRef(loadStockData);
       }
 
       // Set up event handlers for undo/redo functionality
