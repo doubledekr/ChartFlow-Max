@@ -1264,7 +1264,7 @@ export function FinancialChartCanvas({
     xAxisGroup.on('selected', () => {
       console.log('X-axis labels selected (properties-based)');
       if (onElementSelect) {
-        onElementSelect('x-axis-labels', {
+        onElementSelect(xAxisGroup, {
           type: 'x-axis-labels',
           properties: { 
             fontSize: xAxisLabels[0]?.fontSize || 11, 
