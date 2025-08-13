@@ -1709,7 +1709,12 @@ export function FinancialChartCanvas({
     console.log('🔄 Current showJunctions value:', currentProperties.showJunctions);
     console.log('🔄 Current strokeDashArray value:', currentProperties.strokeDashArray);
     
-    if (!fabricCanvasRef.current || data.length === 0) return;
+    if (!fabricCanvasRef.current || data.length === 0) {
+      console.log('❌ ABORT renderChartWithProperties: fabricCanvas exists:', !!fabricCanvasRef.current, 'data length:', data.length);
+      return;
+    }
+    
+    console.log('✅ renderChartWithProperties proceeding: fabricCanvas exists, data length:', data.length);
     
     // Remove existing chart elements including markers and junctions
     const objects = fabricCanvasRef.current.getObjects();
@@ -1723,8 +1728,13 @@ export function FinancialChartCanvas({
     
     // Use the standard chart creation method that includes all elements
     setTimeout(() => {
+      console.log('🔄 Inside setTimeout - starting chart regeneration');
       const svg = d3.select(svgRef.current);
-      if (data.length === 0) return;
+      if (data.length === 0) {
+        console.log('❌ ABORT setTimeout: data length is 0');
+        return;
+      }
+      console.log('✅ setTimeout proceeding with data length:', data.length);
 
       const margin = { top: 120, right: 40, bottom: 80, left: 80 };
       const chartWidth = Math.min(width - margin.left - margin.right, 680);
@@ -1847,6 +1857,7 @@ export function FinancialChartCanvas({
       console.log('📊 REGENERATION - Generated path data with smoothness:', currentProperties.smoothness, 'Path length:', pathData.length);
 
       // Create draggable chart group with all elements and updated properties
+      console.log('🔄 Calling createDraggableChartGroupWithProperties with properties:', currentProperties);
       createDraggableChartGroupWithProperties(pathData, margin, xScale, yScale, chartWidth, chartHeight, currentProperties, yMin, yMax);
     }, 10);
   };
