@@ -248,13 +248,15 @@ export function FinancialChartCanvas({
     setError(null);
     
     try {
-      console.log(`📊 FinancialChartCanvas.loadStockData - symbol prop: "${symbol}", timeframe: ${timeframe}`);
+      // Use propSymbol directly to avoid state sync issues
+      const currentSymbol = propSymbol;
+      console.log(`📊 FinancialChartCanvas.loadStockData - using propSymbol: "${currentSymbol}", timeframe: ${propTimeframe}`);
       
       // Check if symbol contains multiple tickers (comma separated after processing in DataSourcePanel)
-      const symbolsArray = symbol.split(',').map(s => s.trim()).filter(s => s.length > 0);
+      const symbolsArray = currentSymbol.split(',').map(s => s.trim()).filter(s => s.length > 0);
       const isMultiSymbolRequest = symbolsArray.length > 1;
       
-      const response = await fetch(`/api/stocks/${encodeURIComponent(symbol)}/${timeframe}`);
+      const response = await fetch(`/api/stocks/${encodeURIComponent(currentSymbol)}/${propTimeframe}`);
       if (!response.ok) throw new Error('Failed to fetch stock data');
       
       const stockData = await response.json();
@@ -269,7 +271,7 @@ export function FinancialChartCanvas({
         setIsMultiSymbol(true);
         setData(stockData.combinedData || stockData.data || []); // Use combined data for Y-axis calculation
       } else {
-        console.log(`📊 Loading single symbol data: ${symbol}`);
+        console.log(`📊 Loading single symbol data: ${currentSymbol}`);
         setMultiSymbolData(null);
         setIsMultiSymbol(false);
         setData(stockData);
@@ -319,7 +321,7 @@ export function FinancialChartCanvas({
       let yMin, yMax;
       
       // For multiple symbols with very different ranges, use adaptive scaling
-      if (symbol.includes(',') || symbol.includes(' ')) {
+      if (propSymbol.includes(',') || propSymbol.includes(' ')) {
         // Multiple symbols detected - use percentage-based padding for better visualization
         const paddingPercent = Math.max(0.1, Math.min(0.2, priceRange / averagePrice * 0.1));
         const padding = priceRange * paddingPercent;
@@ -365,7 +367,7 @@ export function FinancialChartCanvas({
         .domain([yMin, yMax])
         .range([chartHeight, 0]);
       
-      console.log(`📊 Y-axis scaling: Symbol(s): ${symbol}, Range: $${yMin.toFixed(2)} - $${yMax.toFixed(2)}, Data points: ${chartData.length}`);
+      console.log(`📊 Y-axis scaling: Symbol(s): ${propSymbol}, Range: $${yMin.toFixed(2)} - $${yMax.toFixed(2)}, Data points: ${chartData.length}`);
       
       return { yMin, yMax, yScale };
     };
