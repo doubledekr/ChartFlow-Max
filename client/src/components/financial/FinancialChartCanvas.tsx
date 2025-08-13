@@ -389,10 +389,12 @@ export function FinancialChartCanvas({
         const pathData = line(seriesData.data) || '';
         console.log(`📊 Generated ${seriesData.symbol} path data with smoothness:`, lineProperties.smoothness, 'Path length:', pathData.length);
         
-        // Add to Fabric canvas
+        // Add to Fabric canvas with proper positioning
         if (fabricCanvasRef.current) {
+          const chartStartX = margin.left + 40; // Account for Y-axis labels
+          
           const fabricPath = new (window as any).fabric.Path(pathData, {
-            left: margin.left,
+            left: chartStartX,
             top: margin.top,
             stroke: seriesColor,
             strokeWidth: lineProperties.strokeWidth,
@@ -429,14 +431,24 @@ export function FinancialChartCanvas({
         }
       });
       
-      // Add timeout to ensure all lines are rendered with axes
+      // Add axes for multi-symbol chart after all lines are rendered
       setTimeout(() => {
         if (fabricCanvasRef.current && data.length > 0) {
-          // Add axes for multi-symbol chart
-          addAxisElements(data, margin, fabricCanvasRef.current.width, fabricCanvasRef.current.height);
+          // Remove existing axes to prevent duplicates
+          const objects = fabricCanvasRef.current.getObjects();
+          objects.forEach((obj: any) => {
+            if (obj.type === 'x-axis-line' || obj.type === 'y-axis-line' || 
+                obj.type === 'x-axis-labels' || obj.type === 'y-axis-labels') {
+              fabricCanvasRef.current?.remove(obj);
+            }
+          });
+          
+          // Add fresh axes for multi-symbol chart
+          addAxisElements(data, margin, width, height);
           fabricCanvasRef.current.renderAll();
+          console.log('✅ Added axes for multi-symbol chart');
         }
-      }, 200);
+      }, 100);
     } else {
       // Single symbol rendering
       const line = d3.line<ChartDataPoint>()
