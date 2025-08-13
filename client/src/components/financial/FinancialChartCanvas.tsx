@@ -133,6 +133,13 @@ export function FinancialChartCanvas({
         const obj = e.selected?.[0];
         if (obj && onElementSelect) {
           console.log('Canvas selection created:', obj.elementType || obj.type);
+          
+          // Skip default selection handling for axis elements since they have custom handlers
+          if (['y-axis-labels', 'x-axis-labels', 'y-axis-line', 'x-axis-line'].includes(obj.type)) {
+            console.log('Skipping default selection for axis element:', obj.type);
+            return;
+          }
+          
           onElementSelect(obj, {
             type: obj.elementType || 'element',
             properties: {
@@ -161,6 +168,13 @@ export function FinancialChartCanvas({
         const obj = e.selected?.[0];
         if (obj && onElementSelect) {
           console.log('Canvas selection updated:', obj.elementType || obj.type);
+          
+          // Skip default selection handling for axis elements since they have custom handlers
+          if (['y-axis-labels', 'x-axis-labels', 'y-axis-line', 'x-axis-line'].includes(obj.type)) {
+            console.log('Skipping default selection update for axis element:', obj.type);
+            return;
+          }
+          
           onElementSelect(obj, {
             type: obj.elementType || 'element',
             properties: {
