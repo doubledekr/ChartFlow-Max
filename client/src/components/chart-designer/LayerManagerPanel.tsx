@@ -155,22 +155,49 @@ export function LayerManagerPanel({ canvas, selectedElement, onElementSelect }: 
     if (!layer) return;
 
     if (layer.isGroup && layer.children) {
-      // Toggle group visibility
-      layer.children.forEach(childLayer => {
-        const obj = canvas.getObjects().find((o: any) => (o.id || `layer_${canvas.getObjects().indexOf(o)}`) === childLayer.id);
-        if (obj) {
-          obj.set('visible', !layer.visible);
-        }
-      });
+      // Toggle group visibility - check the actual object visibility, not layer state
+      const firstChild = layer.children[0];
+      if (firstChild) {
+        const firstObj = canvas.getObjects().find((o: any) => (o.id || `layer_${canvas.getObjects().indexOf(o)}`) === firstChild.id);
+        const newVisibility = firstObj ? !firstObj.visible : true;
+        
+        layer.children.forEach(childLayer => {
+          const obj = canvas.getObjects().find((o: any) => (o.id || `layer_${canvas.getObjects().indexOf(o)}`) === childLayer.id);
+          if (obj) {
+            obj.set('visible', newVisibility);
+          }
+        });
+      }
     } else {
-      // Toggle single layer visibility
+      // Toggle single layer visibility - check the actual object visibility
       const obj = canvas.getObjects().find((o: any) => (o.id || `layer_${canvas.getObjects().indexOf(o)}`) === layerId);
       if (obj) {
-        obj.set('visible', !layer.visible);
+        obj.set('visible', !obj.visible);
       }
     }
 
     canvas.renderAll();
+    
+    // Force update layers to reflect new visibility state
+    setTimeout(() => {
+      const updateLayers = () => {
+        const objects = canvas.getObjects();
+        const layerItems: LayerItem[] = objects.map((obj: any, index: number) => ({
+          id: obj.id || `layer_${index}`,
+          name: getLayerName(obj),
+          type: obj.type || obj.elementType || 'object',
+          visible: obj.visible !== false,
+          locked: !obj.selectable,
+          opacity: obj.opacity || 1,
+          zIndex: index,
+          symbol: obj.symbol,
+          color: obj.stroke || obj.fill || '#3b82f6'
+        }));
+        const groupedLayers = groupChartLinesBySymbol(layerItems);
+        setLayers(groupedLayers);
+      };
+      updateLayers();
+    }, 100);
   };
 
   const toggleLayerLock = (layerId: string) => {
