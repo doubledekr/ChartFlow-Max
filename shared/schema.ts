@@ -89,6 +89,39 @@ export const polygonCache = pgTable("polygon_cache", {
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
 
+// Custom fonts table for user-uploaded fonts
+export const customFonts = pgTable("custom_fonts", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: varchar("name").notNull(), // Display name
+  family: varchar("family").notNull(), // CSS font-family name
+  category: varchar("category").notNull().default('custom'), // Font category
+  userId: varchar("user_id").references(() => users.id).notNull(), // User who uploaded it
+  fileName: varchar("file_name").notNull(), // Original file name
+  fileUrl: varchar("file_url").notNull(), // Object storage URL
+  fileSize: integer("file_size"), // File size in bytes
+  format: varchar("format").notNull(), // woff, woff2, ttf, otf
+  isPublic: boolean("is_public").default(false), // Whether other users can use it
+  metadata: jsonb("metadata").default('{}'), // Additional font metadata
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Font usage tracking table
+export const fontUsage = pgTable("font_usage", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  fontFamily: varchar("font_family").notNull(),
+  userId: varchar("user_id").references(() => users.id),
+  projectId: varchar("project_id"), // Template or instance ID
+  usageCount: integer("usage_count").default(1),
+  lastUsed: timestamp("last_used").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export type CustomFont = typeof customFonts.$inferSelect;
+export type InsertCustomFont = typeof customFonts.$inferInsert;
+export type FontUsage = typeof fontUsage.$inferSelect;
+export type InsertFontUsage = typeof fontUsage.$inferInsert;
+
 export type ChartTemplate = typeof chartTemplates.$inferSelect;
 export type InsertChartTemplate = typeof chartTemplates.$inferInsert;
 

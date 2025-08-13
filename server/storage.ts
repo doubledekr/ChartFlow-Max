@@ -4,6 +4,8 @@ import {
   chartInstances,
   exportPresets,
   polygonCache,
+  customFonts,
+  fontUsage,
   type User,
   type UpsertUser,
   type ChartTemplate,
@@ -14,9 +16,13 @@ import {
   type InsertExportPreset,
   type PolygonCache,
   type InsertPolygonCache,
+  type CustomFont,
+  type InsertCustomFont,
+  type FontUsage,
+  type InsertFontUsage,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and, lt, gt } from "drizzle-orm";
+import { eq, desc, and, lt, gt, or } from "drizzle-orm";
 
 // Interface for storage operations
 export interface IStorage {
@@ -47,6 +53,18 @@ export interface IStorage {
   getCachedData(cacheKey: string): Promise<PolygonCache | undefined>;
   setCachedData(data: InsertPolygonCache): Promise<void>;
   clearExpiredCache(): Promise<void>;
+  
+  // Font operations
+  createCustomFont(font: InsertCustomFont): Promise<CustomFont>;
+  getCustomFont(id: string): Promise<CustomFont | undefined>;
+  getUserCustomFonts(userId: string): Promise<CustomFont[]>;
+  getPublicCustomFonts(): Promise<CustomFont[]>;
+  getAllAvailableCustomFonts(userId?: string): Promise<CustomFont[]>;
+  deleteCustomFont(id: string): Promise<void>;
+  
+  // Font usage tracking
+  trackFontUsage(usage: InsertFontUsage): Promise<void>;
+  getFontUsageStats(fontFamily: string): Promise<FontUsage[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -179,6 +197,69 @@ export class DatabaseStorage implements IStorage {
 
   async clearExpiredCache(): Promise<void> {
     await db.delete(polygonCache).where(lt(polygonCache.expiresAt, new Date()));
+  }
+
+  // Font operations
+  async createCustomFont(font: InsertCustomFont): Promise<CustomFont> {
+    const [created] = await db.insert(customFonts).values(font).returning();
+    return created;
+  }
+
+  async getCustomFont(id: string): Promise<CustomFont | undefined> {
+    const [font] = await db.select().from(customFonts).where(eq(customFonts.id, id));
+    return font;
+  }
+
+  async getUserCustomFonts(userId: string): Promise<CustomFont[]> {
+    return await db.select()
+      .from(customFonts)
+      .where(eq(customFonts.userId, userId))
+      .orderBy(desc(customFonts.createdAt));
+  }
+
+  async getPublicCustomFonts(): Promise<CustomFont[]> {
+    return await db.select()
+      .from(customFonts)
+      .where(eq(customFonts.isPublic, true))
+      .orderBy(desc(customFonts.createdAt));
+  }
+
+  async getAllAvailableCustomFonts(userId?: string): Promise<CustomFont[]> {
+    if (!userId) {
+      return this.getPublicCustomFonts();
+    }
+    
+    return await db.select()
+      .from(customFonts)
+      .where(or(
+        eq(customFonts.userId, userId),
+        eq(customFonts.isPublic, true)
+      ))
+      .orderBy(desc(customFonts.createdAt));
+  }
+
+  async deleteCustomFont(id: string): Promise<void> {
+    await db.delete(customFonts).where(eq(customFonts.id, id));
+  }
+
+  // Font usage tracking
+  async trackFontUsage(usage: InsertFontUsage): Promise<void> {
+    await db.insert(fontUsage)
+      .values(usage)
+      .onConflictDoUpdate({
+        target: [fontUsage.fontFamily, fontUsage.userId, fontUsage.projectId],
+        set: {
+          usageCount: fontUsage.usageCount,
+          lastUsed: new Date(),
+        },
+      });
+  }
+
+  async getFontUsageStats(fontFamily: string): Promise<FontUsage[]> {
+    return await db.select()
+      .from(fontUsage)
+      .where(eq(fontUsage.fontFamily, fontFamily))
+      .orderBy(desc(fontUsage.lastUsed));
   }
 }
 

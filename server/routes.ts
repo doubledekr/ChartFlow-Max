@@ -7,7 +7,16 @@ import {
   insertChartTemplateSchema,
   insertChartInstanceSchema,
   insertExportPresetSchema,
+  customFonts,
 } from "@shared/schema";
+import { ObjectStorageService, ObjectNotFoundError } from "./objectStorage";
+import { createInsertSchema } from "drizzle-zod";
+
+const insertCustomFontSchema = createInsertSchema(customFonts).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -196,6 +205,102 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching export presets:", error);
       res.status(500).json({ message: "Failed to fetch export presets" });
+    }
+  });
+
+  // Font management routes
+  app.get("/api/fonts", async (req: any, res) => {
+    try {
+      const userId = req.user?.claims?.sub;
+      const fonts = await storage.getAllAvailableCustomFonts(userId);
+      res.json(fonts);
+    } catch (error) {
+      console.error("Error fetching fonts:", error);
+      res.status(500).json({ message: "Failed to fetch fonts" });
+    }
+  });
+
+  app.post("/api/fonts/upload", isAuthenticated, async (req: any, res) => {
+    try {
+      const objectStorageService = new ObjectStorageService();
+      const uploadURL = await objectStorageService.getFontUploadURL();
+      res.json({ uploadURL });
+    } catch (error) {
+      console.error("Error getting font upload URL:", error);
+      res.status(500).json({ message: "Failed to get upload URL" });
+    }
+  });
+
+  app.post("/api/fonts", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const fontData = insertCustomFontSchema.parse({
+        ...req.body,
+        userId,
+      });
+      
+      const font = await storage.createCustomFont(fontData);
+      res.json(font);
+    } catch (error) {
+      console.error("Error creating custom font:", error);
+      res.status(500).json({ message: "Failed to create custom font" });
+    }
+  });
+
+  app.get("/api/fonts/:id", async (req, res) => {
+    try {
+      const font = await storage.getCustomFont(req.params.id);
+      if (!font) {
+        return res.status(404).json({ message: "Font not found" });
+      }
+      res.json(font);
+    } catch (error) {
+      console.error("Error fetching font:", error);
+      res.status(500).json({ message: "Failed to fetch font" });
+    }
+  });
+
+  app.delete("/api/fonts/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const font = await storage.getCustomFont(req.params.id);
+      
+      if (!font) {
+        return res.status(404).json({ message: "Font not found" });
+      }
+      
+      if (font.userId !== userId) {
+        return res.status(403).json({ message: "Not authorized to delete this font" });
+      }
+      
+      await storage.deleteCustomFont(req.params.id);
+      res.json({ message: "Font deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting font:", error);
+      res.status(500).json({ message: "Failed to delete font" });
+    }
+  });
+
+  app.get("/fonts/:fontId", async (req, res) => {
+    try {
+      const font = await storage.getCustomFont(req.params.fontId);
+      if (!font) {
+        return res.status(404).json({ message: "Font not found" });
+      }
+
+      const objectStorageService = new ObjectStorageService();
+      const fontFile = await objectStorageService.getFontFile(font.fileUrl);
+      
+      res.setHeader('Content-Type', `font/${font.format}`);
+      res.setHeader('Cache-Control', 'public, max-age=31536000'); // 1 year cache
+      
+      await objectStorageService.downloadObject(fontFile, res);
+    } catch (error) {
+      console.error("Error serving font:", error);
+      if (error instanceof ObjectNotFoundError) {
+        return res.status(404).json({ message: "Font file not found" });
+      }
+      res.status(500).json({ message: "Failed to serve font" });
     }
   });
 
