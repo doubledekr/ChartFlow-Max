@@ -1168,6 +1168,52 @@ export function FinancialChartCanvas({
       });
     }
 
+    // Set up event handlers for Y-axis line
+    yAxisLine.on('selected', () => {
+      console.log('Y-axis line selected');
+      if (onElementSelect) {
+        onElementSelect(yAxisLine, {
+          type: 'y-axis-line',
+          properties: { 
+            strokeWidth: yAxisLine.strokeWidth || 1, 
+            stroke: yAxisLine.stroke || '#666666',
+            opacity: yAxisLine.opacity || 1,
+            visible: yAxisLine.visible !== false
+          },
+          updateFunction: (property: string, value: any) => {
+            console.log(`Updating Y-axis line: ${property} = ${value}`);
+            yAxisLine.set(property, value);
+            fabricCanvasRef.current?.renderAll();
+            if (onCanvasChange) onCanvasChange();
+            console.log(`Updated ${property} to ${value} for Y-axis line`);
+          }
+        });
+      }
+    });
+
+    // Set up event handlers for X-axis line
+    xAxisLine.on('selected', () => {
+      console.log('X-axis line selected');
+      if (onElementSelect) {
+        onElementSelect(xAxisLine, {
+          type: 'x-axis-line',
+          properties: { 
+            strokeWidth: xAxisLine.strokeWidth || 1, 
+            stroke: xAxisLine.stroke || '#666666',
+            opacity: xAxisLine.opacity || 1,
+            visible: xAxisLine.visible !== false
+          },
+          updateFunction: (property: string, value: any) => {
+            console.log(`Updating X-axis line: ${property} = ${value}`);
+            xAxisLine.set(property, value);
+            fabricCanvasRef.current?.renderAll();
+            if (onCanvasChange) onCanvasChange();
+            console.log(`Updated ${property} to ${value} for X-axis line`);
+          }
+        });
+      }
+    });
+
     // Add all elements to canvas for independent selection
     fabricCanvasRef.current.add(yAxisLine);
     fabricCanvasRef.current.add(xAxisLine);
@@ -1186,10 +1232,11 @@ export function FinancialChartCanvas({
         onElementSelect(yAxisGroup, {
           type: 'y-axis-labels',
           properties: { 
-            fontSize: 11, 
-            fill: '#666666', 
-            fontFamily: 'Inter, sans-serif', 
-            fontWeight: 'normal' 
+            fontSize: yAxisLabels[0]?.fontSize || 11, 
+            fill: yAxisLabels[0]?.fill || '#666666', 
+            fontFamily: yAxisLabels[0]?.fontFamily || 'Inter, sans-serif', 
+            fontWeight: yAxisLabels[0]?.fontWeight || 'normal',
+            visible: yAxisGroup.visible !== false
           },
           updateFunction: (property: string, value: any) => {
             console.log(`Updating Y-axis labels: ${property} = ${value}`);
@@ -1199,9 +1246,12 @@ export function FinancialChartCanvas({
               if (property === 'fill') obj.set('fill', value);
               if (property === 'fontFamily') obj.set('fontFamily', value);
               if (property === 'fontWeight') obj.set('fontWeight', value);
+              if (property === 'visible') obj.set('visible', value);
             });
+            if (property === 'visible') yAxisGroup.set('visible', value);
             yAxisGroup.addWithUpdate();
             fabricCanvasRef.current?.renderAll();
+            if (onCanvasChange) onCanvasChange();
             console.log(`Updated ${property} to ${value} for element:`, 'y-axis-labels');
           }
         });
@@ -1215,10 +1265,11 @@ export function FinancialChartCanvas({
         onElementSelect(xAxisGroup, {
           type: 'x-axis-labels',
           properties: { 
-            fontSize: 11, 
-            fill: '#666666', 
-            fontFamily: 'Inter, sans-serif', 
-            fontWeight: 'normal' 
+            fontSize: xAxisLabels[0]?.fontSize || 11, 
+            fill: xAxisLabels[0]?.fill || '#666666', 
+            fontFamily: xAxisLabels[0]?.fontFamily || 'Inter, sans-serif', 
+            fontWeight: xAxisLabels[0]?.fontWeight || 'normal',
+            visible: xAxisGroup.visible !== false
           },
           updateFunction: (property: string, value: any) => {
             console.log(`Updating X-axis labels: ${property} = ${value}`);
@@ -1228,9 +1279,12 @@ export function FinancialChartCanvas({
               if (property === 'fill') obj.set('fill', value);
               if (property === 'fontFamily') obj.set('fontFamily', value);
               if (property === 'fontWeight') obj.set('fontWeight', value);
+              if (property === 'visible') obj.set('visible', value);
             });
+            if (property === 'visible') xAxisGroup.set('visible', value);
             xAxisGroup.addWithUpdate();
             fabricCanvasRef.current?.renderAll();
+            if (onCanvasChange) onCanvasChange();
             console.log(`Updated ${property} to ${value} for element:`, 'x-axis-labels');
           }
         });
