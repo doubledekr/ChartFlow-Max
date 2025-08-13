@@ -39,56 +39,56 @@ export function FinancialChartCanvas({
   });
 
   useEffect(() => {
-    if (!canvasRef.current) return;
+    if (!fabricCanvasRef.current && canvasRef.current) {
+      // Initialize Fabric canvas for interactive elements
+      const canvas = new (window as any).fabric.Canvas(canvasRef.current, {
+        width,
+        height,
+        backgroundColor: 'rgba(248, 248, 248, 0.8)',
+        selection: false,
+      });
 
-    // Initialize Fabric canvas for interactive elements
-    const canvas = new (window as any).fabric.Canvas(canvasRef.current, {
-      width,
-      height,
-      backgroundColor: 'rgba(248, 248, 248, 0.8)',
-      selection: false,
-    });
+      fabricCanvasRef.current = canvas;
 
-    fabricCanvasRef.current = canvas;
+      // Add some default interactive elements
+      const title = new (window as any).fabric.Text('Financial Chart', {
+        left: 50,
+        top: 30,
+        fontFamily: 'Inter, sans-serif',
+        fontSize: 24,
+        fontWeight: 'bold',
+        fill: '#1f2937',
+        selectable: true,
+        hasControls: true,
+        hasBorders: true,
+      });
 
-    // Add some default interactive elements
-    const title = new (window as any).fabric.Text('Financial Chart', {
-      left: 50,
-      top: 30,
-      fontFamily: 'Inter, sans-serif',
-      fontSize: 24,
-      fontWeight: 'bold',
-      fill: '#1f2937',
-      selectable: true,
-      hasControls: true,
-      hasBorders: true,
-    });
+      const subtitle = new (window as any).fabric.Text('Drag elements to customize', {
+        left: 50,
+        top: 60,
+        fontFamily: 'Inter, sans-serif',
+        fontSize: 14,
+        fill: '#6b7280',
+        selectable: true,
+      });
 
-    const subtitle = new (window as any).fabric.Text('Drag elements to customize', {
-      left: 50,
-      top: 60,
-      fontFamily: 'Inter, sans-serif',
-      fontSize: 14,
-      fill: '#6b7280',
-      selectable: true,
-    });
+      canvas.add(title, subtitle);
 
-    canvas.add(title, subtitle);
+      // Set cursor states
+      canvas.on('mouse:over', function(e: any) {
+        if (e.target) {
+          document.body.style.cursor = 'move';
+        }
+      });
 
-    // Set cursor states
-    canvas.on('mouse:over', function(e: any) {
-      if (e.target) {
-        document.body.style.cursor = 'move';
-      }
-    });
+      canvas.on('mouse:out', function() {
+        document.body.style.cursor = 'default';
+      });
 
-    canvas.on('mouse:out', function() {
-      document.body.style.cursor = 'default';
-    });
-
-    return () => {
-      canvas.dispose();
-    };
+      return () => {
+        canvas.dispose();
+      };
+    }
   }, [width, height]);
 
   useEffect(() => {
@@ -563,34 +563,22 @@ export function FinancialChartCanvas({
     const newProperties = { ...lineProperties, [property]: value };
     setLineProperties(newProperties);
 
-    // Update standalone path directly - ensure proper rendering
+    // Regenerate the entire chart with new properties for reliable updates
     switch (property) {
       case 'strokeWidth':
-        selectedChartLine.set({ strokeWidth: value });
-        selectedChartLine.setCoords();
-        fabricCanvasRef.current?.requestRenderAll();
-        console.log(`VISUAL UPDATED strokeWidth to ${value} - Path strokeWidth now:`, selectedChartLine.strokeWidth);
-        break;
-
       case 'opacity':
-        selectedChartLine.set({ opacity: value });
-        selectedChartLine.setCoords();
-        fabricCanvasRef.current?.requestRenderAll();
-        console.log(`VISUAL UPDATED opacity to ${value} - Path opacity now:`, selectedChartLine.opacity);
-        break;
-
       case 'color':
-        selectedChartLine.set({ stroke: value });
-        selectedChartLine.setCoords();
-        fabricCanvasRef.current?.requestRenderAll();
-        console.log(`VISUAL UPDATED color to ${value} - Path stroke now:`, selectedChartLine.stroke);
-        break;
-
       case 'visible':
-        selectedChartLine.set({ visible: value });
-        selectedChartLine.setCoords();
-        fabricCanvasRef.current?.requestRenderAll();
-        console.log(`VISUAL UPDATED visibility to ${value}`);
+        // Remove current chart line
+        if (selectedChartLine) {
+          fabricCanvasRef.current?.remove(selectedChartLine);
+        }
+        
+        // Update state and regenerate chart
+        setTimeout(() => {
+          renderChart();
+          console.log(`REGENERATED chart with ${property} = ${value}`);
+        }, 10);
         break;
 
       case 'smoothness':
