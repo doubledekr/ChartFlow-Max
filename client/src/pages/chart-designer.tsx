@@ -217,8 +217,22 @@ export default function ChartDesigner() {
         </div>
 
         {/* Center Panel - Canvas */}
-        <div className="flex-1 p-4">
-          <FinancialChartCanvas onElementSelect={handleElementSelect} />
+        <div className="flex-1 bg-gray-100 flex items-center justify-center p-6 overflow-hidden">
+          <div className="bg-white rounded-lg shadow-lg p-4 max-w-full max-h-full">
+            <div style={{ 
+              width: '1024px', 
+              height: '576px', 
+              maxWidth: 'calc(100vw - 480px - 48px)', // Account for both panels + padding
+              maxHeight: 'calc(100vh - 200px)', // Account for header + padding
+              aspectRatio: '16/9'
+            }}>
+              <FinancialChartCanvas 
+                onElementSelect={handleElementSelect}
+                width={1024}
+                height={576}
+              />
+            </div>
+          </div>
         </div>
 
         {/* Right Panel - Templates & Instances */}

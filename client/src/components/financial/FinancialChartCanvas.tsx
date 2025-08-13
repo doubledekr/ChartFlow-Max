@@ -710,23 +710,38 @@ export function FinancialChartCanvas({
       )}
 
       {/* Chart Container */}
-      <div className="relative border border-gray-200 rounded-lg overflow-hidden bg-white">
+      <div className="relative border border-gray-200 rounded-lg overflow-hidden bg-white" style={{ 
+        width: '100%', 
+        height: '576px',
+        aspectRatio: '16/9',
+        maxWidth: '1024px',
+        margin: '0 auto'
+      }}>
+        {loading && (
+          <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+              <p className="text-sm text-gray-600">Loading chart data...</p>
+            </div>
+          </div>
+        )}
+        
         {/* D3 Chart Layer (Background) */}
         <svg
           ref={svgRef}
           width={width}
           height={height}
-          className="absolute top-0 left-0 pointer-events-none"
+          className="absolute top-0 left-0 pointer-events-none w-full h-full"
+          style={{ objectFit: 'contain' }}
         />
         
         {/* Fabric Canvas Layer (Interactive Elements) */}
         <canvas
           ref={canvasRef}
-          className="absolute top-0 left-0 cursor-default"
+          className="absolute top-0 left-0 cursor-default w-full h-full"
+          style={{ objectFit: 'contain' }}
           data-testid="financial-chart-canvas"
         />
-
-
       </div>
     </div>
   );
