@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Eye, EyeOff, Lock, Unlock, Move, Trash2, Group, Ungroup, ChevronDown, ChevronRight, GripVertical, Edit2, Check, X, FolderPlus } from 'lucide-react';
+import { Eye, EyeOff, Lock, Unlock, Move, Trash2, Group, Ungroup, ChevronDown, ChevronRight, GripVertical, Edit2, Check, X, FolderPlus, Folder } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -39,6 +39,8 @@ export function LayerManagerPanel({ canvas, selectedElement, onElementSelect }: 
   const [editingGroupName, setEditingGroupName] = useState<string>('');
   const [layerGroups, setLayerGroups] = useState<Map<string, LayerItem>>(new Map());
   const [multiSelectedLayers, setMultiSelectedLayers] = useState<string[]>([]);
+  const [isCreatingGroup, setIsCreatingGroup] = useState(false);
+  const [newGroupName, setNewGroupName] = useState('');
 
   // Update layers when canvas changes
   useEffect(() => {
@@ -166,21 +168,24 @@ export function LayerManagerPanel({ canvas, selectedElement, onElementSelect }: 
     const newGroup: LayerItem = {
       id: groupId,
       name: groupName,
-      type: 'layer-group',
+      type: 'folder',
       visible: layersToGroup.every(l => l.visible),
       locked: false,
       opacity: Math.min(...layersToGroup.map(l => l.opacity)),
       zIndex: Math.min(...layersToGroup.map(l => l.zIndex)),
       isGroup: true,
       children: layersToGroup,
-      isExpanded: true
+      isExpanded: true,
+      color: '#8b5cf6' // Purple color for folder groups
     };
 
-    // Update layer groups state
-    setLayerGroups(prev => {
-      const updated = new Map(prev);
-      updated.set(groupId, newGroup);
-      return updated;
+    // Add group directly to layers list
+    setLayers(prev => {
+      const newLayers = [...prev];
+      // Remove the grouped layers from the main list
+      const filteredLayers = newLayers.filter(layer => !layerIds.includes(layer.id));
+      // Add the group at the beginning
+      return [newGroup, ...filteredLayers];
     });
 
     // Mark layers as grouped
@@ -190,6 +195,8 @@ export function LayerManagerPanel({ canvas, selectedElement, onElementSelect }: 
 
     // Add to expanded groups
     setExpandedGroups(prev => new Set(Array.from(prev).concat([groupId])));
+    
+    console.log('Created group:', groupName, 'with layers:', layerIds);
   };
 
   const ungroupLayers = (groupId: string) => {
@@ -607,23 +614,26 @@ export function LayerManagerPanel({ canvas, selectedElement, onElementSelect }: 
               </div>
             )}
 
-            {layer.isGroup && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleGroupExpansion(layer.id);
-                }}
-                className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
-                data-testid={`expand-group-${layer.id}`}
-              >
-                {isExpanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
-              </button>
+            {layer.isGroup ? (
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleGroupExpansion(layer.id);
+                  }}
+                  className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+                  data-testid={`expand-group-${layer.id}`}
+                >
+                  {isExpanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+                </button>
+                <Folder className="w-4 h-4 text-purple-600" />
+              </div>
+            ) : (
+              <div 
+                className="w-3 h-3 rounded border border-gray-300 dark:border-gray-600"
+                style={{ backgroundColor: layer.color }}
+              />
             )}
-            
-            <div 
-              className="w-3 h-3 rounded border border-gray-300 dark:border-gray-600"
-              style={{ backgroundColor: layer.color }}
-            />
             
             <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
               {layer.name}
@@ -738,12 +748,8 @@ export function LayerManagerPanel({ canvas, selectedElement, onElementSelect }: 
               console.log('Group button clicked - multiSelectedLayers:', multiSelectedLayers);
               
               if (multiSelectedLayers.length >= 2) {
-                const groupName = prompt('Enter group name:', 'New Group');
-                if (groupName) {
-                  console.log('Creating group with layers:', multiSelectedLayers);
-                  createLayerGroup(multiSelectedLayers, groupName);
-                  setMultiSelectedLayers([]); // Clear selection after grouping
-                }
+                setIsCreatingGroup(true);
+                setNewGroupName('New Group');
               } else {
                 alert(`Use Shift+Click to select multiple layers first. Currently selected: ${multiSelectedLayers.length} layers`);
               }
@@ -762,6 +768,58 @@ export function LayerManagerPanel({ canvas, selectedElement, onElementSelect }: 
       <CardContent className="p-0">
         <ScrollArea className="h-[calc(100vh-200px)]">
           <div className="p-3 space-y-1">
+            {/* Show group creation input at the top when creating a group */}
+            {isCreatingGroup && (
+              <div className="flex items-center gap-2 p-2 bg-purple-50 dark:bg-purple-950 rounded border-2 border-purple-200 dark:border-purple-800 mb-2">
+                <Folder className="w-4 h-4 text-purple-600" />
+                <input
+                  type="text"
+                  value={newGroupName}
+                  onChange={(e) => setNewGroupName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      createLayerGroup(multiSelectedLayers, newGroupName);
+                      setMultiSelectedLayers([]);
+                      setIsCreatingGroup(false);
+                      setNewGroupName('');
+                    } else if (e.key === 'Escape') {
+                      setIsCreatingGroup(false);
+                      setNewGroupName('');
+                    }
+                  }}
+                  className="flex-1 bg-transparent border-none outline-none text-sm font-medium text-purple-900 dark:text-purple-100 placeholder-purple-500"
+                  placeholder="Group name"
+                  autoFocus
+                />
+                <div className="flex gap-1">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-6 w-6 p-0 text-green-600 hover:bg-green-100 dark:hover:bg-green-900"
+                    onClick={() => {
+                      createLayerGroup(multiSelectedLayers, newGroupName);
+                      setMultiSelectedLayers([]);
+                      setIsCreatingGroup(false);
+                      setNewGroupName('');
+                    }}
+                  >
+                    <Check className="w-3 h-3" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-6 w-6 p-0 text-red-600 hover:bg-red-100 dark:hover:bg-red-900"
+                    onClick={() => {
+                      setIsCreatingGroup(false);
+                      setNewGroupName('');
+                    }}
+                  >
+                    <X className="w-3 h-3" />
+                  </Button>
+                </div>
+              </div>
+            )}
+
             {layers.length === 0 ? (
               <div className="text-sm text-gray-500 dark:text-gray-400 text-center py-8">
                 No layers available
