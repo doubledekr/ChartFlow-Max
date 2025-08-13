@@ -41,6 +41,8 @@ export function LayerManagerPanel({ canvas, selectedElement, onElementSelect }: 
   const [multiSelectedLayers, setMultiSelectedLayers] = useState<string[]>([]);
   const [isCreatingGroup, setIsCreatingGroup] = useState(false);
   const [newGroupName, setNewGroupName] = useState('');
+  const [editingLayerId, setEditingLayerId] = useState<string | null>(null);
+  const [editingLayerName, setEditingLayerName] = useState<string>('');
 
   // Update layers when canvas changes
   useEffect(() => {
@@ -590,6 +592,48 @@ export function LayerManagerPanel({ canvas, selectedElement, onElementSelect }: 
     }
   };
 
+  const startLayerRename = (layerId: string, currentName: string) => {
+    setEditingLayerId(layerId);
+    setEditingLayerName(currentName);
+  };
+
+  const finishLayerRename = () => {
+    if (!editingLayerId || !editingLayerName.trim()) {
+      setEditingLayerId(null);
+      setEditingLayerName('');
+      return;
+    }
+
+    const layer = findLayerById(editingLayerId);
+    if (layer) {
+      // Update layer name
+      layer.name = editingLayerName.trim();
+      
+      // Update layers state
+      setLayers(prev => prev.map(l => 
+        l.id === editingLayerId ? { ...l, name: editingLayerName.trim() } : l
+      ));
+      
+      // If it's a canvas object, update its elementType for display purposes
+      if (!layer.isGroup) {
+        const obj = canvas.getObjects().find((o: any) => 
+          (o.id || `layer_${canvas.getObjects().indexOf(o)}`) === editingLayerId
+        );
+        if (obj) {
+          obj.elementType = editingLayerName.trim();
+        }
+      }
+    }
+
+    setEditingLayerId(null);
+    setEditingLayerName('');
+  };
+
+  const cancelLayerRename = () => {
+    setEditingLayerId(null);
+    setEditingLayerName('');
+  };
+
   const renderLayer = (layer: LayerItem, depth = 0) => {
     const isSelected = selectedElement && (
       (selectedElement.id || `layer_${canvas?.getObjects().indexOf(selectedElement)}`) === layer.id
@@ -647,9 +691,35 @@ export function LayerManagerPanel({ canvas, selectedElement, onElementSelect }: 
               />
             )}
             
-            <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-              {layer.name}
-            </span>
+            {editingLayerId === layer.id ? (
+              <input
+                type="text"
+                value={editingLayerName}
+                onChange={(e) => setEditingLayerName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    finishLayerRename();
+                  } else if (e.key === 'Escape') {
+                    cancelLayerRename();
+                  }
+                }}
+                onBlur={finishLayerRename}
+                className="flex-1 bg-transparent border border-blue-300 dark:border-blue-600 rounded px-1 text-sm font-medium text-gray-900 dark:text-gray-100 outline-none focus:border-blue-500"
+                autoFocus
+                onClick={(e) => e.stopPropagation()}
+              />
+            ) : (
+              <span 
+                className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-1 rounded"
+                onDoubleClick={(e) => {
+                  e.stopPropagation();
+                  startLayerRename(layer.id, layer.name);
+                }}
+                title="Double-click to rename"
+              >
+                {layer.name}
+              </span>
+            )}
             
             {layer.symbol && (
               <Badge variant="secondary" className="text-xs">
