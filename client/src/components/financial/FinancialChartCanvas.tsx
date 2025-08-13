@@ -240,20 +240,27 @@ export function FinancialChartCanvas({
     const g = svg.append('g')
       .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
-    // Create smoothed data based on smoothness parameter
-    const smoothingFactor = Math.max(1, Math.floor((1 - lineProperties.smoothness) * 10) + 1);
-    const smoothedData = data.filter((_, index) => index % smoothingFactor === 0);
-    
-    if (smoothedData[smoothedData.length - 1] !== data[data.length - 1]) {
-      smoothedData.push(data[data.length - 1]);
-    }
+    // Apply smoothness to curve interpolation instead of data filtering
+    const getCurveType = (smoothness: number) => {
+      if (smoothness <= 0.2) {
+        return d3.curveLinear; // Very angular, sharp lines
+      } else if (smoothness <= 0.4) {
+        return d3.curveCardinal.tension(0.2); // Slightly curved
+      } else if (smoothness <= 0.6) {
+        return d3.curveCardinal.tension(0.5); // Moderately curved
+      } else if (smoothness <= 0.8) {
+        return d3.curveCatmullRom.alpha(0.3); // Smooth curves
+      } else {
+        return d3.curveCatmullRom.alpha(0.8); // Very smooth, flowing curves
+      }
+    };
 
     const line = d3.line<ChartDataPoint>()
       .x(d => xScale(new Date(d.timestamp)))
       .y(d => yScale(d.close))
-      .curve(d3.curveCatmullRom.alpha(0.5));
+      .curve(getCurveType(lineProperties.smoothness));
 
-    const pathData = line(smoothedData) || '';
+    const pathData = line(data) || '';
 
     // Create draggable chart group with axis text conversion
     setTimeout(() => {
@@ -860,20 +867,27 @@ export function FinancialChartCanvas({
         .domain(d3.extent(data, d => d.high) as [number, number])
         .range([chartHeight, 0]);
 
-      // Create smoothed data based on properties
-      const smoothingFactor = Math.max(1, Math.floor((1 - currentProperties.smoothness) * 10) + 1);
-      const smoothedData = data.filter((_, index) => index % smoothingFactor === 0);
-      
-      if (smoothedData[smoothedData.length - 1] !== data[data.length - 1]) {
-        smoothedData.push(data[data.length - 1]);
-      }
+      // Apply smoothness to curve interpolation instead of data filtering
+      const getCurveType = (smoothness: number) => {
+        if (smoothness <= 0.2) {
+          return d3.curveLinear; // Very angular, sharp lines
+        } else if (smoothness <= 0.4) {
+          return d3.curveCardinal.tension(0.2); // Slightly curved
+        } else if (smoothness <= 0.6) {
+          return d3.curveCardinal.tension(0.5); // Moderately curved
+        } else if (smoothness <= 0.8) {
+          return d3.curveCatmullRom.alpha(0.3); // Smooth curves
+        } else {
+          return d3.curveCatmullRom.alpha(0.8); // Very smooth, flowing curves
+        }
+      };
 
       const line = d3.line<ChartDataPoint>()
         .x(d => xScale(new Date(d.timestamp)))
         .y(d => yScale(d.close))
-        .curve(d3.curveCatmullRom.alpha(0.5));
+        .curve(getCurveType(currentProperties.smoothness));
 
-      const pathData = line(smoothedData) || '';
+      const pathData = line(data) || '';
 
       // Create draggable chart group with all elements and updated properties
       createDraggableChartGroupWithProperties(pathData, margin, xScale, yScale, chartWidth, chartHeight, currentProperties);
