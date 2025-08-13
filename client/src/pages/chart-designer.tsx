@@ -110,6 +110,7 @@ export default function ChartDesigner() {
       }
       
       setCanvasHistory(newHistory);
+      console.log(`📝 Canvas state saved. History length: ${newHistory.length}, Current index: ${newHistory.length - 1}`);
     } catch (error) {
       console.error('Error saving canvas state:', error);
     }
@@ -130,6 +131,11 @@ export default function ChartDesigner() {
         const previousState = canvasHistory[historyIndex - 1];
         setHistoryIndex(prev => prev - 1);
         
+        // Temporarily disable event listeners to prevent saving state during undo
+        fabricCanvas.off('object:added');
+        fabricCanvas.off('object:removed');
+        fabricCanvas.off('object:modified');
+        
         // Clear current canvas
         fabricCanvas.clear();
         
@@ -140,6 +146,20 @@ export default function ChartDesigner() {
           // Re-establish event handlers for all objects
           fabricCanvas.getObjects().forEach((obj: any) => {
             setupObjectEventHandlers(obj);
+          });
+          
+          // Re-enable canvas event listeners
+          fabricCanvas.on('object:added', () => {
+            updateLayers();
+            setTimeout(() => saveCanvasState(), 100);
+          });
+          fabricCanvas.on('object:removed', () => {
+            updateLayers();
+            setTimeout(() => saveCanvasState(), 100);
+          });
+          fabricCanvas.on('object:modified', () => {
+            updateLayers();
+            setTimeout(() => saveCanvasState(), 100);
           });
         });
         
@@ -168,6 +188,11 @@ export default function ChartDesigner() {
         const nextState = canvasHistory[historyIndex + 1];
         setHistoryIndex(prev => prev + 1);
         
+        // Temporarily disable event listeners to prevent saving state during redo
+        fabricCanvas.off('object:added');
+        fabricCanvas.off('object:removed');
+        fabricCanvas.off('object:modified');
+        
         // Clear current canvas
         fabricCanvas.clear();
         
@@ -178,6 +203,20 @@ export default function ChartDesigner() {
           // Re-establish event handlers for all objects
           fabricCanvas.getObjects().forEach((obj: any) => {
             setupObjectEventHandlers(obj);
+          });
+          
+          // Re-enable canvas event listeners
+          fabricCanvas.on('object:added', () => {
+            updateLayers();
+            setTimeout(() => saveCanvasState(), 100);
+          });
+          fabricCanvas.on('object:removed', () => {
+            updateLayers();
+            setTimeout(() => saveCanvasState(), 100);
+          });
+          fabricCanvas.on('object:modified', () => {
+            updateLayers();
+            setTimeout(() => saveCanvasState(), 100);
           });
         });
         
@@ -257,7 +296,8 @@ export default function ChartDesigner() {
         };
       });
 
-      // State will be saved automatically by canvas event handlers
+      // Save state after property change
+      setTimeout(() => saveCanvasState(), 100);
     } catch (error) {
       console.error('Error updating property:', error);
       toast({
@@ -309,10 +349,20 @@ export default function ChartDesigner() {
       updateLayers();
     }, 100);
     
-    // Add canvas event listeners to update layers
-    canvas.on('object:added', updateLayers);
-    canvas.on('object:removed', updateLayers);
-    canvas.on('object:modified', updateLayers);
+    // Add canvas event listeners to update layers and save state
+    canvas.on('object:added', () => {
+      updateLayers();
+      // Save state after short delay to allow all modifications to complete
+      setTimeout(() => saveCanvasState(), 100);
+    });
+    canvas.on('object:removed', () => {
+      updateLayers();
+      setTimeout(() => saveCanvasState(), 100);
+    });
+    canvas.on('object:modified', () => {
+      updateLayers();
+      setTimeout(() => saveCanvasState(), 100);
+    });
   };
 
   // Handle adding new elements from ElementLibraryPanel
