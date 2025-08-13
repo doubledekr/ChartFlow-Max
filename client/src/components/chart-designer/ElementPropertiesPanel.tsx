@@ -98,120 +98,114 @@ export function ElementPropertiesPanel({
         </div>
 
         <div className="space-y-4">
-          {/* Chart line properties - only show if properties exist */}
-          {isChartGroup && properties.properties && (
-            <div>
-              <Label className="text-xs">Line Thickness: {properties.properties.strokeWidth}px</Label>
-              <Slider
-                value={[properties.properties.strokeWidth]}
-                onValueChange={([value]) => onUpdateProperty('strokeWidth', value)}
-                min={1}
-                max={20}
-                step={1}
-                className="mt-2"
-              />
-            </div>
-          )}
-          
-          {isChartGroup && properties.properties && (
-            <div>
-              <Label className="text-xs">Opacity: {Math.round(properties.properties.opacity * 100)}%</Label>
-              <Slider
-                value={[properties.properties.opacity]}
-                onValueChange={([value]) => onUpdateProperty('opacity', value)}
-                min={0.1}
-                max={1}
-                step={0.1}
-                className="mt-2"
-              />
-            </div>
-          )}
-
-          {isChartGroup && properties.properties && (
-            <div>
-              <Label className="text-xs">Smoothness: {Math.round(properties.properties.smoothness * 100)}%</Label>
-              <Slider
-                value={[properties.properties.smoothness]}
-                onValueChange={([value]) => onUpdateProperty('smoothness', value)}
-                min={0}
-                max={1}
-                step={0.1}
-                className="mt-2"
-              />
-            </div>
-          )}
-
-          {isChartGroup && properties.properties && (
-            <div>
-              <Label className="text-xs">Line Color</Label>
-              <div className="flex gap-2 mt-2 flex-wrap">
-                {['#000000', '#ffffff', '#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'].map(color => (
-                  <button
-                    key={color}
-                    className={`w-6 h-6 rounded border-2 transition-all ${
-                      properties.properties.color === color 
-                        ? 'border-gray-800 scale-110' 
-                        : 'border-gray-300 hover:border-gray-400'
-                    } ${color === '#ffffff' ? 'border-gray-400' : ''}`}
-                    style={{ backgroundColor: color }}
-                    onClick={() => onUpdateProperty('color', color)}
-                    title={color === '#000000' ? 'Black' : color === '#ffffff' ? 'White' : color}
-                  />
-                ))}
+          {/* Chart line properties - only show when chart line is selected */}
+          {(elementType === 'chartline' || elementType === 'financial-chart-line') && properties.properties && (
+            <>
+              <div>
+                <Label className="text-xs">Line Thickness: {properties.properties.strokeWidth}px</Label>
+                <Slider
+                  value={[properties.properties.strokeWidth]}
+                  onValueChange={([value]) => onUpdateProperty('strokeWidth', value)}
+                  min={1}
+                  max={20}
+                  step={1}
+                  className="mt-2"
+                />
               </div>
-              <div className="mt-3">
-                <Label className="text-xs">Custom Color (Hex)</Label>
-                <div className="flex gap-2 mt-2">
-                  <input
-                    type="color"
-                    value={properties.properties.color}
-                    onChange={(e) => onUpdateProperty('color', e.target.value)}
-                    className="w-10 h-8 rounded border border-gray-300 cursor-pointer"
-                    title="Color picker"
-                  />
-                  <input
-                    type="text"
-                    value={properties.properties.color}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      // Allow input while typing, validate on blur
-                      if (value.match(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/)) {
-                        onUpdateProperty('color', value);
-                      }
-                    }}
-                    onBlur={(e) => {
-                      const value = e.target.value;
-                      // Validate and correct format on blur
-                      if (value.match(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/)) {
-                        onUpdateProperty('color', value.toUpperCase());
-                      } else {
-                        // Reset to current color if invalid
-                        e.target.value = properties.properties.color;
-                      }
-                    }}
-                    placeholder="#3B82F6"
-                    className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded font-mono"
-                    pattern="^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$"
-                    title="Enter hex color code (e.g., #3B82F6)"
-                  />
+              
+              <div>
+                <Label className="text-xs">Opacity: {Math.round(properties.properties.opacity * 100)}%</Label>
+                <Slider
+                  value={[properties.properties.opacity]}
+                  onValueChange={([value]) => onUpdateProperty('opacity', value)}
+                  min={0.1}
+                  max={1}
+                  step={0.1}
+                  className="mt-2"
+                />
+              </div>
+
+              <div>
+                <Label className="text-xs">Smoothness: {Math.round(properties.properties.smoothness * 100)}%</Label>
+                <Slider
+                  value={[properties.properties.smoothness]}
+                  onValueChange={([value]) => onUpdateProperty('smoothness', value)}
+                  min={0}
+                  max={1}
+                  step={0.1}
+                  className="mt-2"
+                />
+              </div>
+
+              <div>
+                <Label className="text-xs">Line Color</Label>
+                <div className="flex gap-2 mt-2 flex-wrap">
+                  {['#000000', '#ffffff', '#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'].map(color => (
+                    <button
+                      key={color}
+                      className={`w-6 h-6 rounded border-2 transition-all ${
+                        properties.properties.color === color 
+                          ? 'border-gray-800 scale-110' 
+                          : 'border-gray-300 hover:border-gray-400'
+                      } ${color === '#ffffff' ? 'border-gray-400' : ''}`}
+                      style={{ backgroundColor: color }}
+                      onClick={() => onUpdateProperty('color', color)}
+                      title={color === '#000000' ? 'Black' : color === '#ffffff' ? 'White' : color}
+                    />
+                  ))}
+                </div>
+                <div className="mt-3">
+                  <Label className="text-xs">Custom Color (Hex)</Label>
+                  <div className="flex gap-2 mt-2">
+                    <input
+                      type="color"
+                      value={properties.properties.color}
+                      onChange={(e) => onUpdateProperty('color', e.target.value)}
+                      className="w-10 h-8 rounded border border-gray-300 cursor-pointer"
+                      title="Color picker"
+                    />
+                    <input
+                      type="text"
+                      value={properties.properties.color}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        // Allow input while typing, validate on blur
+                        if (value.match(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/)) {
+                          onUpdateProperty('color', value);
+                        }
+                      }}
+                      onBlur={(e) => {
+                        const value = e.target.value;
+                        // Validate and correct format on blur
+                        if (value.match(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/)) {
+                          onUpdateProperty('color', value.toUpperCase());
+                        } else {
+                          // Reset to current color if invalid
+                          e.target.value = properties.properties.color;
+                        }
+                      }}
+                      placeholder="#3B82F6"
+                      className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded font-mono"
+                      pattern="^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$"
+                      title="Enter hex color code (e.g., #3B82F6)"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
 
-          {/* Visibility toggle for chart line */}
-          {isChartGroup && properties.properties && (
-            <div>
-              <Label className="text-xs">Visibility</Label>
-              <Button
-                variant={properties.properties.visible !== false ? "default" : "outline"}
-                size="sm"
-                className="w-full mt-1"
-                onClick={() => onUpdateProperty('visible', properties.properties.visible === false)}
-              >
-                {properties.properties.visible !== false ? 'Visible' : 'Hidden'}
-              </Button>
-            </div>
+              {/* Visibility toggle for chart line */}
+              <div>
+                <Label className="text-xs">Visibility</Label>
+                <Button
+                  variant={properties.properties.visible !== false ? "default" : "outline"}
+                  size="sm"
+                  className="w-full mt-1"
+                  onClick={() => onUpdateProperty('visible', properties.properties.visible === false)}
+                >
+                  {properties.properties.visible !== false ? 'Visible' : 'Hidden'}
+                </Button>
+              </div>
+            </>
           )}
           
           {/* Axis line controls */}
