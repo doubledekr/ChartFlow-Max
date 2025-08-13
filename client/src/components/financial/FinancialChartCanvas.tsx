@@ -810,7 +810,7 @@ export function FinancialChartCanvas({
     // Y-axis price labels (left side) 
     const yAxisLabels = yTicks.map((price: number, index: number) => new (window as any).fabric.Text(
       `$${price.toFixed(2)}`, {
-        left: chartStartX - 60,
+        left: chartStartX - 80, // Move further left to avoid overlap
         top: 120 + yScale(price) - 8,
         fontSize: 11,
         fontFamily: 'Inter, sans-serif',
@@ -818,7 +818,8 @@ export function FinancialChartCanvas({
         selectable: true,
         hasControls: false,
         hasBorders: true,
-        type: 'y-axis-label'
+        type: 'y-axis-label',
+        evented: true // Ensure events are enabled
       }
     ));
 
@@ -861,7 +862,8 @@ export function FinancialChartCanvas({
       selectable: true,
       hasControls: false,
       hasBorders: true,
-      type: 'y-axis-labels'
+      type: 'y-axis-labels',
+      evented: true // Ensure events are enabled
     });
 
     const xAxisGroup = new (window as any).fabric.Group(xAxisLabels, {
@@ -877,6 +879,64 @@ export function FinancialChartCanvas({
     fabricCanvasRef.current.add(yAxisGroup);
     fabricCanvasRef.current.add(xAxisGroup);
     fabricCanvasRef.current.add(fabricPath);
+
+    // Set up event handlers for Y-axis labels
+    yAxisGroup.on('selected', () => {
+      console.log('Y-axis labels selected (properties-based)');
+      if (onElementSelect) {
+        onElementSelect(yAxisGroup, {
+          type: 'y-axis-labels',
+          properties: { 
+            fontSize: 11, 
+            fill: '#666666', 
+            fontFamily: 'Inter, sans-serif', 
+            fontWeight: 'normal' 
+          },
+          updateFunction: (property: string, value: any) => {
+            console.log(`Updating Y-axis labels: ${property} = ${value}`);
+            const objects = yAxisGroup.getObjects();
+            objects.forEach((obj: any) => {
+              if (property === 'fontSize') obj.set('fontSize', value);
+              if (property === 'fill') obj.set('fill', value);
+              if (property === 'fontFamily') obj.set('fontFamily', value);
+              if (property === 'fontWeight') obj.set('fontWeight', value);
+            });
+            yAxisGroup.addWithUpdate();
+            fabricCanvasRef.current?.renderAll();
+            console.log(`Updated ${property} to ${value} for element:`, 'y-axis-labels');
+          }
+        });
+      }
+    });
+
+    // Set up event handlers for X-axis labels
+    xAxisGroup.on('selected', () => {
+      console.log('X-axis labels selected (properties-based)');
+      if (onElementSelect) {
+        onElementSelect(xAxisGroup, {
+          type: 'x-axis-labels',
+          properties: { 
+            fontSize: 11, 
+            fill: '#666666', 
+            fontFamily: 'Inter, sans-serif', 
+            fontWeight: 'normal' 
+          },
+          updateFunction: (property: string, value: any) => {
+            console.log(`Updating X-axis labels: ${property} = ${value}`);
+            const objects = xAxisGroup.getObjects();
+            objects.forEach((obj: any) => {
+              if (property === 'fontSize') obj.set('fontSize', value);
+              if (property === 'fill') obj.set('fill', value);
+              if (property === 'fontFamily') obj.set('fontFamily', value);
+              if (property === 'fontWeight') obj.set('fontWeight', value);
+            });
+            xAxisGroup.addWithUpdate();
+            fabricCanvasRef.current?.renderAll();
+            console.log(`Updated ${property} to ${value} for element:`, 'x-axis-labels');
+          }
+        });
+      }
+    });
 
     // Set up event handlers for chart line selection
     fabricPath.on('selected', () => {
