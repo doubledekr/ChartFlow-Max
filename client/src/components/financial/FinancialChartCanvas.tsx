@@ -233,8 +233,12 @@ export function FinancialChartCanvas({
       .domain(d3.extent(data, d => new Date(d.timestamp)) as [Date, Date])
       .range([0, chartWidth]);
 
+    // Fix Y-scale to use proper min/max including low values to prevent chart falling below axis
+    const yMin = d3.min(data, d => Math.min(d.low, d.close, d.open, d.high)) || 0;
+    const yMax = d3.max(data, d => Math.max(d.high, d.close, d.open, d.low)) || 100;
+    
     const yScale = d3.scaleLinear()
-      .domain(d3.extent(data, d => d.high) as [number, number])
+      .domain([yMin, yMax])
       .range([chartHeight, 0]);
 
     const g = svg.append('g')
@@ -873,29 +877,33 @@ export function FinancialChartCanvas({
         .domain(d3.extent(data, d => new Date(d.timestamp)) as [Date, Date])
         .range([0, chartWidth]);
 
+      // Fix Y-scale to use proper min/max including low values to prevent chart falling below axis
+      const yMin = d3.min(data, d => Math.min(d.low, d.close, d.open, d.high)) || 0;
+      const yMax = d3.max(data, d => Math.max(d.high, d.close, d.open, d.low)) || 100;
+      
       const yScale = d3.scaleLinear()
-        .domain(d3.extent(data, d => d.high) as [number, number])
+        .domain([yMin, yMax])
         .range([chartHeight, 0]);
 
       // Apply smoothness to curve interpolation instead of data filtering
       const getCurveType = (smoothness: number) => {
-        console.log('🎯 getCurveType called with smoothness:', smoothness);
+        console.log('🎯 REGENERATION - getCurveType called with smoothness:', smoothness);
         let curve;
         if (smoothness <= 0.2) {
           curve = d3.curveLinear; // Very angular, sharp lines
-          console.log('📐 Using linear curve');
+          console.log('📐 REGENERATION - Using linear curve');
         } else if (smoothness <= 0.4) {
           curve = d3.curveCardinal.tension(0.2); // Slightly curved
-          console.log('📈 Using cardinal curve with low tension');
+          console.log('📈 REGENERATION - Using cardinal curve with low tension');
         } else if (smoothness <= 0.6) {
           curve = d3.curveCardinal.tension(0.5); // Moderately curved
-          console.log('📈 Using cardinal curve with medium tension');
+          console.log('📈 REGENERATION - Using cardinal curve with medium tension');
         } else if (smoothness <= 0.8) {
           curve = d3.curveCatmullRom.alpha(0.3); // Smooth curves
-          console.log('🌊 Using catmull-rom curve with low alpha');
+          console.log('🌊 REGENERATION - Using catmull-rom curve with low alpha');
         } else {
           curve = d3.curveCatmullRom.alpha(0.8); // Very smooth, flowing curves
-          console.log('🌊 Using catmull-rom curve with high alpha');
+          console.log('🌊 REGENERATION - Using catmull-rom curve with high alpha');
         }
         return curve;
       };
@@ -906,7 +914,7 @@ export function FinancialChartCanvas({
         .curve(getCurveType(currentProperties.smoothness));
 
       const pathData = line(data) || '';
-      console.log('📊 Generated path data with smoothness:', currentProperties.smoothness, 'Path length:', pathData.length);
+      console.log('📊 REGENERATION - Generated path data with smoothness:', currentProperties.smoothness, 'Path length:', pathData.length);
 
       // Create draggable chart group with all elements and updated properties
       createDraggableChartGroupWithProperties(pathData, margin, xScale, yScale, chartWidth, chartHeight, currentProperties);

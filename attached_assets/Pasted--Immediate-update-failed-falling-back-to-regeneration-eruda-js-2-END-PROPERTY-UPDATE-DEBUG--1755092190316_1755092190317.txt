@@ -1,0 +1,1361 @@
+⚠️ Immediate update failed, falling back to regeneration
+eruda.js:2 === END PROPERTY UPDATE DEBUG ===
+eruda.js:2 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+eruda.js:2 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+eruda.js:2 ElementPropertiesPanel - elementType: chartline
+eruda.js:2 ElementPropertiesPanel - isChartGroup: true
+eruda.js:2 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.1, color: '#3b82f6', visible: true, …}
+eruda.js:2 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.1, color: '#3b82f6'}
+eruda.js:2 🔄 REGENERATED chart with smoothness = 0.1
+eruda.js:2 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.1, color: '#3b82f6'}
+eruda.js:2 🔄 REGENERATED chart with smoothness = 0.1
+eruda.js:2 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.1, color: '#3b82f6'}
+eruda.js:2 🔄 REGENERATED chart with smoothness = 0.1
+eruda.js:2 [vite] hot updated: /src/components/financial/FinancialChartCanvas.tsx
+eruda.js:2 [vite] hot updated: /src/index.css?v=Ykog3PMu5xmz58hqTRKr3
+eruda.js:2 🎯 getCurveType called with smoothness: 0.1
+eruda.js:2 📐 Using linear curve
+eruda.js:2 Object added: undefined
+eruda.js:2 Object added: undefined
+eruda.js:2 Object added: undefined
+eruda.js:2 Object added: undefined
+eruda.js:2 Object added: chartline
+fabric.min.js:1 Uncaught TypeError: Cannot read properties of null (reading 'clearRect')
+clearContext @ fabric.min.js:1
+renderCanvas @ fabric.min.js:1
+renderAll @ fabric.min.js:1
+createDraggableChartGroup @ FinancialChartCanvas.tsx:694
+(anonymous) @ FinancialChartCanvas.tsx:275
+setTimeout
+renderChart @ FinancialChartCanvas.tsx:274
+(anonymous) @ FinancialChartCanvas.tsx:203
+commitHookEffectListMount @ chunk-WERSD76P.js?v=44114c0c:16915
+commitPassiveMountOnFiber @ chunk-WERSD76P.js?v=44114c0c:18156
+commitPassiveMountEffects_complete @ chunk-WERSD76P.js?v=44114c0c:18129
+commitPassiveMountEffects_begin @ chunk-WERSD76P.js?v=44114c0c:18119
+commitPassiveMountEffects @ chunk-WERSD76P.js?v=44114c0c:18109
+flushPassiveEffectsImpl @ chunk-WERSD76P.js?v=44114c0c:19490
+flushPassiveEffects @ chunk-WERSD76P.js?v=44114c0c:19447
+commitRootImpl @ chunk-WERSD76P.js?v=44114c0c:19416
+commitRoot @ chunk-WERSD76P.js?v=44114c0c:19277
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=44114c0c:18895
+flushSyncCallbacks @ chunk-WERSD76P.js?v=44114c0c:9119
+flushSync @ chunk-WERSD76P.js?v=44114c0c:18959
+scheduleRefresh @ chunk-WERSD76P.js?v=44114c0c:20004
+(anonymous) @ @react-refresh:267
+performReactRefresh @ @react-refresh:256
+(anonymous) @ @react-refresh:677
+setTimeout
+(anonymous) @ @react-refresh:666
+validateRefreshBoundaryAndEnqueueUpdate @ @react-refresh:728
+(anonymous) @ FinancialChartCanvas.tsx:1126
+(anonymous) @ client:34
+(anonymous) @ client:218
+(anonymous) @ client:193
+queueUpdate @ client:193
+await in queueUpdate
+(anonymous) @ client:642
+handleMessage @ client:640
+(anonymous) @ client:550Understand this error
+eruda.js:2 [vite] server connection lost. Polling for restart...
+44548022-3aeb-460b-b6e0-6757401244d2-00-y4r7pzhaz1jx.spock.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arbsk%3A:32 Unrecognized feature: 'ambient-light-sensor'.Understand this warning
+44548022-3aeb-460b-b6e0-6757401244d2-00-y4r7pzhaz1jx.spock.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arbsk%3A:32 Unrecognized feature: 'battery'.Understand this warning
+44548022-3aeb-460b-b6e0-6757401244d2-00-y4r7pzhaz1jx.spock.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arbsk%3A:32 Unrecognized feature: 'execution-while-not-rendered'.Understand this warning
+44548022-3aeb-460b-b6e0-6757401244d2-00-y4r7pzhaz1jx.spock.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arbsk%3A:32 Unrecognized feature: 'execution-while-out-of-viewport'.Understand this warning
+44548022-3aeb-460b-b6e0-6757401244d2-00-y4r7pzhaz1jx.spock.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arbsk%3A:32 Unrecognized feature: 'layout-animations'.Understand this warning
+44548022-3aeb-460b-b6e0-6757401244d2-00-y4r7pzhaz1jx.spock.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arbsk%3A:32 Unrecognized feature: 'legacy-image-formats'.Understand this warning
+44548022-3aeb-460b-b6e0-6757401244d2-00-y4r7pzhaz1jx.spock.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arbsk%3A:32 Unrecognized feature: 'navigation-override'.Understand this warning
+44548022-3aeb-460b-b6e0-6757401244d2-00-y4r7pzhaz1jx.spock.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arbsk%3A:32 Unrecognized feature: 'oversized-images'.Understand this warning
+44548022-3aeb-460b-b6e0-6757401244d2-00-y4r7pzhaz1jx.spock.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arbsk%3A:32 Unrecognized feature: 'publickey-credentials'.Understand this warning
+workspace_iframe.html?initialPath=%2F&id=%3Arbsk%3A:32 Unrecognized feature: 'speaker-selection'.Understand this warning
+workspace_iframe.html?initialPath=%2F&id=%3Arbsk%3A:32 Unrecognized feature: 'unoptimized-images'.Understand this warning
+workspace_iframe.html?initialPath=%2F&id=%3Arbsk%3A:32 Unrecognized feature: 'unsized-media'.Understand this warning
+workspace_iframe.html?initialPath=%2F&id=%3Arbsk%3A:32 Allow attribute will take precedence over 'allowfullscreen'.Understand this warning
+workspace_iframe.html?initialPath=%2F&id=%3Arbsk%3A:32 Allow attribute will take precedence over 'allowpaymentrequest'.Understand this warning
+DevTools.js:316 [Violation] Added non-passive event listener to a scroll-blocking 'wheel' event. Consider marking event handler as 'passive' to make the page more responsive. See https://www.chromestatus.com/feature/5745543795965952
+add @ delegate.js:81
+(anonymous) @ $event.js:17
+t @ each.js:8
+(anonymous) @ $event.js:16
+on @ $.js:42
+value @ index.js:144
+t @ index.js:17
+value @ DevTools.js:316
+t @ DevTools.js:58
+_initDevTools @ eruda.js:244
+init @ eruda.js:51
+(anonymous) @ injected.js:2
+(anonymous) @ injected.js:307
+Console.js:61 [vite] connecting...
+Console.js:61 [vite] connected.
+Console.js:61 ElementPropertiesPanel - selectedElement: null
+Console.js:61 ElementPropertiesPanel - properties: null
+Detail.js:76 [Violation] Added non-passive event listener to a scroll-blocking 'wheel' event. Consider marking event handler as 'passive' to make the page more responsive. See https://www.chromestatus.com/feature/5745543795965952
+e.addEventListener @ Detail.js:76
+fabric.util.addListener @ fabric.min.js:1
+addOrRemove @ fabric.min.js:1
+_initEventListeners @ fabric.min.js:1
+_initInteractive @ fabric.min.js:1
+initialize @ fabric.min.js:1
+i @ fabric.min.js:1
+(anonymous) @ FinancialChartCanvas.tsx:50
+commitHookEffectListMount @ chunk-WERSD76P.js?v=44114c0c:16915
+commitPassiveMountOnFiber @ chunk-WERSD76P.js?v=44114c0c:18156
+commitPassiveMountEffects_complete @ chunk-WERSD76P.js?v=44114c0c:18129
+commitPassiveMountEffects_begin @ chunk-WERSD76P.js?v=44114c0c:18119
+commitPassiveMountEffects @ chunk-WERSD76P.js?v=44114c0c:18109
+flushPassiveEffectsImpl @ chunk-WERSD76P.js?v=44114c0c:19490
+flushPassiveEffects @ chunk-WERSD76P.js?v=44114c0c:19447
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=44114c0c:18868
+flushSyncCallbacks @ chunk-WERSD76P.js?v=44114c0c:9119
+commitRootImpl @ chunk-WERSD76P.js?v=44114c0c:19432
+commitRoot @ chunk-WERSD76P.js?v=44114c0c:19277
+finishConcurrentRender @ chunk-WERSD76P.js?v=44114c0c:18805
+performConcurrentWorkOnRoot @ chunk-WERSD76P.js?v=44114c0c:18718
+workLoop @ chunk-WERSD76P.js?v=44114c0c:197
+flushWork @ chunk-WERSD76P.js?v=44114c0c:176
+performWorkUntilDeadline @ chunk-WERSD76P.js?v=44114c0c:384
+Console.js:61 ElementPropertiesPanel - selectedElement: null
+Console.js:61 ElementPropertiesPanel - properties: null
+injected.js:253  GET https://44548022-3aeb-460b-b6e0-6757401244d2-00-y4r7pzhaz1jx.spock.replit.dev/api/logos 401 (Unauthorized)
+window.fetch @ Network.js:219
+apply @ injected.js:253
+(anonymous) @ queryClient.ts:32
+fetchFn @ @tanstack_react-query.js?v=44114c0c:840
+run @ @tanstack_react-query.js?v=44114c0c:494
+start @ @tanstack_react-query.js?v=44114c0c:536
+fetch @ @tanstack_react-query.js?v=44114c0c:926
+executeFetch_fn @ @tanstack_react-query.js?v=44114c0c:2211
+onSubscribe @ @tanstack_react-query.js?v=44114c0c:1898
+subscribe @ @tanstack_react-query.js?v=44114c0c:24
+(anonymous) @ @tanstack_react-query.js?v=44114c0c:3022
+subscribeToStore @ chunk-WERSD76P.js?v=44114c0c:11984
+commitHookEffectListMount @ chunk-WERSD76P.js?v=44114c0c:16915
+commitPassiveMountOnFiber @ chunk-WERSD76P.js?v=44114c0c:18156
+commitPassiveMountEffects_complete @ chunk-WERSD76P.js?v=44114c0c:18129
+commitPassiveMountEffects_begin @ chunk-WERSD76P.js?v=44114c0c:18119
+commitPassiveMountEffects @ chunk-WERSD76P.js?v=44114c0c:18109
+flushPassiveEffectsImpl @ chunk-WERSD76P.js?v=44114c0c:19490
+flushPassiveEffects @ chunk-WERSD76P.js?v=44114c0c:19447
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=44114c0c:18868
+flushSyncCallbacks @ chunk-WERSD76P.js?v=44114c0c:9119
+commitRootImpl @ chunk-WERSD76P.js?v=44114c0c:19432
+commitRoot @ chunk-WERSD76P.js?v=44114c0c:19277
+finishConcurrentRender @ chunk-WERSD76P.js?v=44114c0c:18805
+performConcurrentWorkOnRoot @ chunk-WERSD76P.js?v=44114c0c:18718
+workLoop @ chunk-WERSD76P.js?v=44114c0c:197
+flushWork @ chunk-WERSD76P.js?v=44114c0c:176
+performWorkUntilDeadline @ chunk-WERSD76P.js?v=44114c0c:384Understand this error
+injected.js:253  GET https://44548022-3aeb-460b-b6e0-6757401244d2-00-y4r7pzhaz1jx.spock.replit.dev/api/templates 401 (Unauthorized)
+window.fetch @ Network.js:219
+apply @ injected.js:253
+(anonymous) @ queryClient.ts:32
+fetchFn @ @tanstack_react-query.js?v=44114c0c:840
+run @ @tanstack_react-query.js?v=44114c0c:494
+start @ @tanstack_react-query.js?v=44114c0c:536
+fetch @ @tanstack_react-query.js?v=44114c0c:926
+executeFetch_fn @ @tanstack_react-query.js?v=44114c0c:2211
+onSubscribe @ @tanstack_react-query.js?v=44114c0c:1898
+subscribe @ @tanstack_react-query.js?v=44114c0c:24
+(anonymous) @ @tanstack_react-query.js?v=44114c0c:3022
+subscribeToStore @ chunk-WERSD76P.js?v=44114c0c:11984
+commitHookEffectListMount @ chunk-WERSD76P.js?v=44114c0c:16915
+commitPassiveMountOnFiber @ chunk-WERSD76P.js?v=44114c0c:18156
+commitPassiveMountEffects_complete @ chunk-WERSD76P.js?v=44114c0c:18129
+commitPassiveMountEffects_begin @ chunk-WERSD76P.js?v=44114c0c:18119
+commitPassiveMountEffects @ chunk-WERSD76P.js?v=44114c0c:18109
+flushPassiveEffectsImpl @ chunk-WERSD76P.js?v=44114c0c:19490
+flushPassiveEffects @ chunk-WERSD76P.js?v=44114c0c:19447
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=44114c0c:18868
+flushSyncCallbacks @ chunk-WERSD76P.js?v=44114c0c:9119
+commitRootImpl @ chunk-WERSD76P.js?v=44114c0c:19432
+commitRoot @ chunk-WERSD76P.js?v=44114c0c:19277
+finishConcurrentRender @ chunk-WERSD76P.js?v=44114c0c:18805
+performConcurrentWorkOnRoot @ chunk-WERSD76P.js?v=44114c0c:18718
+workLoop @ chunk-WERSD76P.js?v=44114c0c:197
+flushWork @ chunk-WERSD76P.js?v=44114c0c:176
+performWorkUntilDeadline @ chunk-WERSD76P.js?v=44114c0c:384Understand this error
+injected.js:253  GET https://44548022-3aeb-460b-b6e0-6757401244d2-00-y4r7pzhaz1jx.spock.replit.dev/api/instances 401 (Unauthorized)
+window.fetch @ Network.js:219
+apply @ injected.js:253
+(anonymous) @ queryClient.ts:32
+fetchFn @ @tanstack_react-query.js?v=44114c0c:840
+run @ @tanstack_react-query.js?v=44114c0c:494
+start @ @tanstack_react-query.js?v=44114c0c:536
+fetch @ @tanstack_react-query.js?v=44114c0c:926
+executeFetch_fn @ @tanstack_react-query.js?v=44114c0c:2211
+onSubscribe @ @tanstack_react-query.js?v=44114c0c:1898
+subscribe @ @tanstack_react-query.js?v=44114c0c:24
+(anonymous) @ @tanstack_react-query.js?v=44114c0c:3022
+subscribeToStore @ chunk-WERSD76P.js?v=44114c0c:11984
+commitHookEffectListMount @ chunk-WERSD76P.js?v=44114c0c:16915
+commitPassiveMountOnFiber @ chunk-WERSD76P.js?v=44114c0c:18156
+commitPassiveMountEffects_complete @ chunk-WERSD76P.js?v=44114c0c:18129
+commitPassiveMountEffects_begin @ chunk-WERSD76P.js?v=44114c0c:18119
+commitPassiveMountEffects @ chunk-WERSD76P.js?v=44114c0c:18109
+flushPassiveEffectsImpl @ chunk-WERSD76P.js?v=44114c0c:19490
+flushPassiveEffects @ chunk-WERSD76P.js?v=44114c0c:19447
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=44114c0c:18868
+flushSyncCallbacks @ chunk-WERSD76P.js?v=44114c0c:9119
+commitRootImpl @ chunk-WERSD76P.js?v=44114c0c:19432
+commitRoot @ chunk-WERSD76P.js?v=44114c0c:19277
+finishConcurrentRender @ chunk-WERSD76P.js?v=44114c0c:18805
+performConcurrentWorkOnRoot @ chunk-WERSD76P.js?v=44114c0c:18718
+workLoop @ chunk-WERSD76P.js?v=44114c0c:197
+flushWork @ chunk-WERSD76P.js?v=44114c0c:176
+performWorkUntilDeadline @ chunk-WERSD76P.js?v=44114c0c:384Understand this error
+Console.js:61 ElementPropertiesPanel - selectedElement: null
+Console.js:61 ElementPropertiesPanel - properties: null
+Console.js:61 🎯 getCurveType called with smoothness: 0.5
+Console.js:61 📈 Using cardinal curve with medium tension
+Console.js:61 Object added: undefined
+Console.js:61 Object added: undefined
+Console.js:61 Object added: undefined
+Console.js:61 Object added: undefined
+Console.js:61 Object added: chartline
+Console.js:61 Chart line selected
+Console.js:61 chart-designer.tsx - handleElementSelect called with: financial-chart-line financial-chart-line
+chart-designer.tsx:36 handleElementSelect call stack
+handleElementSelect @ chart-designer.tsx:36
+(anonymous) @ FinancialChartCanvas.tsx:564
+fire @ fabric.min.js:1
+(anonymous) @ fabric.min.js:1
+_fireSelectionEvents @ fabric.min.js:1
+setActiveObject @ fabric.min.js:1
+createDraggableChartGroup @ FinancialChartCanvas.tsx:697
+(anonymous) @ FinancialChartCanvas.tsx:275
+setTimeout
+renderChart @ FinancialChartCanvas.tsx:274
+(anonymous) @ FinancialChartCanvas.tsx:203
+commitHookEffectListMount @ chunk-WERSD76P.js?v=44114c0c:16915
+commitPassiveMountOnFiber @ chunk-WERSD76P.js?v=44114c0c:18156
+commitPassiveMountEffects_complete @ chunk-WERSD76P.js?v=44114c0c:18129
+commitPassiveMountEffects_begin @ chunk-WERSD76P.js?v=44114c0c:18119
+commitPassiveMountEffects @ chunk-WERSD76P.js?v=44114c0c:18109
+flushPassiveEffectsImpl @ chunk-WERSD76P.js?v=44114c0c:19490
+flushPassiveEffects @ chunk-WERSD76P.js?v=44114c0c:19447
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=44114c0c:18868
+flushSyncCallbacks @ chunk-WERSD76P.js?v=44114c0c:9119
+commitRootImpl @ chunk-WERSD76P.js?v=44114c0c:19432
+commitRoot @ chunk-WERSD76P.js?v=44114c0c:19277
+finishConcurrentRender @ chunk-WERSD76P.js?v=44114c0c:18805
+performConcurrentWorkOnRoot @ chunk-WERSD76P.js?v=44114c0c:18718
+workLoop @ chunk-WERSD76P.js?v=44114c0c:197
+flushWork @ chunk-WERSD76P.js?v=44114c0c:176
+performWorkUntilDeadline @ chunk-WERSD76P.js?v=44114c0c:384
+Console.js:61 chart-designer.tsx - State set to: financial-chart-line financial-chart-line
+Console.js:61 Canvas selection created: chartline
+Console.js:61 chart-designer.tsx - handleElementSelect called with: financial-chart-line chartline
+chart-designer.tsx:36 handleElementSelect call stack
+handleElementSelect @ chart-designer.tsx:36
+(anonymous) @ FinancialChartCanvas.tsx:136
+fire @ fabric.min.js:1
+_fireSelectionEvents @ fabric.min.js:1
+setActiveObject @ fabric.min.js:1
+createDraggableChartGroup @ FinancialChartCanvas.tsx:697
+(anonymous) @ FinancialChartCanvas.tsx:275
+setTimeout
+renderChart @ FinancialChartCanvas.tsx:274
+(anonymous) @ FinancialChartCanvas.tsx:203
+commitHookEffectListMount @ chunk-WERSD76P.js?v=44114c0c:16915
+commitPassiveMountOnFiber @ chunk-WERSD76P.js?v=44114c0c:18156
+commitPassiveMountEffects_complete @ chunk-WERSD76P.js?v=44114c0c:18129
+commitPassiveMountEffects_begin @ chunk-WERSD76P.js?v=44114c0c:18119
+commitPassiveMountEffects @ chunk-WERSD76P.js?v=44114c0c:18109
+flushPassiveEffectsImpl @ chunk-WERSD76P.js?v=44114c0c:19490
+flushPassiveEffects @ chunk-WERSD76P.js?v=44114c0c:19447
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=44114c0c:18868
+flushSyncCallbacks @ chunk-WERSD76P.js?v=44114c0c:9119
+commitRootImpl @ chunk-WERSD76P.js?v=44114c0c:19432
+commitRoot @ chunk-WERSD76P.js?v=44114c0c:19277
+finishConcurrentRender @ chunk-WERSD76P.js?v=44114c0c:18805
+performConcurrentWorkOnRoot @ chunk-WERSD76P.js?v=44114c0c:18718
+workLoop @ chunk-WERSD76P.js?v=44114c0c:197
+flushWork @ chunk-WERSD76P.js?v=44114c0c:176
+performWorkUntilDeadline @ chunk-WERSD76P.js?v=44114c0c:384
+Console.js:61 chart-designer.tsx - State set to: financial-chart-line chartline
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6', visible: true, …}
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.4
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.4, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.4 to chart line...
+Console.js:61 Before: smoothness = 0.4
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.4, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.4, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.4
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.4
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.3
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.3, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.3 to chart line...
+Console.js:61 Before: smoothness = 0.3
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.3, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.3, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.3
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.3
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.4
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.4, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.4 to chart line...
+Console.js:61 Before: smoothness = 0.4
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.4, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.4, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.4
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.4
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.5
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.5 to chart line...
+Console.js:61 Before: smoothness = 0.5
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.5
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.5
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.6
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.6, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.6 to chart line...
+Console.js:61 Before: smoothness = 0.6
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.6, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.6, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.6
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.6
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.7
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.7, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.7 to chart line...
+Console.js:61 Before: smoothness = 0.7
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.7, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.7, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.7
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.7
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.8
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.8, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.8 to chart line...
+Console.js:61 Before: smoothness = 0.8
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.8, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.8, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.8
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.8
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.7
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.7, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.7 to chart line...
+Console.js:61 Before: smoothness = 0.7
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.7, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.7, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.7
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.7
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.6
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.6, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.6 to chart line...
+Console.js:61 Before: smoothness = 0.6
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.6, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.6, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.6
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.6
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.5
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.5 to chart line...
+Console.js:61 Before: smoothness = 0.5
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.5
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.5
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.4
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.4, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.4 to chart line...
+Console.js:61 Before: smoothness = 0.4
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.4, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.4, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.4
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.4
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.3
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.3, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.3 to chart line...
+Console.js:61 Before: smoothness = 0.3
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.3, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.3, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.3
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.3
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.2
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.2, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.2 to chart line...
+Console.js:61 Before: smoothness = 0.2
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.2, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.2, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.2
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.2
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.1
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.1, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.1 to chart line...
+Console.js:61 Before: smoothness = 0.1
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.1, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.1, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.1
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.1
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.2
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.2, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.2 to chart line...
+Console.js:61 Before: smoothness = 0.2
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.2, color: '#3b82f6', visible: true, …}
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.3
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.3, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.3 to chart line...
+Console.js:61 Before: smoothness = 0.3
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.2, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.2
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.2
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.3, color: '#3b82f6', visible: true, …}
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.4
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.4, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.4 to chart line...
+Console.js:61 Before: smoothness = 0.4
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.3, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.3
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.3
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.4, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.4, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.4
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.4
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.5
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.5 to chart line...
+Console.js:61 Before: smoothness = 0.5
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.5
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.5
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.6
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.6, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.6 to chart line...
+Console.js:61 Before: smoothness = 0.6
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.6, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.6, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.6
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.6
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.7
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.7, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.7 to chart line...
+Console.js:61 Before: smoothness = 0.7
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.7, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.7, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.7
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.7
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.6
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.6, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.6 to chart line...
+Console.js:61 Before: smoothness = 0.6
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.6, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.6, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.6
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.6
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.5
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.5 to chart line...
+Console.js:61 Before: smoothness = 0.5
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.5
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.5
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.4
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.4, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.4 to chart line...
+Console.js:61 Before: smoothness = 0.4
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.4, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.4, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.4
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.4
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.3
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.3, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.3 to chart line...
+Console.js:61 Before: smoothness = 0.3
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.3, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.3, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.3
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.3
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.2
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.2, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.2 to chart line...
+Console.js:61 Before: smoothness = 0.2
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.2, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.2, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.2
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.2
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.3
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.3, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.3 to chart line...
+Console.js:61 Before: smoothness = 0.3
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.3, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.3, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.3
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.3
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.4
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.4, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.4 to chart line...
+Console.js:61 Before: smoothness = 0.4
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.4, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.4, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.4
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.4
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.5
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.5 to chart line...
+Console.js:61 Before: smoothness = 0.5
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.5
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.5
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.6
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.6, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.6 to chart line...
+Console.js:61 Before: smoothness = 0.6
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.6, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.6, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.6
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.6
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.7
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.7, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.7 to chart line...
+Console.js:61 Before: smoothness = 0.7
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.7, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.7, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.7
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.7
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.6
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.6, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.6 to chart line...
+Console.js:61 Before: smoothness = 0.6
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.6, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.6, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.6
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.6
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.5
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.5 to chart line...
+Console.js:61 Before: smoothness = 0.5
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.5
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.5
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.4
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.4, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.4 to chart line...
+Console.js:61 Before: smoothness = 0.4
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.4, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.4, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.4
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.4
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.3
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.3, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.3 to chart line...
+Console.js:61 Before: smoothness = 0.3
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.3, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.3, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.3
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.3
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.4
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.4, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.4 to chart line...
+Console.js:61 Before: smoothness = 0.4
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.4, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.4, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.4
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.4
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.5
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.5 to chart line...
+Console.js:61 Before: smoothness = 0.5
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.5
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.5
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.6
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.6, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.6 to chart line...
+Console.js:61 Before: smoothness = 0.6
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.6, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.6, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.6
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.6
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.7
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.7, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.7 to chart line...
+Console.js:61 Before: smoothness = 0.7
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.7, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.7, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.7
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.7
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.8
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.8, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.8 to chart line...
+Console.js:61 Before: smoothness = 0.8
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.8, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.8, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.8
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.8
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.9
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 Active object from Fabric: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 🔧 FALLBACK: Using active object as chart line
+Console.js:61 BEFORE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 New properties object: {strokeWidth: 3, opacity: 1, smoothness: 0.9, color: '#3b82f6'}
+Console.js:61 --- IMMEDIATE UPDATE ATTEMPT ---
+Console.js:61 Fabric canvas exists: true
+Console.js:61 Chart line object exists: true
+Console.js:61 Applying smoothness = 0.9 to chart line...
+Console.js:61 Before: smoothness = 0.9
+Console.js:61 Smoothness requires regeneration - returning false
+Console.js:61 AFTER IMMEDIATE UPDATE - Chart line properties: {strokeWidth: 3, stroke: '#3b82f6', opacity: 1, visible: true, fill: ''}
+Console.js:61 ⚠️ Immediate update failed, falling back to regeneration
+Console.js:61 === END PROPERTY UPDATE DEBUG ===
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.9, color: '#3b82f6', visible: true, …}
+Console.js:61 🔄 renderChartWithProperties called with: {strokeWidth: 3, opacity: 1, smoothness: 0.9, color: '#3b82f6'}
+Console.js:61 🔄 Current smoothness value: 0.9
+Console.js:61 🔄 REGENERATED chart with smoothness = 0.9
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 0.9, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 0.9, smoothness: 0.9, color: '#3b82f6', visible: true, …}
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 0.8, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 0.8, smoothness: 0.9, color: '#3b82f6', visible: true, …}
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 0.7, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 0.7, smoothness: 0.9, color: '#3b82f6', visible: true, …}
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 0.6, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 0.6, smoothness: 0.9, color: '#3b82f6', visible: true, …}
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 0.7, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 0.7, smoothness: 0.9, color: '#3b82f6', visible: true, …}
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 0.8, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 0.8, smoothness: 0.9, color: '#3b82f6', visible: true, …}
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 0.9, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 0.9, smoothness: 0.9, color: '#3b82f6', visible: true, …}
+Console.js:61 ElementPropertiesPanel - selectedElement: i {fill: '', dirty: false, stroke: '#3b82f6', strokeWidth: 3, opacity: 1, …}
+Console.js:61 ElementPropertiesPanel - properties: {type: 'chartline', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: {strokeWidth: 3, opacity: 1, smoothness: 0.9, color: '#3b82f6', visible: true, …}
