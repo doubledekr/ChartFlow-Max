@@ -376,6 +376,19 @@ export function FinancialChartCanvas({
     if (isMultiSymbol && multiSymbolData?.series) {
       console.log(`📊 Rendering ${multiSymbolData.series.length} symbol lines`);
       
+      // Clear existing chart elements when re-rendering multi-symbol chart
+      if (fabricCanvasRef.current) {
+        const objects = fabricCanvasRef.current.getObjects();
+        objects.forEach((obj: any) => {
+          if (obj.type === 'financial-chart-line' || obj.elementType === 'chartline' ||
+              obj.type === 'x-axis-line' || obj.type === 'y-axis-line' || 
+              obj.type === 'x-axis-labels' || obj.type === 'y-axis-labels' ||
+              obj.type === 'x-axis-label' || obj.type === 'y-axis-label') {
+            fabricCanvasRef.current?.remove(obj);
+          }
+        });
+      }
+      
       // Define colors for different symbols  
       const symbolColors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6'];
       
@@ -448,16 +461,17 @@ export function FinancialChartCanvas({
       // Add axes for multi-symbol chart after all lines are rendered
       setTimeout(() => {
         if (fabricCanvasRef.current && data.length > 0) {
-          // Remove existing axes to prevent duplicates
+          // Remove existing axes and chart lines to prevent duplicates when rescaling
           const objects = fabricCanvasRef.current.getObjects();
           objects.forEach((obj: any) => {
             if (obj.type === 'x-axis-line' || obj.type === 'y-axis-line' || 
-                obj.type === 'x-axis-labels' || obj.type === 'y-axis-labels') {
+                obj.type === 'x-axis-labels' || obj.type === 'y-axis-labels' ||
+                obj.type === 'x-axis-label' || obj.type === 'y-axis-label') {
               fabricCanvasRef.current?.remove(obj);
             }
           });
           
-          // Add fresh axes for multi-symbol chart
+          // Add fresh axes for multi-symbol chart with updated scaling
           addAxisElements(data, margin, width, height);
           fabricCanvasRef.current.renderAll();
           console.log('✅ Added axes for multi-symbol chart');
