@@ -49,10 +49,12 @@ export default function ChartDesigner() {
     if (!fabricCanvas) return;
     
     try {
-      // Save the complete canvas state as JSON
+      // Save the complete canvas state as JSON with all element properties
       const canvasState = JSON.stringify(fabricCanvas.toJSON([
         'id', 'selectable', 'hasControls', 'hasBorders', 'visible',
-        'strokeWidth', 'opacity', 'smoothness', 'color', 'symbol', 'elementType'
+        'strokeWidth', 'opacity', 'smoothness', 'color', 'symbol', 'elementType',
+        'text', 'fontSize', 'fontWeight', 'fontFamily', 'fill', 'backgroundColor',
+        'stroke', 'radius', 'width', 'height', 'angle', 'strokeDashArray', 'padding'
       ]));
       
       // Remove any states after current index (for branching)
@@ -72,27 +74,7 @@ export default function ChartDesigner() {
     }
   };
 
-  const handlePropertyUpdate = (property: string, value: any) => {
-    if (!selectedElement || !elementProperties) return;
 
-    // Save state before change for undo functionality
-    saveCanvasState();
-
-    // Update local properties state
-    setElementProperties((prev: any) => ({
-      ...prev,
-      properties: {
-        ...prev.properties,
-        [property]: value
-      }
-    }));
-
-    // Update the actual element via the canvas update function
-    if (elementProperties?.updateFunction) {
-      elementProperties.updateFunction(property, value);
-    }
-    console.log(`Updated ${property} to ${value} for element:`, selectedElement.type);
-  };
 
   const handleSaveProject = () => {
     toast({
@@ -105,20 +87,18 @@ export default function ChartDesigner() {
     if (historyIndex > 0 && fabricCanvas) {
       try {
         const previousState = canvasHistory[historyIndex - 1];
-        setHistoryIndex(historyIndex - 1);
+        setHistoryIndex(prev => prev - 1);
         
         // Clear current canvas
         fabricCanvas.clear();
         
-        // Load previous state
-        fabricCanvas.loadFromJSON(previousState, () => {
+        // Load previous state with proper callback handling
+        fabricCanvas.loadFromJSON(JSON.parse(previousState), () => {
           fabricCanvas.renderAll();
           
-          // Re-establish event handlers for new objects
+          // Re-establish event handlers for all objects
           fabricCanvas.getObjects().forEach((obj: any) => {
-            if (obj.elementType) {
-              setupObjectEventHandlers(obj);
-            }
+            setupObjectEventHandlers(obj);
           });
         });
         
@@ -145,20 +125,18 @@ export default function ChartDesigner() {
     if (historyIndex < canvasHistory.length - 1 && fabricCanvas) {
       try {
         const nextState = canvasHistory[historyIndex + 1];
-        setHistoryIndex(historyIndex + 1);
+        setHistoryIndex(prev => prev + 1);
         
         // Clear current canvas
         fabricCanvas.clear();
         
-        // Load next state
-        fabricCanvas.loadFromJSON(nextState, () => {
+        // Load next state with proper callback handling
+        fabricCanvas.loadFromJSON(JSON.parse(nextState), () => {
           fabricCanvas.renderAll();
           
-          // Re-establish event handlers for new objects
+          // Re-establish event handlers for all objects
           fabricCanvas.getObjects().forEach((obj: any) => {
-            if (obj.elementType) {
-              setupObjectEventHandlers(obj);
-            }
+            setupObjectEventHandlers(obj);
           });
         });
         
@@ -218,8 +196,7 @@ export default function ChartDesigner() {
         };
       });
 
-      // Save state for undo/redo
-      saveCanvasState();
+      // State will be saved automatically by canvas event handlers
     } catch (error) {
       console.error('Error updating property:', error);
       toast({
@@ -254,12 +231,14 @@ export default function ChartDesigner() {
   const handleCanvasReady = (canvas: any) => {
     setFabricCanvas(canvas);
     
-    // Save initial state
+    // Save initial state with all properties
     setTimeout(() => {
       if (canvas && canvasHistory.length === 0) {
         const initialState = JSON.stringify(canvas.toJSON([
           'id', 'selectable', 'hasControls', 'hasBorders', 'visible',
-          'strokeWidth', 'opacity', 'smoothness', 'color', 'symbol', 'elementType'
+          'strokeWidth', 'opacity', 'smoothness', 'color', 'symbol', 'elementType',
+          'text', 'fontSize', 'fontWeight', 'fontFamily', 'fill', 'backgroundColor',
+          'stroke', 'radius', 'width', 'height', 'angle', 'strokeDashArray', 'padding'
         ]));
         setCanvasHistory([initialState]);
         setHistoryIndex(0);
@@ -468,8 +447,8 @@ export default function ChartDesigner() {
       fabricCanvas.setActiveObject(newElement);
       fabricCanvas.renderAll();
 
-      // Trigger canvas change for undo/redo
-      saveCanvasState();
+      // Save state for undo/redo after element is added
+      setTimeout(() => saveCanvasState(), 50);
 
       toast({
         title: "Element Added",
@@ -491,8 +470,8 @@ export default function ChartDesigner() {
       setSelectedElement(null);
       setElementProperties(null);
       
-      // Save state for undo/redo
-      saveCanvasState();
+      // Save state for undo/redo after deletion
+      setTimeout(() => saveCanvasState(), 50);
 
       toast({
         title: "Element Deleted",
