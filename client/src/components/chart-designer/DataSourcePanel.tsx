@@ -21,7 +21,12 @@ export function DataSourcePanel({ onDataUpdate, onSymbolChange, onTimeframeChang
   const handleSymbolChange = (value: string) => {
     const upperValue = value.toUpperCase();
     updateConfig({ symbol: upperValue });
-    onSymbolChange?.(upperValue);
+    
+    // Parse multiple symbols and format them properly
+    const symbolsArray = upperValue.split(/[,\s]+/).map(s => s.trim()).filter(s => s.length > 0);
+    const formattedSymbol = symbolsArray.join(', ');
+    
+    onSymbolChange?.(formattedSymbol);
   };
 
   const handlePeriodChange = (value: string) => {

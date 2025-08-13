@@ -247,55 +247,28 @@ export function FinancialChartCanvas({
     setError(null);
     
     try {
-      // Always check if the symbol contains multiple tickers (comma or space separated)
-      const symbolsArray = symbol.split(/[,\s]+/).map(s => s.trim()).filter(s => s.length > 0);
+      console.log(`📊 Loading data for symbol: ${symbol}, timeframe: ${timeframe}`);
+      
+      // Check if symbol contains multiple tickers (comma separated after processing in DataSourcePanel)
+      const symbolsArray = symbol.split(',').map(s => s.trim()).filter(s => s.length > 0);
       const isMultiSymbolRequest = symbolsArray.length > 1;
       
-      // If we detect multiple symbols, force multi-symbol handling even if API doesn't
-      if (isMultiSymbolRequest) {
-        console.log(`📊 Detected multi-symbol request: ${symbolsArray.join(', ')}`);
-        // Format as comma-separated for API call
-        const formattedSymbol = symbolsArray.join(', ');
-        const response = await fetch(`/api/stocks/${formattedSymbol}/${timeframe}`);
-        if (!response.ok) throw new Error('Failed to fetch stock data');
-        
-        const stockData = await response.json();
-        
-        // Force multi-symbol mode regardless of API response structure
-        if (stockData.isMultiSymbol || symbolsArray.length > 1) {
-          setMultiSymbolData(stockData);
-          setIsMultiSymbol(true);
-          setData(stockData.combinedData || stockData.data || []); // Use combined data for Y-axis calculation
-        } else {
-          // Fallback: Convert single response to multi-symbol format
-          const multiData = {
-            isMultiSymbol: true,
-            symbols: symbolsArray,
-            series: [{ symbol: symbolsArray[0], data: stockData }],
-            combinedData: stockData
-          };
-          setMultiSymbolData(multiData);
-          setIsMultiSymbol(true);
-          setData(stockData);
-        }
+      const response = await fetch(`/api/stocks/${symbol}/${timeframe}`);
+      if (!response.ok) throw new Error('Failed to fetch stock data');
+      
+      const stockData = await response.json();
+      
+      // Handle multi-symbol or single symbol response
+      if (stockData.isMultiSymbol || isMultiSymbolRequest) {
+        console.log(`📊 Loading multi-symbol data: ${symbolsArray.join(', ')}`);
+        setMultiSymbolData(stockData);
+        setIsMultiSymbol(true);
+        setData(stockData.combinedData || stockData.data || []); // Use combined data for Y-axis calculation
       } else {
-        // Single symbol request
-        const response = await fetch(`/api/stocks/${symbol}/${timeframe}`);
-        if (!response.ok) throw new Error('Failed to fetch stock data');
-        
-        const stockData = await response.json();
-        
-        if (stockData.isMultiSymbol) {
-          console.log(`📊 Loading multi-symbol data: ${stockData.symbols.join(', ')}`);
-          setMultiSymbolData(stockData);
-          setIsMultiSymbol(true);
-          setData(stockData.combinedData || []); // Use combined data for Y-axis calculation
-        } else {
-          console.log(`📊 Loading single symbol data: ${symbol}`);
-          setMultiSymbolData(null);
-          setIsMultiSymbol(false);
-          setData(stockData);
-        }
+        console.log(`📊 Loading single symbol data: ${symbol}`);
+        setMultiSymbolData(null);
+        setIsMultiSymbol(false);
+        setData(stockData);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load stock data');
