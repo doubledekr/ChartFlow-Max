@@ -34,6 +34,8 @@ export function FinancialChartCanvas({
   const [symbol, setSymbol] = useState('AAPL');
   const [timeframe, setTimeframe] = useState('1Y');
   const [data, setData] = useState<ChartDataPoint[]>([]);
+  const [multiSymbolData, setMultiSymbolData] = useState<any>(null);
+  const [isMultiSymbol, setIsMultiSymbol] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedChartLine, setSelectedChartLine] = useState<any>(null);
@@ -226,22 +228,29 @@ export function FinancialChartCanvas({
     setError(null);
     
     try {
-      const response = await PolygonClient.getStockData(symbol, timeframe);
+      // Use direct API call to handle multi-symbol responses properly
+      const response = await fetch(`/api/stocks/${symbol}/${timeframe}`);
+      if (!response.ok) throw new Error('Failed to fetch stock data');
+      
+      const stockData = await response.json();
       
       // Handle multi-symbol response structure
-      if (response && typeof response === 'object' && 'isMultiSymbol' in response) {
-        // Use combined data for Y-axis scaling but store series info
-        setData((response as any).combinedData);
-        // Store series data for multi-line rendering
-        (window as any).multiSymbolData = response;
+      if (stockData.isMultiSymbol) {
+        console.log(`📊 Loading multi-symbol data: ${stockData.symbols.join(', ')}`);
+        setMultiSymbolData(stockData);
+        setIsMultiSymbol(true);
+        setData(stockData.combinedData || []); // Use combined data for Y-axis calculation
       } else {
-        // Single symbol response
-        setData(response as ChartDataPoint[]);
-        (window as any).multiSymbolData = null;
+        console.log(`📊 Loading single symbol data: ${symbol}`);
+        setMultiSymbolData(null);
+        setIsMultiSymbol(false);
+        setData(stockData);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load stock data');
       console.error('Error loading stock data:', err);
+      setMultiSymbolData(null);
+      setIsMultiSymbol(false);
     } finally {
       setLoading(false);
     }
@@ -257,9 +266,8 @@ export function FinancialChartCanvas({
     const chartWidth = Math.min(width - margin.left - margin.right, 680);
     const chartHeight = Math.min(height - margin.top - margin.bottom, 280);
 
-    // Check if we have multi-symbol data
-    const multiSymbolData = (window as any).multiSymbolData;
-    const isMultiSymbol = multiSymbolData?.isMultiSymbol;
+    // Check if we have multi-symbol data from component state
+    console.log('📊 Rendering chart - isMultiSymbol:', isMultiSymbol, 'symbols:', multiSymbolData?.symbols);
 
     const xScale = d3.scaleTime()
       .domain(d3.extent(data, d => new Date(d.timestamp)) as [Date, Date])
@@ -364,31 +372,56 @@ export function FinancialChartCanvas({
 
     // Render multiple lines for multi-symbol data or single line for single symbol
     if (isMultiSymbol && multiSymbolData?.series) {
-      console.log(`📊 Rendering ${multiSymbolData.series.length} symbol lines with unified Y-axis`);
+      console.log(`📊 Rendering ${multiSymbolData.series.length} symbol lines`);
       
-      // Predefined colors for different symbols
-      const symbolColors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4'];
+      // Define colors for different symbols  
+      const symbolColors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6'];
       
-      multiSymbolData.series.forEach((series: any, index: number) => {
+      multiSymbolData.series.forEach((seriesData: any, index: number) => {
+        const seriesColor = symbolColors[index % symbolColors.length];
+        console.log(`📈 Rendering ${seriesData.symbol} with color ${seriesColor}`);
+        
         const line = d3.line<ChartDataPoint>()
           .x(d => xScale(new Date(d.timestamp)))
           .y(d => yScale(d.close))
           .curve(getCurveType(lineProperties.smoothness));
-
-        const pathData = line(series.data) || '';
-        const color = symbolColors[index % symbolColors.length];
         
-        console.log(`📈 Creating line for ${series.symbol}: ${series.data.length} points, color: ${color}`);
+        const pathData = line(seriesData.data) || '';
+        console.log(`📊 Generated ${seriesData.symbol} path data with smoothness:`, lineProperties.smoothness, 'Path length:', pathData.length);
         
-        // Create draggable chart group with symbol-specific properties
-        setTimeout(() => {
-          createDraggableChartGroup(pathData, margin, xScale, yScale, chartWidth, chartHeight, {
-            symbol: series.symbol,
-            color: color,
+        // Add to Fabric canvas
+        if (fabricCanvasRef.current) {
+          const fabricPath = new (window as any).fabric.Path(pathData, {
+            left: margin.left,
+            top: margin.top,
+            stroke: seriesColor,
             strokeWidth: lineProperties.strokeWidth,
-            opacity: lineProperties.opacity
+            fill: '',
+            selectable: true,
+            hasControls: true,
+            hasBorders: true,
+            opacity: lineProperties.opacity,
+            visible: lineProperties.visible,
+            strokeLineCap: 'round',
+            strokeLineJoin: 'round'
           });
-        }, 100 + (index * 50)); // Stagger creation slightly
+          
+          // Add metadata for identification
+          fabricPath.set({
+            type: 'financial-chart-line',
+            elementType: 'chartline',
+            symbol: seriesData.symbol,
+            color: seriesColor
+          });
+          
+          fabricCanvasRef.current.add(fabricPath);
+          
+          // Set up selection handler for this line
+          fabricPath.on('selected', function() {
+            console.log(`Chart line selected for ${seriesData.symbol}`);
+            handleChartLineSelection(fabricPath);
+          });
+        }
       });
     } else {
       // Single symbol rendering
