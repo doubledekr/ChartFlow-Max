@@ -993,11 +993,24 @@ export function FinancialChartCanvas({
                 
                 // Create vertical grid lines
                 console.log('🔧 CANVAS: Creating vertical grid lines');
+                console.log('🔧 CANVAS: Sample X grid line data:', xGridLines[0]);
                 
-                // Create vertical grid lines from stored X grid data
+                // Create one bright blue test line for vertical grids
+                const testLineVertical = new (window as any).fabric.Line([400, 120, 400, 400], {
+                  stroke: '#0000ff',
+                  strokeWidth: 3,
+                  opacity: 1,
+                  selectable: true,
+                  evented: true,
+                  type: 'test-x-grid-line'
+                });
+                
+                console.log('🔧 CANVAS: Adding bright blue test line at X=400');
+                fabricCanvasRef.current?.add(testLineVertical);
                 
                 // Create actual vertical grid lines
                 xGridLines.forEach((gridLine: any, index: number) => {
+                  console.log(`🔧 CANVAS: X grid line ${index} data:`, gridLine.left, gridLine.width, gridLine.top);
                   const xPos = gridLine.left + (gridLine.width / 2); // Center of the grid line
                   const freshGridLine = new (window as any).fabric.Line([xPos, 120, xPos, 400], {
                     stroke: '#e5e7eb',
