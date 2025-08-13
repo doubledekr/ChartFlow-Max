@@ -12,12 +12,16 @@ interface FinancialChartCanvasProps {
   width?: number;
   height?: number;
   onElementSelect?: (element: any, properties: any) => void;
+  onCanvasReady?: (canvas: any) => void;
+  onCanvasChange?: () => void;
 }
 
 export function FinancialChartCanvas({ 
   width = 900, 
   height = 500, 
-  onElementSelect 
+  onElementSelect,
+  onCanvasReady,
+  onCanvasChange
 }: FinancialChartCanvasProps) {
   
   // Expose update function to parent component
@@ -72,7 +76,39 @@ export function FinancialChartCanvas({
         selectable: true,
       });
 
+      // Add element types for undo/redo tracking
+      title.set({ elementType: 'title' });
+      subtitle.set({ elementType: 'subtitle' });
+      
       canvas.add(title, subtitle);
+
+      // Notify parent component that canvas is ready
+      if (onCanvasReady) {
+        onCanvasReady(canvas);
+      }
+
+      // Set up event handlers for undo/redo functionality
+      canvas.on('object:modified', function(e: any) {
+        console.log('Object modified:', e.target?.elementType);
+        if (onCanvasChange) {
+          // Debounce canvas changes to avoid too frequent saves
+          setTimeout(() => onCanvasChange(), 100);
+        }
+      });
+
+      canvas.on('object:added', function(e: any) {
+        console.log('Object added:', e.target?.elementType);
+        if (onCanvasChange) {
+          setTimeout(() => onCanvasChange(), 100);
+        }
+      });
+
+      canvas.on('object:removed', function(e: any) {
+        console.log('Object removed:', e.target?.elementType);
+        if (onCanvasChange) {
+          setTimeout(() => onCanvasChange(), 100);
+        }
+      });
 
       // Set cursor states
       canvas.on('mouse:over', function(e: any) {
@@ -85,18 +121,68 @@ export function FinancialChartCanvas({
         document.body.style.cursor = 'default';
       });
 
-      // Prevent canvas from clearing selections on click
-      canvas.on('selection:cleared', function(e: any) {
-        console.log('Canvas selection cleared - this might be the issue!');
-      });
-
-      // Listen for selection updates
+      // Handle element selection for property panel
       canvas.on('selection:created', function(e: any) {
-        console.log('Canvas selection created:', e.selected?.[0]?.type);
+        const obj = e.selected?.[0];
+        if (obj && onElementSelect) {
+          console.log('Canvas selection created:', obj.elementType || obj.type);
+          onElementSelect(obj, {
+            type: obj.elementType || 'element',
+            properties: {
+              strokeWidth: obj.strokeWidth || 3,
+              opacity: obj.opacity || 1,
+              smoothness: obj.smoothness || 0.5,
+              color: obj.stroke || obj.fill || '#3b82f6',
+              visible: obj.visible !== false,
+              left: obj.left,
+              top: obj.top,
+              angle: obj.angle || 0
+            },
+            updateFunction: (property: string, value: any) => {
+              obj.set(property, value);
+              canvas.renderAll();
+              // Trigger canvas change for undo/redo
+              if (onCanvasChange) {
+                setTimeout(() => onCanvasChange(), 100);
+              }
+            }
+          });
+        }
       });
 
       canvas.on('selection:updated', function(e: any) {
-        console.log('Canvas selection updated:', e.selected?.[0]?.type);
+        const obj = e.selected?.[0];
+        if (obj && onElementSelect) {
+          console.log('Canvas selection updated:', obj.elementType || obj.type);
+          onElementSelect(obj, {
+            type: obj.elementType || 'element',
+            properties: {
+              strokeWidth: obj.strokeWidth || 3,
+              opacity: obj.opacity || 1,
+              smoothness: obj.smoothness || 0.5,
+              color: obj.stroke || obj.fill || '#3b82f6',
+              visible: obj.visible !== false,
+              left: obj.left,
+              top: obj.top,
+              angle: obj.angle || 0
+            },
+            updateFunction: (property: string, value: any) => {
+              obj.set(property, value);
+              canvas.renderAll();
+              // Trigger canvas change for undo/redo
+              if (onCanvasChange) {
+                setTimeout(() => onCanvasChange(), 100);
+              }
+            }
+          });
+        }
+      });
+
+      canvas.on('selection:cleared', function(e: any) {
+        console.log('Canvas selection cleared');
+        if (onElementSelect) {
+          onElementSelect(null, null);
+        }
       });
 
       return () => {
@@ -182,6 +268,7 @@ export function FinancialChartCanvas({
       selectable: true,
       hasControls: true,
       hasBorders: true,
+      elementType: 'annotation'
     });
 
     fabricCanvasRef.current.add(annotation);
@@ -194,6 +281,7 @@ export function FinancialChartCanvas({
     const line = new (window as any).fabric.Line([150, 200, 350, 150], {
       stroke: '#f59e0b',
       strokeWidth: 3,
+      elementType: 'trendline',
       selectable: true,
       hasControls: true,
       hasBorders: true,
@@ -225,7 +313,8 @@ export function FinancialChartCanvas({
       hasControls: false,
       hasBorders: false,
       strokeLineCap: 'round',
-      strokeLineJoin: 'round'
+      strokeLineJoin: 'round',
+      elementType: 'chartline'
     });
 
     // Convert D3 axis data to Fabric.js text objects

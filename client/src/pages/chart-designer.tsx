@@ -21,8 +21,9 @@ export default function ChartDesigner() {
   const [selectedInstance, setSelectedInstance] = useState<ChartInstance | null>(null);
   const [selectedElement, setSelectedElement] = useState<any>(null);
   const [elementProperties, setElementProperties] = useState<any>(null);
-  const [canvasHistory, setCanvasHistory] = useState<any[]>([]);
+  const [canvasHistory, setCanvasHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
+  const [fabricCanvas, setFabricCanvas] = useState<any>(null);
   const { toast } = useToast();
 
   const handleDataUpdate = () => {
@@ -45,19 +46,30 @@ export default function ChartDesigner() {
   };
 
   const saveCanvasState = () => {
-    // Save canvas state for undo/redo
-    const canvasState = {
-      timestamp: Date.now(),
-      elements: selectedElement ? [{
-        type: selectedElement.type,
-        properties: elementProperties?.properties
-      }] : []
-    };
+    if (!fabricCanvas) return;
     
-    const newHistory = canvasHistory.slice(0, historyIndex + 1);
-    newHistory.push(canvasState);
-    setCanvasHistory(newHistory);
-    setHistoryIndex(newHistory.length - 1);
+    try {
+      // Save the complete canvas state as JSON
+      const canvasState = JSON.stringify(fabricCanvas.toJSON([
+        'id', 'selectable', 'hasControls', 'hasBorders', 'visible',
+        'strokeWidth', 'opacity', 'smoothness', 'color', 'symbol', 'elementType'
+      ]));
+      
+      // Remove any states after current index (for branching)
+      const newHistory = canvasHistory.slice(0, historyIndex + 1);
+      newHistory.push(canvasState);
+      
+      // Limit history to 50 states to prevent memory issues
+      if (newHistory.length > 50) {
+        newHistory.shift();
+      } else {
+        setHistoryIndex(newHistory.length - 1);
+      }
+      
+      setCanvasHistory(newHistory);
+    } catch (error) {
+      console.error('Error saving canvas state:', error);
+    }
   };
 
   const handlePropertyUpdate = (property: string, value: any) => {
@@ -90,55 +102,120 @@ export default function ChartDesigner() {
   };
 
   const handleUndo = () => {
-    if (historyIndex > 0) {
-      const previousState = canvasHistory[historyIndex - 1];
-      setHistoryIndex(historyIndex - 1);
-      
-      // Apply previous state to canvas
-      if (previousState && selectedElement && elementProperties?.updateFunction) {
-        const elementState = previousState.elements.find((el: any) => el.type === selectedElement.type);
-        if (elementState) {
-          Object.entries(elementState.properties).forEach(([prop, value]) => {
-            elementProperties.updateFunction(prop, value);
+    if (historyIndex > 0 && fabricCanvas) {
+      try {
+        const previousState = canvasHistory[historyIndex - 1];
+        setHistoryIndex(historyIndex - 1);
+        
+        // Clear current canvas
+        fabricCanvas.clear();
+        
+        // Load previous state
+        fabricCanvas.loadFromJSON(previousState, () => {
+          fabricCanvas.renderAll();
+          
+          // Re-establish event handlers for new objects
+          fabricCanvas.getObjects().forEach((obj: any) => {
+            if (obj.elementType) {
+              setupObjectEventHandlers(obj);
+            }
           });
-          setElementProperties((prev: any) => ({
-            ...prev,
-            properties: elementState.properties
-          }));
-        }
+        });
+        
+        // Clear current selection
+        setSelectedElement(null);
+        setElementProperties(null);
+        
+        toast({
+          title: "Undo",
+          description: "Last action undone.",
+        });
+      } catch (error) {
+        console.error('Error during undo:', error);
+        toast({
+          title: "Undo Failed",
+          description: "Could not undo the last action.",
+          variant: "destructive",
+        });
       }
-      
-      toast({
-        title: "Undo",
-        description: "Last action undone.",
-      });
     }
   };
 
   const handleRedo = () => {
-    if (historyIndex < canvasHistory.length - 1) {
-      const nextState = canvasHistory[historyIndex + 1];
-      setHistoryIndex(historyIndex + 1);
-      
-      // Apply next state to canvas
-      if (nextState && selectedElement && elementProperties?.updateFunction) {
-        const elementState = nextState.elements.find((el: any) => el.type === selectedElement.type);
-        if (elementState) {
-          Object.entries(elementState.properties).forEach(([prop, value]) => {
-            elementProperties.updateFunction(prop, value);
+    if (historyIndex < canvasHistory.length - 1 && fabricCanvas) {
+      try {
+        const nextState = canvasHistory[historyIndex + 1];
+        setHistoryIndex(historyIndex + 1);
+        
+        // Clear current canvas
+        fabricCanvas.clear();
+        
+        // Load next state
+        fabricCanvas.loadFromJSON(nextState, () => {
+          fabricCanvas.renderAll();
+          
+          // Re-establish event handlers for new objects
+          fabricCanvas.getObjects().forEach((obj: any) => {
+            if (obj.elementType) {
+              setupObjectEventHandlers(obj);
+            }
           });
-          setElementProperties((prev: any) => ({
-            ...prev,
-            properties: elementState.properties
-          }));
-        }
+        });
+        
+        // Clear current selection
+        setSelectedElement(null);
+        setElementProperties(null);
+        
+        toast({
+          title: "Redo", 
+          description: "Action redone.",
+        });
+      } catch (error) {
+        console.error('Error during redo:', error);
+        toast({
+          title: "Redo Failed",
+          description: "Could not redo the action.",
+          variant: "destructive",
+        });
       }
-      
-      toast({
-        title: "Redo", 
-        description: "Action redone.",
-      });
     }
+  };
+
+  // Helper function to setup event handlers for canvas objects
+  const setupObjectEventHandlers = (obj: any) => {
+    obj.on('selected', () => {
+      handleElementSelect(obj, {
+        type: obj.elementType || 'element',
+        properties: {
+          strokeWidth: obj.strokeWidth || 3,
+          opacity: obj.opacity || 1,
+          smoothness: obj.smoothness || 0.5,
+          color: obj.stroke || obj.fill || '#3b82f6',
+          visible: obj.visible !== false
+        },
+        updateFunction: (property: string, value: any) => {
+          obj.set(property, value);
+          fabricCanvas.renderAll();
+        }
+      });
+    });
+  };
+
+  // Initialize canvas state when fabric canvas is ready
+  const handleCanvasReady = (canvas: any) => {
+    setFabricCanvas(canvas);
+    
+    // Save initial state
+    setTimeout(() => {
+      if (canvas && canvasHistory.length === 0) {
+        const initialState = JSON.stringify(canvas.toJSON([
+          'id', 'selectable', 'hasControls', 'hasBorders', 'visible',
+          'strokeWidth', 'opacity', 'smoothness', 'color', 'symbol', 'elementType'
+        ]));
+        setCanvasHistory([initialState]);
+        setHistoryIndex(0);
+      }
+    }, 100);
   };
 
   return (
@@ -160,7 +237,10 @@ export default function ChartDesigner() {
               variant="outline"
               size="sm"
               onClick={handleUndo}
-              className="toolbar-btn text-gray-700 hover:text-gray-900"
+              disabled={historyIndex <= 0}
+              className={`toolbar-btn text-gray-700 hover:text-gray-900 ${
+                historyIndex <= 0 ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
               data-testid="button-undo"
             >
               <Undo className="mr-1" size={16} />
@@ -170,7 +250,10 @@ export default function ChartDesigner() {
               variant="outline"
               size="sm"
               onClick={handleRedo}
-              className="toolbar-btn text-gray-700 hover:text-gray-900"
+              disabled={historyIndex >= canvasHistory.length - 1}
+              className={`toolbar-btn text-gray-700 hover:text-gray-900 ${
+                historyIndex >= canvasHistory.length - 1 ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
               data-testid="button-redo"
             >
               <Redo className="mr-1" size={16} />
@@ -230,7 +313,11 @@ export default function ChartDesigner() {
 
         {/* Center Panel - Canvas */}
         <div className="flex-1 p-4">
-          <FinancialChartCanvas onElementSelect={handleElementSelect} />
+          <FinancialChartCanvas 
+            onElementSelect={handleElementSelect} 
+            onCanvasReady={handleCanvasReady}
+            onCanvasChange={saveCanvasState}
+          />
         </div>
 
         {/* Right Panel - Templates & Instances */}
