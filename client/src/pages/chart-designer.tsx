@@ -9,6 +9,7 @@ import { TypographyPanel } from '@/components/chart-designer/TypographyPanel';
 import { AxisFormattingPanel } from '@/components/chart-designer/AxisFormattingPanel';
 import { ElementLibraryPanel } from '@/components/chart-designer/ElementLibraryPanel';
 import { LogoPanel } from '@/components/chart-designer/LogoPanel';
+import { LayerPanel } from '@/components/chart-designer/LayerPanel';
 import { FinancialChartCanvas } from '@/components/financial';
 import { TemplateManager, InstanceManager } from '@/components/templates';
 import { ElementPropertiesPanel } from '@/components/chart-designer/ElementPropertiesPanel';
@@ -24,6 +25,14 @@ export default function ChartDesigner() {
   const [canvasHistory, setCanvasHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [fabricCanvas, setFabricCanvas] = useState<any>(null);
+  const [layers, setLayers] = useState<Array<{
+    id: string;
+    type: string;
+    name: string;
+    visible: boolean;
+    locked?: boolean;
+    zIndex: number;
+  }>>([]);
   const chartUpdateRef = useRef<((property: string, value: any) => void) | null>(null);
   const { toast } = useToast();
 
@@ -44,6 +53,116 @@ export default function ChartDesigner() {
     setSelectedElement(element);
     setElementProperties(properties);
     console.log('chart-designer.tsx - State set to:', element?.type, properties?.type);
+    
+    // Update layers when canvas changes
+    updateLayers();
+  };
+
+  const updateLayers = () => {
+    if (!fabricCanvas) return;
+    
+    const objects = fabricCanvas.getObjects();
+    const layerItems = objects.map((obj: any, index: number) => ({
+      id: obj.id || `layer-${index}`,
+      type: obj.type || 'unknown',
+      name: obj.elementType || obj.type || 'Unknown',
+      visible: obj.visible !== false,
+      locked: !obj.selectable,
+      zIndex: index
+    }));
+    
+    setLayers(layerItems);
+  };
+
+  const handleLayerSelect = (layerId: string) => {
+    if (!fabricCanvas) return;
+    
+    const object = fabricCanvas.getObjects().find((obj: any) => 
+      (obj.id || `layer-${fabricCanvas.getObjects().indexOf(obj)}`) === layerId
+    );
+    
+    if (object) {
+      fabricCanvas.setActiveObject(object);
+      fabricCanvas.renderAll();
+      
+      // Trigger the same selection logic as clicking on the canvas
+      const properties = {
+        type: object.elementType || object.type,
+        properties: {
+          strokeWidth: object.strokeWidth,
+          opacity: object.opacity,
+          smoothness: object.smoothness,
+          color: object.stroke || object.fill,
+          visible: object.visible !== false,
+          left: object.left,
+          top: object.top,
+          angle: object.angle
+        }
+      };
+      
+      handleElementSelect(object, properties);
+    }
+  };
+
+  const handleToggleVisibility = (layerId: string) => {
+    if (!fabricCanvas) return;
+    
+    const object = fabricCanvas.getObjects().find((obj: any) => 
+      (obj.id || `layer-${fabricCanvas.getObjects().indexOf(obj)}`) === layerId
+    );
+    
+    if (object) {
+      object.set('visible', !object.visible);
+      fabricCanvas.renderAll();
+      updateLayers();
+      saveCanvasState();
+    }
+  };
+
+  const handleMoveLayer = (layerId: string, direction: 'up' | 'down') => {
+    if (!fabricCanvas) return;
+    
+    const object = fabricCanvas.getObjects().find((obj: any) => 
+      (obj.id || `layer-${fabricCanvas.getObjects().indexOf(obj)}`) === layerId
+    );
+    
+    if (object) {
+      if (direction === 'up') {
+        fabricCanvas.bringForward(object);
+      } else {
+        fabricCanvas.sendBackwards(object);
+      }
+      fabricCanvas.renderAll();
+      updateLayers();
+      saveCanvasState();
+    }
+  };
+
+  const handleDeleteLayer = (layerId: string) => {
+    if (!fabricCanvas) return;
+    
+    const object = fabricCanvas.getObjects().find((obj: any) => 
+      (obj.id || `layer-${fabricCanvas.getObjects().indexOf(obj)}`) === layerId
+    );
+    
+    if (object) {
+      fabricCanvas.remove(object);
+      fabricCanvas.renderAll();
+      
+      // Clear selection if deleted object was selected
+      if (selectedElement === object) {
+        setSelectedElement(null);
+        setElementProperties(null);
+      }
+      
+      updateLayers();
+      saveCanvasState();
+      
+      toast({
+        title: "Layer deleted",
+        description: "The selected layer has been removed from the chart.",
+      });
+    }
   };
 
   const saveCanvasState = () => {
@@ -264,7 +383,15 @@ export default function ChartDesigner() {
         setCanvasHistory([initialState]);
         setHistoryIndex(0);
       }
+      
+      // Update layers initially
+      updateLayers();
     }, 100);
+    
+    // Add canvas event listeners to update layers
+    canvas.on('object:added', updateLayers);
+    canvas.on('object:removed', updateLayers);
+    canvas.on('object:modified', updateLayers);
   };
 
   // Handle adding new elements from ElementLibraryPanel
@@ -614,10 +741,22 @@ export default function ChartDesigner() {
           />
         </div>
 
-        {/* Right Panel - Templates & Instances */}
+        {/* Right Panel - Layers, Templates & Instances */}
         <div className="w-96 bg-white border-l border-gray-200 flex flex-col">
           <div className="p-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Templates & Charts</h2>
+            <h2 className="text-lg font-semibold text-gray-900">Layers & Templates</h2>
+          </div>
+          
+          {/* Layer Panel Section */}
+          <div className="p-4 border-b border-gray-200">
+            <LayerPanel 
+              layers={layers}
+              selectedLayerId={selectedElement?.id || (selectedElement ? `layer-${fabricCanvas?.getObjects().indexOf(selectedElement)}` : undefined)}
+              onSelectLayer={handleLayerSelect}
+              onToggleVisibility={handleToggleVisibility}
+              onMoveLayer={handleMoveLayer}
+              onDeleteLayer={handleDeleteLayer}
+            />
           </div>
           
           {/* Templates Section */}
