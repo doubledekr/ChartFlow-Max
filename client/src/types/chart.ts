@@ -37,10 +37,13 @@ export interface ChartConfig {
   gradientIntensity: number;
   
   // Line Styling
-  lineStyle: 'solid' | 'dashed' | 'dotted' | 'dashDot' | 'longDash';
+  lineStyle: 'solid' | 'dashed' | 'dotted' | 'dashDot' | 'longDash' | 'doubleDot';
   lineThickness: number;
-  curveStyle: 'linear' | 'smooth' | 'step' | 'basis' | 'monotone';
+  curveStyle: 'linear' | 'smooth' | 'step' | 'basis' | 'monotone' | 'cardinal';
   lineCap: 'round' | 'square' | 'butt';
+  pointStyle: 'none' | 'circle' | 'square' | 'triangle' | 'diamond' | 'cross';
+  pointSize: number;
+  showJunctionDots: boolean;
   
   // Typography
   title: {

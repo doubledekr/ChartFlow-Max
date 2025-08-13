@@ -17,6 +17,9 @@ const defaultConfig: ChartConfig = {
   lineThickness: 2,
   curveStyle: 'linear',
   lineCap: 'round',
+  pointStyle: 'none',
+  pointSize: 4,
+  showJunctionDots: false,
   
   // Typography
   title: {
