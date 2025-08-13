@@ -179,9 +179,76 @@ export function ElementPropertiesPanel({
             </>
           )}
 
-          {/* Axis label properties */}
-          {(elementType === 'y-axis-labels' || elementType === 'x-axis-labels') && properties.properties && (
+          {/* Y-axis label properties */}
+          {elementType === 'y-axis-labels' && properties.properties && (
             <>
+              <div className="mb-4">
+                <Label className="text-sm font-medium">Y-Axis Labels (Price Numbers)</Label>
+              </div>
+              <div>
+                <Label className="text-xs">Font Size: {properties.properties.fontSize}px</Label>
+                <Slider
+                  value={[properties.properties.fontSize]}
+                  onValueChange={([value]) => onUpdateProperty('fontSize', value)}
+                  min={8}
+                  max={24}
+                  step={1}
+                  className="mt-2"
+                />
+              </div>
+              
+              <div>
+                <Label className="text-xs">Font Color</Label>
+                <div className="mt-2 flex gap-2">
+                  <input
+                    type="color"
+                    value={properties.properties.fill}
+                    onChange={(e) => onUpdateProperty('fill', e.target.value)}
+                    className="w-12 h-8 rounded border border-gray-300 cursor-pointer"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label className="text-xs">Font Family</Label>
+                <Select value={properties.properties.fontFamily} onValueChange={(value) => onUpdateProperty('fontFamily', value)}>
+                  <SelectTrigger className="mt-2">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Inter, sans-serif">Inter</SelectItem>
+                    <SelectItem value="Arial, sans-serif">Arial</SelectItem>
+                    <SelectItem value="Helvetica, sans-serif">Helvetica</SelectItem>
+                    <SelectItem value="Times New Roman, serif">Times New Roman</SelectItem>
+                    <SelectItem value="Georgia, serif">Georgia</SelectItem>
+                    <SelectItem value="Courier New, monospace">Courier New</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label className="text-xs">Font Weight</Label>
+                <Select value={properties.properties.fontWeight} onValueChange={(value) => onUpdateProperty('fontWeight', value)}>
+                  <SelectTrigger className="mt-2">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="normal">Normal</SelectItem>
+                    <SelectItem value="bold">Bold</SelectItem>
+                    <SelectItem value="600">Semi Bold</SelectItem>
+                    <SelectItem value="300">Light</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </>
+          )}
+
+          {/* X-axis label properties */}
+          {elementType === 'x-axis-labels' && properties.properties && (
+            <>
+              <div className="mb-4">
+                <Label className="text-sm font-medium">X-Axis Labels (Dates)</Label>
+              </div>
               <div>
                 <Label className="text-xs">Font Size: {properties.properties.fontSize}px</Label>
                 <Slider
