@@ -1177,6 +1177,7 @@ export function FinancialChartCanvas({
           properties: { 
             strokeWidth: yAxisLine.strokeWidth || 1, 
             stroke: yAxisLine.stroke || '#666666',
+            strokeDashArray: yAxisLine.strokeDashArray || null,
             opacity: yAxisLine.opacity || 1,
             visible: yAxisLine.visible !== false
           },
@@ -1200,6 +1201,7 @@ export function FinancialChartCanvas({
           properties: { 
             strokeWidth: xAxisLine.strokeWidth || 1, 
             stroke: xAxisLine.stroke || '#666666',
+            strokeDashArray: xAxisLine.strokeDashArray || null,
             opacity: xAxisLine.opacity || 1,
             visible: xAxisLine.visible !== false
           },
@@ -1262,7 +1264,7 @@ export function FinancialChartCanvas({
     xAxisGroup.on('selected', () => {
       console.log('X-axis labels selected (properties-based)');
       if (onElementSelect) {
-        onElementSelect(xAxisGroup, {
+        onElementSelect('x-axis-labels', {
           type: 'x-axis-labels',
           properties: { 
             fontSize: xAxisLabels[0]?.fontSize || 11, 
