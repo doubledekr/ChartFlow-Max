@@ -1604,8 +1604,9 @@ export function FinancialChartCanvas({
     if (!immediateSuccess) {
       console.log('⚠️ Immediate update failed, falling back to regeneration');
       setTimeout(() => {
+        console.log(`🔄 REGENERATING chart with ${property} = ${value}`);
+        console.log('🔄 Passing properties to regeneration:', newProperties);
         renderChartWithProperties(newProperties);
-        console.log(`🔄 REGENERATED chart with ${property} = ${value}`);
       }, 0);
     } else {
       console.log(`✅ IMMEDIATE UPDATE ${property} = ${value}`);
@@ -1654,6 +1655,8 @@ export function FinancialChartCanvas({
         case 'showJunctions':
         case 'markerFrequency':
         case 'strokeDashArray':
+        case 'markerStyle':
+        case 'markerSize':
           console.log(`${property} requires regeneration - returning false`);
           return false;
         default:
