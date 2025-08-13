@@ -1,0 +1,24 @@
+{strokeWidth: 1, opacity: 1, smoothness: 0.5, color: '#666666', visible: true, …}
+chunk-WERSD76P.js?v=bb89766c:2074 The specified value "" does not conform to the required format.  The format is "#rrggbb" where rr, gg, bb are two-digit hexadecimal numbers.
+Console.js:61 📝 Canvas state saved. History length: 2, Current index: 1
+Console.js:61 ElementPropertiesPanel - selectedElement: 
+i {stroke: '#666666', dirty: false, strokeWidth: 1, selectable: true, hasControls: false, …}
+Console.js:61 ElementPropertiesPanel - properties: 
+{type: 'y-axis-line', properties: {…}}
+Console.js:61 ElementPropertiesPanel - elementType: y-axis-line
+Console.js:61 ElementPropertiesPanel - isChartGroup: false
+Console.js:61 ElementPropertiesPanel - properties.properties: 
+{strokeWidth: 1, opacity: 1, smoothness: 0.5, color: '#666666', visible: true, …}
+chunk-WERSD76P.js?v=bb89766c:2074 The specified value "" does not conform to the required format.  The format is "#rrggbb" where rr, gg, bb are two-digit hexadecimal numbers.
+﻿
+
+A more reliable and productive Chrome DevTools
+In Chrome 139, DevTools prioritized product excellence and developer experience. We tackled numerous known issues, including some years-old ones, and also made improvements to newer features. Behind the scenes, we enhanced our test coverage and migrated tests to more robust foundations.
+
+We hope you will experience these numerous subtle fixes across various panels, making your daily debugging and development workflows smoother, more reliable, and more productive.
+
+Upload images in AI assistance for styling
+To provide additional visual context to your prompts, you can now upload arbitrary images in the AI assistance panel when you start your conversation from the Elements panel with a DOM element selected as context.
+
+Check out the highlights from I/O
+Check out the features we announced at Google I/O 2025, including features with Gemini integration: modify and save CSS changes to your workspace, ask about performance insights, annotate performance findings, and more.

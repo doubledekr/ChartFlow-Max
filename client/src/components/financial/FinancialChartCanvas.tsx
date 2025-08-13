@@ -768,6 +768,7 @@ export function FinancialChartCanvas({
         chartStartX, yPos, chartStartX + chartWidth, yPos
       ], {
         stroke: '#e5e7eb',
+        fill: '',
         strokeWidth: 0.5,
         selectable: false,
         evented: false,
@@ -786,6 +787,7 @@ export function FinancialChartCanvas({
         xPos, margin.top, xPos, margin.top + chartHeight
       ], {
         stroke: '#e5e7eb',
+        fill: '',
         strokeWidth: 0.5,
         selectable: false,
         evented: false,
@@ -897,23 +899,26 @@ export function FinancialChartCanvas({
             if (property === 'visible') yAxisLine.set('visible', value);
             if (property === 'gridLinesVisible') {
               const yGridLines = (fabricCanvasRef.current as any)?.yGridLines || [];
+              console.log('Y Grid Lines stored:', yGridLines.length);
+              
               if (value) {
-                // Create grid group and add to canvas
-                const yGridGroup = new (window as any).fabric.Group(yGridLines, {
-                  type: 'y-grid-lines-group',
-                  selectable: false,
-                  evented: false,
-                  opacity: 0.3
-                });
-                fabricCanvasRef.current?.add(yGridGroup);
-                console.log('Added Y grid lines to canvas');
-              } else {
-                // Remove grid group from canvas
-                const yGridGroup = fabricCanvasRef.current?.getObjects().find((obj: any) => obj.type === 'y-grid-lines-group');
-                if (yGridGroup) {
-                  fabricCanvasRef.current?.remove(yGridGroup);
-                  console.log('Removed Y grid lines from canvas');
+                // Remove existing grid group first
+                const existingYGridGroup = fabricCanvasRef.current?.getObjects().find((obj: any) => obj.type === 'y-grid-lines-group');
+                if (existingYGridGroup) {
+                  fabricCanvasRef.current?.remove(existingYGridGroup);
                 }
+                
+                // Add individual grid lines to canvas
+                yGridLines.forEach((gridLine: any) => {
+                  fabricCanvasRef.current?.add(gridLine);
+                });
+                console.log('Added Y grid lines to canvas individually:', yGridLines.length);
+              } else {
+                // Remove individual grid lines from canvas
+                yGridLines.forEach((gridLine: any) => {
+                  fabricCanvasRef.current?.remove(gridLine);
+                });
+                console.log('Removed Y grid lines from canvas');
               }
             }
             fabricCanvasRef.current?.renderAll();
@@ -944,23 +949,26 @@ export function FinancialChartCanvas({
             if (property === 'visible') xAxisLine.set('visible', value);
             if (property === 'gridLinesVisible') {
               const xGridLines = (fabricCanvasRef.current as any)?.xGridLines || [];
+              console.log('X Grid Lines stored:', xGridLines.length);
+              
               if (value) {
-                // Create grid group and add to canvas
-                const xGridGroup = new (window as any).fabric.Group(xGridLines, {
-                  type: 'x-grid-lines-group',
-                  selectable: false,
-                  evented: false,
-                  opacity: 0.3
-                });
-                fabricCanvasRef.current?.add(xGridGroup);
-                console.log('Added X grid lines to canvas');
-              } else {
-                // Remove grid group from canvas
-                const xGridGroup = fabricCanvasRef.current?.getObjects().find((obj: any) => obj.type === 'x-grid-lines-group');
-                if (xGridGroup) {
-                  fabricCanvasRef.current?.remove(xGridGroup);
-                  console.log('Removed X grid lines from canvas');
+                // Remove existing grid group first
+                const existingXGridGroup = fabricCanvasRef.current?.getObjects().find((obj: any) => obj.type === 'x-grid-lines-group');
+                if (existingXGridGroup) {
+                  fabricCanvasRef.current?.remove(existingXGridGroup);
                 }
+                
+                // Add individual grid lines to canvas
+                xGridLines.forEach((gridLine: any) => {
+                  fabricCanvasRef.current?.add(gridLine);
+                });
+                console.log('Added X grid lines to canvas individually:', xGridLines.length);
+              } else {
+                // Remove individual grid lines from canvas
+                xGridLines.forEach((gridLine: any) => {
+                  fabricCanvasRef.current?.remove(gridLine);
+                });
+                console.log('Removed X grid lines from canvas');
               }
             }
             fabricCanvasRef.current?.renderAll();
