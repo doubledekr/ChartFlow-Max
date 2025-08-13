@@ -43,7 +43,9 @@ export function FinancialChartCanvas({
     strokeWidth: 3,
     opacity: 1,
     smoothness: 0.5, // 0 = linear, 1 = very curved
-    color: '#3b82f6'
+    color: '#3b82f6',
+    visible: true,
+    strokeDashArray: null as number[] | null
   });
 
   useEffect(() => {
@@ -424,7 +426,19 @@ export function FinancialChartCanvas({
           // Set up selection handler for this line
           fabricPath.on('selected', function() {
             console.log(`Chart line selected for ${seriesData.symbol}`);
-            handleChartLineSelection(fabricPath);
+            setSelectedChartLine(fabricPath);
+            if (onElementSelect) {
+              onElementSelect(fabricPath, {
+                type: 'financial-chart-line',
+                symbol: seriesData.symbol,
+                properties: {
+                  strokeWidth: fabricPath.strokeWidth,
+                  opacity: fabricPath.opacity,
+                  color: fabricPath.stroke,
+                  visible: fabricPath.visible
+                }
+              });
+            }
           });
           
           console.log(`✅ Added ${seriesData.symbol} line to canvas`);
@@ -516,10 +530,10 @@ export function FinancialChartCanvas({
       .range([0, chartWidth]);
       
     const allPrices = chartData.flatMap(d => [d.high, d.low, d.close, d.open]);
-    const yMin = Math.min(...allPrices) * 0.95;
-    const yMax = Math.max(...allPrices) * 1.05;
+    const calculatedYMin = Math.min(...allPrices) * 0.95;
+    const calculatedYMax = Math.max(...allPrices) * 1.05;
     const yScale = d3.scaleLinear()
-      .domain([yMin, yMax])
+      .domain([calculatedYMin, calculatedYMax])
       .range([chartHeight, 0]);
     
     // Create Y-axis labels
@@ -1312,17 +1326,17 @@ export function FinancialChartCanvas({
       
       // Generate ticks
       const ticks = [];
-      let tickValue = Math.ceil(yMin / stepSize) * stepSize;
+      let tickValue = Math.ceil(calculatedYMin / stepSize) * stepSize;
       
-      while (tickValue <= yMax && ticks.length < 8) {
+      while (tickValue <= calculatedYMax && ticks.length < 8) {
         ticks.push(tickValue);
         tickValue += stepSize;
       }
       
-      return ticks.length > 0 ? ticks : [yMin, yMax];
+      return ticks.length > 0 ? ticks : [calculatedYMin, calculatedYMax];
     };
     
-    const yTicks = generateOptimalTicks(yMin, yMax, 6);
+    const yTicks = generateOptimalTicks(calculatedYMin, calculatedYMax, 6);
     const xTicks = xScale.ticks(5);
 
     // Enhanced Y-axis price labels with smart formatting
@@ -1339,7 +1353,7 @@ export function FinancialChartCanvas({
       }
     };
     
-    const priceRange = yMax - yMin;
+    const priceRange = calculatedYMax - calculatedYMin;
     const yAxisLabels = yTicks.map((price: number, index: number) => new (window as any).fabric.Text(
       formatPrice(price, priceRange), {
         left: chartStartX - 80, // Move further left to avoid overlap
