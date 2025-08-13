@@ -256,16 +256,25 @@ export default function ChartDesigner() {
 
     try {
       // Special handling for chart line elements
-      if (elementProperties?.type === 'chartline') {
-        // Map properties to correct Fabric.js properties
-        const fabricProperty = property === 'color' ? 'stroke' : property;
+      if (elementProperties?.type === 'chartline' || elementProperties?.type === 'financial-chart-line' || selectedElement?.type === 'financial-chart-line') {
+        console.log('🔧 Chart Designer - Handling chart line property update:', property, '=', value);
         
-        // Update the selected element
-        selectedElement.set(fabricProperty, value);
-        
-        // For smoothness, we need to regenerate the chart path
-        if (property === 'smoothness') {
-          // Trigger chart regeneration with new smoothness
+        // For smoothness and other properties that require regeneration, use chart update function
+        if (property === 'smoothness' || property === 'showMarkers' || property === 'showJunctions' || property === 'markerFrequency') {
+          console.log('🔧 Chart Designer - Calling chartUpdateRef for property:', property);
+          if (chartUpdateRef.current) {
+            chartUpdateRef.current(property, value);
+          } else {
+            console.log('❌ Chart Designer - chartUpdateRef.current is null');
+          }
+        } else {
+          // Map properties to correct Fabric.js properties for immediate updates
+          const fabricProperty = property === 'color' ? 'stroke' : property;
+          
+          // Update the selected element directly for immediate visual feedback
+          selectedElement.set(fabricProperty, value);
+          
+          // Also call chart update function for consistency
           if (chartUpdateRef.current) {
             chartUpdateRef.current(property, value);
           }

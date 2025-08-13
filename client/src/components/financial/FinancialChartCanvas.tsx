@@ -1650,7 +1650,11 @@ export function FinancialChartCanvas({
           console.log('Applied visible via set()');
           break;
         case 'smoothness':
-          console.log('Smoothness requires regeneration - returning false');
+        case 'showMarkers':
+        case 'showJunctions':
+        case 'markerFrequency':
+        case 'strokeDashArray':
+          console.log(`${property} requires regeneration - returning false`);
           return false;
         default:
           console.log('❌ Unknown property:', property);
@@ -1698,6 +1702,9 @@ export function FinancialChartCanvas({
     const currentProperties = overrideProperties || lineProperties;
     console.log('🔄 renderChartWithProperties called with:', currentProperties);
     console.log('🔄 Current smoothness value:', currentProperties.smoothness);
+    console.log('🔄 Current showMarkers value:', currentProperties.showMarkers);
+    console.log('🔄 Current showJunctions value:', currentProperties.showJunctions);
+    console.log('🔄 Current strokeDashArray value:', currentProperties.strokeDashArray);
     
     if (!fabricCanvasRef.current || data.length === 0) return;
     
