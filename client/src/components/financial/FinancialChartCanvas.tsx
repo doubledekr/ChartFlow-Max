@@ -118,9 +118,9 @@ export function FinancialChartCanvas({
 
     if (data.length === 0) return;
 
-    const margin = { top: 60, right: 60, bottom: 80, left: 80 };
-    const chartWidth = Math.min(width - margin.left - margin.right, 600); // Fit within 16:9 bounds
-    const chartHeight = Math.min(height - margin.top - margin.bottom, 300); // Fit within 16:9 bounds
+    const margin = { top: 80, right: 40, bottom: 80, left: 120 }; // More left padding, less right padding
+    const chartWidth = Math.min(width - margin.left - margin.right, 650); // Longer horizontal span
+    const chartHeight = Math.min(height - margin.top - margin.bottom, 280); // Slightly shorter height
 
     const xScale = d3.scaleTime()
       .domain(d3.extent(data, d => new Date(d.timestamp)) as [Date, Date])
@@ -339,10 +339,10 @@ export function FinancialChartCanvas({
 
     // Add elements separately for independent selection and editing
     
-    // Position axis lines
+    // Position axis lines with better spacing
     yAxisLine.set({
-      left: 80,
-      top: 60,
+      left: 120,  // More left padding
+      top: 80,    // Lower positioning
       selectable: true,
       hasControls: true,
       hasBorders: true,
@@ -350,8 +350,8 @@ export function FinancialChartCanvas({
     });
 
     xAxisLine.set({
-      left: 80,
-      top: 60 + chartHeight,
+      left: 120,  // Match Y-axis positioning
+      top: 80 + chartHeight,  // Below chart area
       selectable: true,
       hasControls: true,
       hasBorders: true,
@@ -360,8 +360,8 @@ export function FinancialChartCanvas({
 
     // Position axis text groups
     yAxisGroup.set({
-      left: 20,
-      top: 60,
+      left: 50,   // More space from left edge
+      top: 80,    // Match chart positioning
       selectable: true,
       hasControls: true,
       hasBorders: true,
@@ -369,18 +369,18 @@ export function FinancialChartCanvas({
     });
 
     xAxisGroup.set({
-      left: 80,
-      top: 60 + chartHeight + 25,
+      left: 120,  // Match axis positioning
+      top: 80 + chartHeight + 25,  // Below axis line
       selectable: true,
       hasControls: true,
       hasBorders: true,
       type: 'x-axis-labels'
     });
 
-    // Create draggable chart line
+    // Create draggable chart line with updated positioning
     const chartLine = new (window as any).fabric.Group([fabricPath], {
-      left: 80,  // Match axis position
-      top: 60,   // Match axis position
+      left: 120,  // Match axis position with more left padding
+      top: 80,    // Lower positioning to avoid title/subtitle
       selectable: true,
       hasControls: true,
       hasBorders: true,
@@ -654,14 +654,7 @@ export function FinancialChartCanvas({
           data-testid="financial-chart-canvas"
         />
 
-        {/* Data Info Overlay */}
-        {data.length > 0 && (
-          <div className="absolute top-4 right-4 bg-white/90 p-2 rounded shadow text-xs">
-            <div><strong>{symbol}</strong> • {timeframe}</div>
-            <div>{data.length} data points</div>
-            <div>Latest: ${data[data.length - 1]?.close.toFixed(2)}</div>
-          </div>
-        )}
+
       </div>
     </div>
   );
