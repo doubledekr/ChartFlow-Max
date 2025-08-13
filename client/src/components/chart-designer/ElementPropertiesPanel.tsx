@@ -433,38 +433,110 @@ export function ElementPropertiesPanel({
           {/* Axis line controls */}
           {(elementType === 'y-axis-line' || elementType === 'x-axis-line') && properties.properties && (
             <>
-              <div>
-                <Label className="text-xs">Line Thickness: {properties.properties.strokeWidth || 1}px</Label>
-                <Slider
-                  value={[properties.properties.strokeWidth || 1]}
-                  onValueChange={([value]) => onUpdateProperty('strokeWidth', value)}
-                  min={1}
-                  max={10}
-                  step={1}
-                  className="mt-2"
-                />
+              <div className="mb-4">
+                <Label className="text-sm font-medium">
+                  {elementType === 'y-axis-line' ? 'Y-Axis Line (Vertical)' : 'X-Axis Line (Horizontal)'}
+                </Label>
               </div>
-              <div>
-                <Label className="text-xs">Opacity: {Math.round((properties.properties.opacity || 1) * 100)}%</Label>
-                <Slider
-                  value={[properties.properties.opacity || 1]}
-                  onValueChange={([value]) => onUpdateProperty('opacity', value)}
-                  min={0.1}
-                  max={1}
-                  step={0.1}
-                  className="mt-2"
-                />
+              
+              {/* Line Style Section */}
+              <div className="space-y-4">
+                <h4 className="text-sm font-semibold text-gray-800 border-b pb-2">Line Style</h4>
+                
+                <div>
+                  <Label className="text-xs">Line Thickness: {properties.properties.strokeWidth || 1}px</Label>
+                  <Slider
+                    value={[properties.properties.strokeWidth || 1]}
+                    onValueChange={([value]) => onUpdateProperty('strokeWidth', value)}
+                    min={0.5}
+                    max={10}
+                    step={0.5}
+                    className="mt-2"
+                  />
+                </div>
+                
+                <div>
+                  <Label className="text-xs">Opacity: {Math.round((properties.properties.opacity || 1) * 100)}%</Label>
+                  <Slider
+                    value={[properties.properties.opacity || 1]}
+                    onValueChange={([value]) => onUpdateProperty('opacity', value)}
+                    min={0.1}
+                    max={1}
+                    step={0.1}
+                    className="mt-2"
+                  />
+                </div>
+                
+                <div>
+                  <Label className="text-xs">Line Pattern</Label>
+                  <Select 
+                    value={getLinePatternFromDashArray(properties.properties.strokeDashArray)} 
+                    onValueChange={(value) => onUpdateProperty('strokeDashArray', getStrokeDashArray(value))}
+                  >
+                    <SelectTrigger className="mt-2">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="solid">Solid</SelectItem>
+                      <SelectItem value="dashed">Dashed</SelectItem>
+                      <SelectItem value="dotted">Dotted</SelectItem>
+                      <SelectItem value="dash-dot">Dash-Dot</SelectItem>
+                      <SelectItem value="long-dash">Long Dash</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              <div>
-                <Label className="text-xs">Visibility</Label>
-                <Button
-                  variant={properties.properties.visible !== false ? "default" : "outline"}
-                  size="sm"
-                  className="w-full mt-1"
-                  onClick={() => onUpdateProperty('visible', properties.properties.visible === false)}
-                >
-                  {properties.properties.visible !== false ? 'Visible' : 'Hidden'}
-                </Button>
+              
+              {/* Color Section */}
+              <div className="space-y-4">
+                <h4 className="text-sm font-semibold text-gray-800 border-b pb-2">Color</h4>
+                
+                <div className="mt-3">
+                  <Label className="text-xs">Line Color</Label>
+                  <div className="flex gap-2 mt-2">
+                    <input
+                      type="color"
+                      value={properties.properties.stroke}
+                      onChange={(e) => onUpdateProperty('stroke', e.target.value)}
+                      className="w-10 h-8 rounded border border-gray-300 cursor-pointer"
+                      title="Color picker"
+                    />
+                    <Input
+                      type="text"
+                      value={properties.properties.stroke}
+                      onChange={(e) => onUpdateProperty('stroke', e.target.value)}
+                      onBlur={(e) => {
+                        const value = e.target.value.trim();
+                        const normalizedValue = value.startsWith('#') ? value : `#${value}`;
+                        if (normalizedValue.match(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/)) {
+                          onUpdateProperty('stroke', normalizedValue.toUpperCase());
+                        } else {
+                          onUpdateProperty('stroke', properties.properties.stroke);
+                        }
+                      }}
+                      placeholder="#666666"
+                      className="flex-1 text-xs font-mono"
+                      title="Enter hex color code"
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              {/* Visibility Section */}
+              <div className="space-y-4">
+                <h4 className="text-sm font-semibold text-gray-800 border-b pb-2">Visibility</h4>
+                
+                <div>
+                  <Label className="text-xs">Show/Hide Line</Label>
+                  <Button
+                    variant={properties.properties.visible !== false ? "default" : "outline"}
+                    size="sm"
+                    className="w-full mt-1"
+                    onClick={() => onUpdateProperty('visible', properties.properties.visible === false)}
+                  >
+                    {properties.properties.visible !== false ? 'Visible' : 'Hidden'}
+                  </Button>
+                </div>
               </div>
             </>
           )}
