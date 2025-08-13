@@ -710,21 +710,23 @@ export function FinancialChartCanvas({
       )}
 
       {/* Chart Container */}
-      <div className="relative border border-gray-200 rounded-lg overflow-hidden bg-white">
-        {/* D3 Chart Layer (Background) */}
-        <svg
-          ref={svgRef}
-          width={width}
-          height={height}
-          className="absolute top-0 left-0 pointer-events-none"
-        />
-        
-        {/* Fabric Canvas Layer (Interactive Elements) */}
-        <canvas
-          ref={canvasRef}
-          className="absolute top-0 left-0 cursor-default"
-          data-testid="financial-chart-canvas"
-        />
+      <div className="flex justify-center">
+        <div className="relative border border-gray-200 rounded-lg overflow-hidden bg-white" style={{ width: `${width}px`, height: `${height}px` }}>
+          {/* D3 Chart Layer (Background) */}
+          <svg
+            ref={svgRef}
+            width={width}
+            height={height}
+            className="absolute top-0 left-0 pointer-events-none"
+          />
+          
+          {/* Fabric Canvas Layer (Interactive Elements) */}
+          <canvas
+            ref={canvasRef}
+            className="absolute top-0 left-0 cursor-default"
+            data-testid="financial-chart-canvas"
+          />
+        </div>
       </div>
     </div>
   );
