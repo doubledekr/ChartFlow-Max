@@ -1,0 +1,682 @@
+Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+44548022-3aeb-460b-b6e0-6757401244d2-00-y4r7pzhaz1jx.spock.replit.dev/api/instances:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+2Console.js:61 Chart line selected
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 4
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 4 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 5
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 5 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 6
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 6 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 7
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 7 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 8
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 8 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 9
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 9 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 10
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 10 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 11
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 11 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 10
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 10 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 9
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 9 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 8
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 8 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 7
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 7 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 8
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 8 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 9
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 9 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 10
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 10 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 11
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 11 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 12
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 12 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: opacity Value: 0.9
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated opacity to 0.9 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: opacity Value: 0.8
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated opacity to 0.8 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: opacity Value: 0.7
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated opacity to 0.7 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: opacity Value: 0.6
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated opacity to 0.6 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: opacity Value: 0.5
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated opacity to 0.5 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: opacity Value: 0.6
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated opacity to 0.6 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: opacity Value: 0.7
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated opacity to 0.7 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: opacity Value: 0.8
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated opacity to 0.8 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: opacity Value: 0.9
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated opacity to 0.9 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: opacity Value: 0.8
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated opacity to 0.8 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: opacity Value: 0.7
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated opacity to 0.7 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: opacity Value: 0.6
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated opacity to 0.6 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: opacity Value: 0.5
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated opacity to 0.5 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: opacity Value: 0.4
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated opacity to 0.4 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.4
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated smoothness to 0.4 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.3
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated smoothness to 0.3 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.2
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated smoothness to 0.2 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.3
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated smoothness to 0.3 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.4
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated smoothness to 0.4 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.5
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated smoothness to 0.5 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.6
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated smoothness to 0.6 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.5
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated smoothness to 0.5 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.4
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated smoothness to 0.4 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.3
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated smoothness to 0.3 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.4
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated smoothness to 0.4 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.5
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated smoothness to 0.5 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: smoothness Value: 0.6
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated smoothness to 0.6 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 11
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 11 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 10
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 10 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 9
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 9 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 8
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 8 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 7
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 7 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 8
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 8 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 10
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 10 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 12
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 12 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 14
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 14 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 16
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 16 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 17
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 17 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 18
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 18 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 16
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 16 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 14
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 14 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 13
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 13 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 12
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 12 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 13
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 13 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 15
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 15 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 16
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 16 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 17
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 17 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 18
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 18 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 17
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 17 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 16
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 16 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 14
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 14 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 13
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 13 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 12
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 12 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 13
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 13 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 14
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 14 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 15
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 15 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 16
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 16 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 15
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 15 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 14
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 14 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 13
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: Object
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 13 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 12
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 12 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 11
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 11 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 10
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 10 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 9
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 9 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 8
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 8 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 7
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 7 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 8
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 8 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 9
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 9 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 10
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 10 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 11
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 11 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 12
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 12 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 13
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 13 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 14
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 14 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 15
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 15 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 14
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 14 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 13
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 13 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 12
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 12 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 11
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 11 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 10
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 10 for element: financial-chart-line
+Console.js:61 === PROPERTY UPDATE DEBUG ===
+Console.js:61 Property: strokeWidth Value: 9
+Console.js:61 Selected chart line: null
+Console.js:61 Chart line type: undefined
+Console.js:61 Current lineProperties state: {strokeWidth: 3, opacity: 1, smoothness: 0.5, color: '#3b82f6'}
+Console.js:61 ❌ ABORT: No selected chart line or wrong type
+Console.js:61 Updated strokeWidth to 9 for element: financial-chart-line
