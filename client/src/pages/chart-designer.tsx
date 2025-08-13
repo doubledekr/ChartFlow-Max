@@ -26,6 +26,7 @@ export default function ChartDesigner() {
   const [canvasHistory, setCanvasHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [fabricCanvas, setFabricCanvas] = useState<any>(null);
+  const [saveTimeout, setSaveTimeout] = useState<NodeJS.Timeout | null>(null);
   const [showLayerManager, setShowLayerManager] = useState(false);
   const [layers, setLayers] = useState<Array<{
     id: string;
@@ -89,31 +90,41 @@ export default function ChartDesigner() {
   const saveCanvasState = () => {
     if (!fabricCanvas) return;
     
-    try {
-      // Save the complete canvas state as JSON with all element properties
-      const canvasState = JSON.stringify(fabricCanvas.toJSON([
-        'id', 'selectable', 'hasControls', 'hasBorders', 'visible',
-        'strokeWidth', 'opacity', 'smoothness', 'color', 'symbol', 'elementType',
-        'text', 'fontSize', 'fontWeight', 'fontFamily', 'fill', 'backgroundColor',
-        'stroke', 'radius', 'width', 'height', 'angle', 'strokeDashArray', 'padding'
-      ]));
-      
-      // Remove any states after current index (for branching)
-      const newHistory = canvasHistory.slice(0, historyIndex + 1);
-      newHistory.push(canvasState);
-      
-      // Limit history to 50 states to prevent memory issues
-      if (newHistory.length > 50) {
-        newHistory.shift();
-      } else {
-        setHistoryIndex(newHistory.length - 1);
-      }
-      
-      setCanvasHistory(newHistory);
-      console.log(`📝 Canvas state saved. History length: ${newHistory.length}, Current index: ${newHistory.length - 1}`);
-    } catch (error) {
-      console.error('Error saving canvas state:', error);
+    // Clear any existing save timeout to prevent duplicate saves
+    if (saveTimeout) {
+      clearTimeout(saveTimeout);
     }
+    
+    // Debounce the save operation
+    const timeout = setTimeout(() => {
+      try {
+        // Save the complete canvas state as JSON with all element properties
+        const canvasState = JSON.stringify(fabricCanvas.toJSON([
+          'id', 'selectable', 'hasControls', 'hasBorders', 'visible',
+          'strokeWidth', 'opacity', 'smoothness', 'color', 'symbol', 'elementType',
+          'text', 'fontSize', 'fontWeight', 'fontFamily', 'fill', 'backgroundColor',
+          'stroke', 'radius', 'width', 'height', 'angle', 'strokeDashArray', 'padding'
+        ]));
+        
+        // Remove any states after current index (for branching)
+        const newHistory = canvasHistory.slice(0, historyIndex + 1);
+        newHistory.push(canvasState);
+        
+        // Limit history to 50 states to prevent memory issues
+        if (newHistory.length > 50) {
+          newHistory.shift();
+        } else {
+          setHistoryIndex(newHistory.length - 1);
+        }
+        
+        setCanvasHistory(newHistory);
+        console.log(`📝 Canvas state saved. History length: ${newHistory.length}, Current index: ${newHistory.length - 1}`);
+      } catch (error) {
+        console.error('Error saving canvas state:', error);
+      }
+    }, 300); // 300ms debounce
+    
+    setSaveTimeout(timeout);
   };
 
 
@@ -297,7 +308,7 @@ export default function ChartDesigner() {
       });
 
       // Save state after property change
-      setTimeout(() => saveCanvasState(), 100);
+      saveCanvasState();
     } catch (error) {
       console.error('Error updating property:', error);
       toast({
@@ -352,16 +363,15 @@ export default function ChartDesigner() {
     // Add canvas event listeners to update layers and save state
     canvas.on('object:added', () => {
       updateLayers();
-      // Save state after short delay to allow all modifications to complete
-      setTimeout(() => saveCanvasState(), 100);
+      saveCanvasState();
     });
     canvas.on('object:removed', () => {
       updateLayers();
-      setTimeout(() => saveCanvasState(), 100);
+      saveCanvasState();
     });
     canvas.on('object:modified', () => {
       updateLayers();
-      setTimeout(() => saveCanvasState(), 100);
+      saveCanvasState();
     });
   };
 

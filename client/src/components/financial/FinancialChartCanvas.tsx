@@ -490,9 +490,21 @@ export function FinancialChartCanvas({
       const pathData = line(data) || '';
       console.log('📊 Generated single symbol path data with smoothness:', lineProperties.smoothness, 'Path length:', pathData.length);
 
+      // Remove existing axes and chart lines to prevent duplicates when rescaling
+      const objects = fabricCanvasRef.current.getObjects();
+      objects.forEach((obj: any) => {
+        if (obj.type === 'x-axis-line' || obj.type === 'y-axis-line' || 
+            obj.type === 'x-axis-labels' || obj.type === 'y-axis-labels' ||
+            obj.type === 'x-axis-label' || obj.type === 'y-axis-label') {
+          fabricCanvasRef.current?.remove(obj);
+        }
+      });
+
       // Create draggable chart group with axis text conversion
       setTimeout(() => {
         createDraggableChartGroup(pathData, margin, xScale, yScale, chartWidth, chartHeight);
+        // Add separate axis elements for single symbol
+        addAxisElements(data, margin, width, height);
       }, 100);
     }
   };
@@ -677,26 +689,8 @@ export function FinancialChartCanvas({
       }
     ));
 
-    // X-axis date labels (bottom) - converted from D3 axis
-    const xAxisLabels = xTicks.map((date: Date, index: number) => new (window as any).fabric.Text(
-      date.toLocaleDateString('en-US', { 
-        month: 'short', 
-        year: 'numeric' 
-      }), 
-      {
-        left: xScale(date) - 20,
-        top: chartHeight + 25,
-        fontSize: 12,
-        fill: '#6b7280',
-        fontFamily: 'Inter, sans-serif',
-        selectable: false,
-        hasControls: false,
-        hasBorders: false,
-        editable: true,
-        type: 'x-axis-label',
-        originalValue: date
-      }
-    ));
+    // Skip X-axis labels in createDraggableChartGroup - they will be added by addAxisElements
+    // This prevents duplication of X-axis labels
 
     // Create axis lines as Fabric.js vectors
     const yAxisLine = new (window as any).fabric.Line([0, 0, 0, chartHeight], {
@@ -763,14 +757,7 @@ export function FinancialChartCanvas({
       type: 'y-axis-labels'
     });
 
-    const xAxisGroup = new (window as any).fabric.Group(xAxisLabels, {
-      left: margin.left,
-      top: margin.top + chartHeight + 25,
-      selectable: true,
-      hasControls: true,
-      hasBorders: true,
-      type: 'x-axis-labels'
-    });
+    // X-axis labels will be created separately by addAxisElements to prevent duplication
 
     // Add elements separately for independent selection and editing
     
@@ -808,14 +795,7 @@ export function FinancialChartCanvas({
       type: 'y-axis-labels'
     });
 
-    xAxisGroup.set({
-      left: chartStartX,       // Match axis positioning
-      top: 120 + chartHeight + 25,  // Below axis line with proper clearance
-      selectable: true,
-      hasControls: true,
-      hasBorders: true,
-      type: 'x-axis-labels'
-    });
+    // X-axis labels positioning will be handled by addAxisElements
 
     // Create draggable chart line as standalone Path (no Group wrapper)
     const chartLine = fabricPath;
@@ -847,7 +827,6 @@ export function FinancialChartCanvas({
     fabricCanvasRef.current.add(yAxisLine);
     fabricCanvasRef.current.add(xAxisLine);
     fabricCanvasRef.current.add(yAxisGroup);
-    fabricCanvasRef.current.add(xAxisGroup);
     fabricCanvasRef.current.add(chartLine);
 
     // Set up event handlers for chart line selection with position locking
@@ -918,33 +897,7 @@ export function FinancialChartCanvas({
       }
     });
 
-    xAxisGroup.on('selected', () => {
-      console.log('X-axis labels selected');
-      if (onElementSelect) {
-        onElementSelect(xAxisGroup, {
-          type: 'x-axis-labels',
-          properties: { 
-            fontSize: 11, 
-            fill: '#666666', 
-            fontFamily: 'Inter, sans-serif', 
-            fontWeight: 'normal' 
-          },
-          updateFunction: (property: string, value: any) => {
-            console.log(`Updating X-axis labels: ${property} = ${value}`);
-            const objects = xAxisGroup.getObjects();
-            objects.forEach((obj: any) => {
-              if (property === 'fontSize') obj.set('fontSize', value);
-              if (property === 'fill') obj.set('fill', value);
-              if (property === 'fontFamily') obj.set('fontFamily', value);
-              if (property === 'fontWeight') obj.set('fontWeight', value);
-            });
-            xAxisGroup.addWithUpdate();
-            fabricCanvasRef.current?.renderAll();
-            console.log(`Updated ${property} to ${value} for element:`, 'x-axis-labels');
-          }
-        });
-      }
-    });
+    // X-axis label event handlers will be set up by addAxisElements
 
     // Set up event handlers for axis lines
     yAxisLine.on('selected', () => {
@@ -1003,7 +956,6 @@ export function FinancialChartCanvas({
     });
     
     yAxisGroup.on('deselected', handleDeselection);
-    xAxisGroup.on('deselected', handleDeselection);
     yAxisLine.on('deselected', handleDeselection);
     xAxisLine.on('deselected', handleDeselection);
 
