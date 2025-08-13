@@ -2,6 +2,13 @@
 
 ChartFlow is a professional chart designer application that enables users to create interactive financial charts with advanced customization capabilities. The application provides a Canva/Photoshop-like editor specifically designed for financial data visualization, featuring real-time chart generation, comprehensive styling controls, and export functionality. Users can drag and drop chart elements, apply professional color palettes and gradients, customize typography, and export charts in multiple formats (PNG, SVG, PDF).
 
+## Recent Changes (January 2025)
+
+- **Independent Component Selection**: Chart line, axis lines, and axis labels are now separate elements that can be selected and edited independently
+- **Optimized Chart Positioning**: Established default positioning at 120px from top, horizontally centered with proper Y-axis label spacing
+- **Clean Vector Interface**: Removed all data information overlays for clean, professional appearance
+- **Template-Ready Architecture**: Each component saves position and properties separately for accurate template restoration
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
@@ -26,10 +33,11 @@ The backend uses Express.js with a minimal API surface designed primarily to sup
 ## Chart Generation System
 The core chart functionality combines multiple libraries for different aspects:
 
-- **Interactive Chart Groups**: Fabric.js handles draggable financial chart lines grouped with editable axis labels, ensuring perfect alignment during manipulation
-- **Chart Rendering**: D3.js generates background axes and data points, with primary chart lines rendered as draggable Fabric.js paths
-- **Template System**: Complete CRUD operations for saving chart layouts and reusing them across different stock symbols
-- **Data Processing**: Polygon API integration with intelligent caching and demo data fallbacks for realistic financial data
+- **Independent Chart Components**: Fabric.js handles separate selectable elements - chart line, Y-axis line, X-axis line, Y-axis labels, X-axis labels
+- **Optimized Positioning**: Default chart positioning at 120px from top, horizontally centered with calculated Y-axis label spacing
+- **Chart Rendering**: D3.js generates chart data points, with chart lines rendered as draggable Fabric.js paths
+- **Template System**: Complete CRUD operations for saving chart layouts and reusing them across different stock symbols, preserving exact component positions
+- **Data Processing**: Polygon API integration with intelligent caching for realistic financial data
 
 ## Export and Persistence
 Export functionality supports multiple formats with configurable options:
