@@ -250,13 +250,76 @@ export function FinancialChartCanvas({
       .domain(d3.extent(data, d => new Date(d.timestamp)) as [Date, Date])
       .range([0, chartWidth]);
 
-    // Fix Y-scale to use proper min/max including low values to prevent chart falling below axis
-    const yMin = d3.min(data, d => Math.min(d.low, d.close, d.open, d.high)) || 0;
-    const yMax = d3.max(data, d => Math.max(d.high, d.close, d.open, d.low)) || 100;
+    // Enhanced Y-scale for multiple symbols with graceful range accommodation
+    const calculateOptimalYScale = (chartData: ChartDataPoint[]) => {
+      if (!chartData || chartData.length === 0) {
+        return { yMin: 0, yMax: 100, yScale: d3.scaleLinear().domain([0, 100]).range([chartHeight, 0]) };
+      }
+      
+      // Get all price values (high, low, close, open) from the data
+      const allPrices = chartData.flatMap(d => [d.high, d.low, d.close, d.open]);
+      const rawMin = Math.min(...allPrices);
+      const rawMax = Math.max(...allPrices);
+      
+      // Calculate price range and determine scaling strategy
+      const priceRange = rawMax - rawMin;
+      const averagePrice = (rawMin + rawMax) / 2;
+      
+      let yMin, yMax;
+      
+      // For multiple symbols with very different ranges, use adaptive scaling
+      if (symbol.includes(',') || symbol.includes(' ')) {
+        // Multiple symbols detected - use percentage-based padding for better visualization
+        const paddingPercent = Math.max(0.1, Math.min(0.2, priceRange / averagePrice * 0.1));
+        const padding = priceRange * paddingPercent;
+        
+        yMin = Math.max(0, rawMin - padding);
+        yMax = rawMax + padding;
+        
+        // Ensure minimum visual range for readability
+        const minVisualRange = averagePrice * 0.1;
+        if ((yMax - yMin) < minVisualRange) {
+          const center = (yMax + yMin) / 2;
+          yMin = center - minVisualRange / 2;
+          yMax = center + minVisualRange / 2;
+        }
+      } else {
+        // Single symbol - use traditional scaling with smart padding
+        const paddingPercent = 0.05;
+        const padding = priceRange * paddingPercent;
+        
+        yMin = Math.max(0, rawMin - padding);
+        yMax = rawMax + padding;
+      }
+      
+      // Round to nice numbers for cleaner axis labels
+      const roundToNiceNumber = (value: number) => {
+        const magnitude = Math.pow(10, Math.floor(Math.log10(Math.abs(value))));
+        const normalized = value / magnitude;
+        let niceNormalized;
+        
+        if (normalized <= 1) niceNormalized = 1;
+        else if (normalized <= 2) niceNormalized = 2;
+        else if (normalized <= 5) niceNormalized = 5;
+        else niceNormalized = 10;
+        
+        return niceNormalized * magnitude;
+      };
+      
+      // Apply nice rounding to min/max
+      yMin = Math.floor(yMin / roundToNiceNumber(priceRange * 0.1)) * roundToNiceNumber(priceRange * 0.1);
+      yMax = Math.ceil(yMax / roundToNiceNumber(priceRange * 0.1)) * roundToNiceNumber(priceRange * 0.1);
+      
+      const yScale = d3.scaleLinear()
+        .domain([yMin, yMax])
+        .range([chartHeight, 0]);
+      
+      console.log(`📊 Y-axis scaling: Symbol(s): ${symbol}, Range: $${yMin.toFixed(2)} - $${yMax.toFixed(2)}, Data points: ${chartData.length}`);
+      
+      return { yMin, yMax, yScale };
+    };
     
-    const yScale = d3.scaleLinear()
-      .domain([yMin, yMax])
-      .range([chartHeight, 0]);
+    const { yMin, yMax, yScale } = calculateOptimalYScale(data);
 
     const g = svg.append('g')
       .attr('transform', `translate(${margin.left}, ${margin.top})`);
@@ -896,13 +959,76 @@ export function FinancialChartCanvas({
         .domain(d3.extent(data, d => new Date(d.timestamp)) as [Date, Date])
         .range([0, chartWidth]);
 
-      // Fix Y-scale to use proper min/max including low values to prevent chart falling below axis
-      const yMin = d3.min(data, d => Math.min(d.low, d.close, d.open, d.high)) || 0;
-      const yMax = d3.max(data, d => Math.max(d.high, d.close, d.open, d.low)) || 100;
+      // Enhanced Y-scale for multiple symbols with graceful range accommodation
+      const calculateOptimalYScale = (chartData: ChartDataPoint[]) => {
+        if (!chartData || chartData.length === 0) {
+          return { yMin: 0, yMax: 100, yScale: d3.scaleLinear().domain([0, 100]).range([chartHeight, 0]) };
+        }
+        
+        // Get all price values (high, low, close, open) from the data
+        const allPrices = chartData.flatMap(d => [d.high, d.low, d.close, d.open]);
+        const rawMin = Math.min(...allPrices);
+        const rawMax = Math.max(...allPrices);
+        
+        // Calculate price range and determine scaling strategy
+        const priceRange = rawMax - rawMin;
+        const averagePrice = (rawMin + rawMax) / 2;
+        
+        let yMin, yMax;
+        
+        // For multiple symbols with very different ranges, use adaptive scaling
+        if (symbol.includes(',') || symbol.includes(' ')) {
+          // Multiple symbols detected - use percentage-based padding for better visualization
+          const paddingPercent = Math.max(0.1, Math.min(0.2, priceRange / averagePrice * 0.1));
+          const padding = priceRange * paddingPercent;
+          
+          yMin = Math.max(0, rawMin - padding);
+          yMax = rawMax + padding;
+          
+          // Ensure minimum visual range for readability
+          const minVisualRange = averagePrice * 0.1;
+          if ((yMax - yMin) < minVisualRange) {
+            const center = (yMax + yMin) / 2;
+            yMin = center - minVisualRange / 2;
+            yMax = center + minVisualRange / 2;
+          }
+        } else {
+          // Single symbol - use traditional scaling with smart padding
+          const paddingPercent = 0.05;
+          const padding = priceRange * paddingPercent;
+          
+          yMin = Math.max(0, rawMin - padding);
+          yMax = rawMax + padding;
+        }
+        
+        // Round to nice numbers for cleaner axis labels
+        const roundToNiceNumber = (value: number) => {
+          const magnitude = Math.pow(10, Math.floor(Math.log10(Math.abs(value))));
+          const normalized = value / magnitude;
+          let niceNormalized;
+          
+          if (normalized <= 1) niceNormalized = 1;
+          else if (normalized <= 2) niceNormalized = 2;
+          else if (normalized <= 5) niceNormalized = 5;
+          else niceNormalized = 10;
+          
+          return niceNormalized * magnitude;
+        };
+        
+        // Apply nice rounding to min/max
+        yMin = Math.floor(yMin / roundToNiceNumber(priceRange * 0.1)) * roundToNiceNumber(priceRange * 0.1);
+        yMax = Math.ceil(yMax / roundToNiceNumber(priceRange * 0.1)) * roundToNiceNumber(priceRange * 0.1);
+        
+        const yScale = d3.scaleLinear()
+          .domain([yMin, yMax])
+          .range([chartHeight, 0]);
+        
+        console.log(`📊 REGENERATION Y-axis scaling: Symbol(s): ${symbol}, Range: $${yMin.toFixed(2)} - $${yMax.toFixed(2)}, Data points: ${chartData.length}`);
+        
+        return { yMin, yMax, yScale };
+      };
       
-      const yScale = d3.scaleLinear()
-        .domain([yMin, yMax])
-        .range([chartHeight, 0]);
+      const { yMin, yMax, yScale } = calculateOptimalYScale(data);
 
       // Apply smoothness to curve interpolation instead of data filtering
       const getCurveType = (smoothness: number) => {
@@ -976,13 +1102,55 @@ export function FinancialChartCanvas({
       top: 120
     });
 
-    // Convert D3 axis data to Fabric.js text objects  
-    const yTicks = yScale.ticks(6);
+    // Enhanced axis ticks generation for better readability
+    const generateOptimalTicks = (yMin: number, yMax: number, tickCount: number = 6) => {
+      const range = yMax - yMin;
+      const roughStep = range / (tickCount - 1);
+      
+      // Calculate nice step size
+      const magnitude = Math.pow(10, Math.floor(Math.log10(roughStep)));
+      const normalizedStep = roughStep / magnitude;
+      
+      let niceStep;
+      if (normalizedStep <= 1) niceStep = 1;
+      else if (normalizedStep <= 2) niceStep = 2;
+      else if (normalizedStep <= 5) niceStep = 5;
+      else niceStep = 10;
+      
+      const stepSize = niceStep * magnitude;
+      
+      // Generate ticks
+      const ticks = [];
+      let tickValue = Math.ceil(yMin / stepSize) * stepSize;
+      
+      while (tickValue <= yMax && ticks.length < 8) {
+        ticks.push(tickValue);
+        tickValue += stepSize;
+      }
+      
+      return ticks.length > 0 ? ticks : [yMin, yMax];
+    };
+    
+    const yTicks = generateOptimalTicks(yMin, yMax, 6);
     const xTicks = xScale.ticks(5);
 
-    // Y-axis price labels (left side) 
+    // Enhanced Y-axis price labels with smart formatting
+    const formatPrice = (price: number, range: number) => {
+      // Smart price formatting based on range and value
+      if (price >= 1000) {
+        return `$${(price / 1000).toFixed(1)}K`;
+      } else if (range > 50) {
+        return `$${price.toFixed(0)}`;
+      } else if (range > 5) {
+        return `$${price.toFixed(1)}`;
+      } else {
+        return `$${price.toFixed(2)}`;
+      }
+    };
+    
+    const priceRange = yMax - yMin;
     const yAxisLabels = yTicks.map((price: number, index: number) => new (window as any).fabric.Text(
-      `$${price.toFixed(2)}`, {
+      formatPrice(price, priceRange), {
         left: chartStartX - 80, // Move further left to avoid overlap
         top: 120 + yScale(price) - 8,
         fontSize: 11,
