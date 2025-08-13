@@ -78,12 +78,11 @@ export function ElementPropertiesPanel({
 
   const isChartGroup = properties.type === 'financial-chart-group' || properties.type === 'financial-chart-line' || properties.type === 'chartline';
   const elementType = properties.type;
-  const isAxisLabels = elementType === 'axis-labels';
   const isMultiSelection = elementType === 'multi-selection';
   const isTextElement = ['title', 'annotation', 'price-label'].includes(elementType);
   const isShapeElement = ['rectangle', 'circle', 'triangle', 'star', 'target', 'alert', 'highlight'].includes(elementType);
   const isLineElement = ['trend-line', 'arrow-up', 'arrow-down'].includes(elementType);
-  const isDeletable = !['chartline', 'y-axis-line', 'x-axis-line', 'y-axis-labels', 'x-axis-labels', 'axis-labels'].includes(elementType);
+  const isDeletable = !['chartline', 'y-axis-line', 'x-axis-line', 'y-axis-labels', 'x-axis-labels'].includes(elementType);
   
   console.log('ElementPropertiesPanel - elementType:', elementType);
   console.log('ElementPropertiesPanel - isChartGroup:', isChartGroup);
@@ -101,10 +100,9 @@ export function ElementPropertiesPanel({
             )}
             <h3 className="text-sm font-medium">
               {isChartGroup || elementType === 'chartline' ? 'Financial Chart Line' : 
-               isAxisLabels ? 'All Axis Labels' :
                isMultiSelection ? `Multi-Selection (${properties.count} items)` :
-               elementType === 'y-axis-labels' ? 'Y-Axis Labels' : 
-               elementType === 'x-axis-labels' ? 'X-Axis Labels' :
+               elementType === 'y-axis-labels' ? 'Y-Axis Labels (Price)' : 
+               elementType === 'x-axis-labels' ? 'X-Axis Labels (Dates)' :
                elementType === 'y-axis-line' ? 'Y-Axis Line' :
                elementType === 'x-axis-line' ? 'X-Axis Line' :
                elementType === 'title' ? 'Title Text' :
@@ -546,12 +544,11 @@ export function ElementPropertiesPanel({
           )}
 
           {/* Y-axis label properties */}
-          {(elementType === 'y-axis-labels' || elementType === 'x-axis-labels' || isAxisLabels || isMultiSelection) && properties.properties && (
+          {(elementType === 'y-axis-labels' || elementType === 'x-axis-labels' || isMultiSelection) && properties.properties && (
             <>
               <div className="mb-4">
                 <Label className="text-sm font-medium">
-                  {isAxisLabels ? 'All Axis Labels (Unified)' :
-                   isMultiSelection ? `Multi-Selection (${properties.count} items)` :
+                  {isMultiSelection ? `Multi-Selection (${properties.count} items)` :
                    elementType === 'y-axis-labels' ? 'Y-Axis Labels (Price Numbers)' : 'X-Axis Labels (Dates)'}
                 </Label>
               </div>

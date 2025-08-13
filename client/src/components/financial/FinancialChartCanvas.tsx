@@ -254,7 +254,7 @@ export function FinancialChartCanvas({
           console.log('Canvas selection created:', obj.elementType || obj.type);
           
           // Skip default selection handling for axis elements since they have custom handlers
-          if (['y-axis-labels', 'x-axis-labels', 'y-axis-line', 'x-axis-line', 'axis-labels'].includes(obj.type)) {
+          if (['y-axis-labels', 'x-axis-labels', 'y-axis-line', 'x-axis-line'].includes(obj.type)) {
             console.log('Skipping default selection for axis element:', obj.type);
             return;
           }
@@ -325,7 +325,7 @@ export function FinancialChartCanvas({
           console.log('Canvas selection updated:', obj.elementType || obj.type);
           
           // Skip default selection handling for axis elements since they have custom handlers
-          if (['y-axis-labels', 'x-axis-labels', 'y-axis-line', 'x-axis-line', 'axis-labels'].includes(obj.type)) {
+          if (['y-axis-labels', 'x-axis-labels', 'y-axis-line', 'x-axis-line'].includes(obj.type)) {
             console.log('Skipping default selection update for axis element:', obj.type);
             return;
           }
@@ -760,22 +760,29 @@ export function FinancialChartCanvas({
       type: 'x-axis-line'
     });
     
-    // Create grouped axis labels for unified selection and editing
-    const allAxisLabels = [...yAxisLabels, ...xAxisLabels];
-    const axisLabelsGroup = new (window as any).fabric.Group(allAxisLabels, {
+    // Create separate groups for Y-axis and X-axis labels
+    const yAxisLabelsGroup = new (window as any).fabric.Group(yAxisLabels, {
       selectable: true,
       hasControls: false,
       hasBorders: true,
-      type: 'axis-labels',
+      type: 'y-axis-labels',
       evented: true
     });
 
-    // Set up event handler for axis labels group
-    axisLabelsGroup.on('selected', () => {
-      console.log('All axis labels selected');
+    const xAxisLabelsGroup = new (window as any).fabric.Group(xAxisLabels, {
+      selectable: true,
+      hasControls: false,
+      hasBorders: true,
+      type: 'x-axis-labels',
+      evented: true
+    });
+
+    // Set up event handlers for Y-axis labels group
+    yAxisLabelsGroup.on('selected', () => {
+      console.log('Y-axis labels group selected');
       if (onElementSelect) {
-        onElementSelect(axisLabelsGroup, {
-          type: 'axis-labels',
+        onElementSelect(yAxisLabelsGroup, {
+          type: 'y-axis-labels',
           properties: { 
             fontSize: 11, 
             fill: '#666666', 
@@ -783,17 +790,46 @@ export function FinancialChartCanvas({
             fontWeight: 'normal' 
           },
           updateFunction: (property: string, value: any) => {
-            console.log(`Updating all axis labels: ${property} = ${value}`);
-            const objects = axisLabelsGroup.getObjects();
+            console.log(`Updating Y-axis labels: ${property} = ${value}`);
+            const objects = yAxisLabelsGroup.getObjects();
             objects.forEach((obj: any) => {
               if (property === 'fontSize') obj.set('fontSize', value);
               if (property === 'fill') obj.set('fill', value);
               if (property === 'fontFamily') obj.set('fontFamily', value);
               if (property === 'fontWeight') obj.set('fontWeight', value);
             });
-            axisLabelsGroup.addWithUpdate();
+            yAxisLabelsGroup.addWithUpdate();
             fabricCanvasRef.current?.renderAll();
-            console.log(`Updated ${property} to ${value} for element:`, 'axis-labels');
+            console.log(`Updated ${property} to ${value} for Y-axis labels`);
+          }
+        });
+      }
+    });
+
+    // Set up event handlers for X-axis labels group
+    xAxisLabelsGroup.on('selected', () => {
+      console.log('X-axis labels group selected');
+      if (onElementSelect) {
+        onElementSelect(xAxisLabelsGroup, {
+          type: 'x-axis-labels',
+          properties: { 
+            fontSize: 11, 
+            fill: '#666666', 
+            fontFamily: 'Inter, sans-serif', 
+            fontWeight: 'normal' 
+          },
+          updateFunction: (property: string, value: any) => {
+            console.log(`Updating X-axis labels: ${property} = ${value}`);
+            const objects = xAxisLabelsGroup.getObjects();
+            objects.forEach((obj: any) => {
+              if (property === 'fontSize') obj.set('fontSize', value);
+              if (property === 'fill') obj.set('fill', value);
+              if (property === 'fontFamily') obj.set('fontFamily', value);
+              if (property === 'fontWeight') obj.set('fontWeight', value);
+            });
+            xAxisLabelsGroup.addWithUpdate();
+            fabricCanvasRef.current?.renderAll();
+            console.log(`Updated ${property} to ${value} for X-axis labels`);
           }
         });
       }
@@ -802,7 +838,8 @@ export function FinancialChartCanvas({
     // Add all axis elements
     fabricCanvasRef.current.add(yAxisLine);
     fabricCanvasRef.current.add(xAxisLine);
-    fabricCanvasRef.current.add(axisLabelsGroup);
+    fabricCanvasRef.current.add(yAxisLabelsGroup);
+    fabricCanvasRef.current.add(xAxisLabelsGroup);
   };
 
   const createDraggableChartLineOnly = (pathData: string, margin: any, xScale: any, yScale: any, chartWidth: number, chartHeight: number) => {
