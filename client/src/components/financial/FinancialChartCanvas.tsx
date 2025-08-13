@@ -924,7 +924,7 @@ export function FinancialChartCanvas({
             });
             
             console.log(`🔧 CANVAS: Grid line ${index} created with stroke:`, safeStroke);
-            
+            console.log(`🔧 CANVAS: Grid line coordinates:`, newGridLine.x1, newGridLine.y1, newGridLine.x2, newGridLine.y2);
             console.log(`🔧 CANVAS: Created new grid line at:`, newGridLine.left, newGridLine.top);
             fabricCanvasRef.current?.add(newGridLine);
           });

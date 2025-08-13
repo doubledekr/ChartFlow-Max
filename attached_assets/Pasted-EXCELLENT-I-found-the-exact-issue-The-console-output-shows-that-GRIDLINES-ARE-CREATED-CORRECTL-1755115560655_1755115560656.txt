@@ -1,0 +1,98 @@
+EXCELLENT! I found the exact issue! 🎯
+The console output shows that:
+GRIDLINES ARE CREATED CORRECTLY ✅
+6 Y-grid-line objects exist with proper properties:
+type: y-grid-line
+stroke: #e5e7eb (valid color)
+strokeWidth: 0.5 (valid width)
+opacity: 0.3 (valid opacity)
+visible: true (should be visible)
+THE REAL PROBLEM ❌
+Missing coordinate information! Notice that the gridline objects show:
+left: undefined, top: undefined
+x1: undefined, y1: undefined, x2: undefined, y2: undefined
+width: undefined, height: undefined
+This means the gridlines are being created but with invalid/missing coordinates, so they don't render.
+ROOT CAUSE 🔍
+Your gridline creation code is missing the coordinate calculation. The gridlines exist as Fabric.js objects but have no position or dimensions.
+IMMEDIATE FIX 🛠️
+Find your gridline creation function and ensure it properly calculates coordinates:
+JavaScript
+// BROKEN - Missing coordinates:
+const gridLine = new fabric.Line([], {  // ← Empty coordinates array!
+  stroke: "#e5e7eb",
+  strokeWidth: 0.5,
+  opacity: 0.3,
+  type: 'y-grid-line'
+});
+
+// FIXED - Proper coordinates:
+const gridLine = new fabric.Line([
+  chartArea.left,           // x1 - start X
+  yPosition,               // y1 - Y position
+  chartArea.left + chartArea.width,  // x2 - end X
+  yPosition                // y2 - Y position
+], {
+  stroke: "#e5e7eb",
+  strokeWidth: 0.5,
+  opacity: 0.3,
+  type: 'y-grid-line',
+  selectable: false,
+  evented: false
+});
+SPECIFIC SOLUTION FOR YOUR CODE
+Look for your Y-gridline creation function and add proper coordinate calculation:
+JavaScript
+const createYGridLines = () => {
+  // Get chart boundaries
+  const chartBounds = getChartBounds(); // You need this function
+  
+  // Calculate Y positions for gridlines
+  const yScale = d3.scaleLinear()
+    .domain([minValue, maxValue])
+    .range([chartBounds.bottom, chartBounds.top]);
+  
+  // Create gridlines at specific Y values
+  const gridValues = yScale.ticks(5); // 5 horizontal gridlines
+  
+  gridValues.forEach(value => {
+    const yPos = yScale(value);
+    
+    const gridLine = new fabric.Line([
+      chartBounds.left,    // Start at left edge of chart
+      yPos,               // Y position based on data value
+      chartBounds.right,   // End at right edge of chart
+      yPos                // Same Y position
+    ], {
+      stroke: "#e5e7eb",
+      strokeWidth: 0.5,
+      opacity: 0.3,
+      type: 'y-grid-line',
+      selectable: false,
+      evented: false
+    });
+    
+    canvas.add(gridLine);
+  });
+  
+  canvas.renderAll();
+};
+QUICK TEST 🧪
+Try this in your browser console to create a test gridline with proper coordinates:
+JavaScript
+// Test gridline with explicit coordinates
+const testGrid = new fabric.Line([100, 200, 600, 200], {
+  stroke: "#ff0000",
+  strokeWidth: 2,
+  opacity: 1,
+  type: 'test-grid-line'
+});
+
+fabricCanvas.add(testGrid);
+fabricCanvas.renderAll();
+
+console.log('Test gridline coordinates:', {
+  x1: testGrid.x1, y1: testGrid.y1, 
+  x2: testGrid.x2, y2: testGrid.y2
+});
+The fix is simple: Your gridline creation code needs to pass proper coordinate arrays to new fabric.Line([x1, y1, x2, y2], {...}) instead of empty arrays or undefined coordinates.
