@@ -319,9 +319,16 @@ export function FinancialChartCanvas({
       
       // For multiple symbols with very different ranges, use adaptive scaling
       if (symbol.includes(',') || symbol.includes(' ')) {
-        // Multiple symbols - use exact bounds with no padding for maximum data density
-        yMin = rawMin;
-        yMax = rawMax;
+        // Multiple symbols - analyze price distribution for smarter bounds
+        const sortedPrices = allPrices.sort((a, b) => a - b);
+        const p5 = sortedPrices[Math.floor(sortedPrices.length * 0.05)]; // 5th percentile
+        const p95 = sortedPrices[Math.floor(sortedPrices.length * 0.95)]; // 95th percentile
+        
+        // Use percentile-based bounds to exclude extreme outliers
+        yMin = Math.max(rawMin, p5 - (p95 - p5) * 0.02); // Allow 2% below 5th percentile
+        yMax = Math.min(rawMax, p95 + (p95 - p5) * 0.02); // Allow 2% above 95th percentile
+        
+        console.log(`📊 Multi-symbol percentile analysis: P5=${p5.toFixed(2)}, P95=${p95.toFixed(2)}, Raw=${rawMin.toFixed(2)}-${rawMax.toFixed(2)}, Final=${yMin.toFixed(2)}-${yMax.toFixed(2)}`);
       } else {
         // Single symbol - use tiny padding for readability
         const padding = priceRange * 0.01; // 1% padding
