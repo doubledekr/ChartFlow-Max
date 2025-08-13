@@ -319,13 +319,12 @@ export function FinancialChartCanvas({
       
       // For multiple symbols with very different ranges, use adaptive scaling
       if (symbol.includes(',') || symbol.includes(' ')) {
-        // Multiple symbols - use minimal padding for tight fit
-        const padding = priceRange * 0.01; // Very minimal 1% padding
-        yMin = Math.max(0, rawMin - padding);
-        yMax = rawMax + padding;
+        // Multiple symbols - use exact bounds with no padding for maximum data density
+        yMin = rawMin;
+        yMax = rawMax;
       } else {
-        // Single symbol - use minimal padding for tight fit  
-        const padding = priceRange * 0.02; // Minimal 2% padding
+        // Single symbol - use tiny padding for readability
+        const padding = priceRange * 0.01; // 1% padding
         yMin = Math.max(0, rawMin - padding);
         yMax = rawMax + padding;
       }
