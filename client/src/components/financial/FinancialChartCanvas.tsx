@@ -2014,7 +2014,8 @@ export function FinancialChartCanvas({
 
     // Create point markers if enabled
     const markers: any[] = [];
-    if (properties.showMarkers) {
+    console.log('🔴 Checking showMarkers:', properties.showMarkers, 'typeof:', typeof properties.showMarkers);
+    if (properties.showMarkers === true) {
       console.log('🔴 Creating point markers with properties:', properties);
       
       const getMarkerFrequencyStep = (frequency: string) => {
@@ -2122,7 +2123,8 @@ export function FinancialChartCanvas({
     
     // Create junction dots if enabled
     const junctions: any[] = [];
-    if (properties.showJunctions) {
+    console.log('🟡 Checking showJunctions:', properties.showJunctions, 'typeof:', typeof properties.showJunctions);
+    if (properties.showJunctions === true) {
       console.log('🟡 Creating junction dots with properties:', properties);
       
       const junctionSize = properties.junctionSize || 3;

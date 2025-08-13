@@ -236,16 +236,16 @@ export function ElementPropertiesPanel({
                 <div>
                   <Label className="text-xs">Show Data Points</Label>
                   <Button
-                    variant={properties.properties.showMarkers !== false ? "default" : "outline"}
+                    variant={properties.properties.showMarkers === true ? "default" : "outline"}
                     size="sm"
                     className="w-full mt-1"
-                    onClick={() => onUpdateProperty('showMarkers', properties.properties.showMarkers === false)}
+                    onClick={() => onUpdateProperty('showMarkers', !properties.properties.showMarkers)}
                   >
-                    {properties.properties.showMarkers !== false ? 'Show Points' : 'Hide Points'}
+                    {properties.properties.showMarkers === true ? 'Hide Points' : 'Show Points'}
                   </Button>
                 </div>
 
-                {properties.properties.showMarkers !== false && (
+                {properties.properties.showMarkers === true && (
                   <>
                     <div>
                       <Label className="text-xs">Marker Style</Label>
@@ -308,16 +308,16 @@ export function ElementPropertiesPanel({
                 <div>
                   <Label className="text-xs">Junction Dots</Label>
                   <Button
-                    variant={properties.properties.showJunctions !== false ? "default" : "outline"}
+                    variant={properties.properties.showJunctions === true ? "default" : "outline"}
                     size="sm"
                     className="w-full mt-1"
-                    onClick={() => onUpdateProperty('showJunctions', properties.properties.showJunctions === false)}
+                    onClick={() => onUpdateProperty('showJunctions', !properties.properties.showJunctions)}
                   >
-                    {properties.properties.showJunctions !== false ? 'Show Junctions' : 'Hide Junctions'}
+                    {properties.properties.showJunctions === true ? 'Hide Junctions' : 'Show Junctions'}
                   </Button>
                 </div>
 
-                {properties.properties.showJunctions !== false && (
+                {properties.properties.showJunctions === true && (
                   <>
                     <div>
                       <Label className="text-xs">Junction Size: {properties.properties.junctionSize || 3}px</Label>
