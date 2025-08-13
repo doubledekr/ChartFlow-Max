@@ -382,7 +382,14 @@ export function FinancialChartCanvas({
       type: 'x-axis-labels'
     });
 
-    // Create draggable chart line with optimal positioning
+    // Create draggable chart line with optimal positioning - store path reference
+    fabricPath.set({
+      strokeWidth: lineProperties.strokeWidth,
+      stroke: lineProperties.color,
+      opacity: lineProperties.opacity,
+      visible: true
+    });
+
     const chartLine = new (window as any).fabric.Group([fabricPath], {
       left: chartStartX,   // Centered positioning
       top: 120,            // Balanced positioning on canvas
@@ -398,7 +405,8 @@ export function FinancialChartCanvas({
       type: 'financial-chart-line',
       symbol,
       timeframe,
-      properties: lineProperties
+      properties: lineProperties,
+      chartPath: fabricPath  // Direct reference for easier updates
     });
 
     // Add all elements to canvas for independent selection
@@ -541,82 +549,77 @@ export function FinancialChartCanvas({
     const newProperties = { ...lineProperties, [property]: value };
     setLineProperties(newProperties);
 
-    // Update the chart line properties for separate elements
-    if (selectedChartLine.type === 'financial-chart-line') {
-      const objects = selectedChartLine.getObjects();
-      const chartPath = objects.find((obj: any) => obj.type === 'path');
+    // Get direct path reference for more reliable updates
+    const chartPath = selectedChartLine.chartPath || selectedChartLine.getObjects().find((obj: any) => obj.type === 'path');
 
+    if (selectedChartLine.type === 'financial-chart-line' && chartPath) {
       switch (property) {
         case 'strokeWidth':
-          if (chartPath) {
-            chartPath.set('strokeWidth', value);
-            chartPath.set('dirty', true);
-            selectedChartLine.addWithUpdate();
-            selectedChartLine.setCoords();
-            fabricCanvasRef.current?.renderAll();
-            fabricCanvasRef.current?.requestRenderAll();
-            console.log(`Updated strokeWidth to ${value} for element:`, selectedChartLine.type, 'Current path strokeWidth:', chartPath.strokeWidth);
-          }
+          // Update path directly
+          chartPath.strokeWidth = value;
+          chartPath.set('strokeWidth', value);
+          
+          // Force complete re-render
+          selectedChartLine.removeWithUpdate();
+          fabricCanvasRef.current?.add(selectedChartLine);
+          fabricCanvasRef.current?.renderAll();
+          
+          console.log(`UPDATED strokeWidth to ${value} - Path strokeWidth now:`, chartPath.strokeWidth);
           break;
 
         case 'opacity':
-          if (chartPath) {
-            chartPath.set('opacity', value);
-            chartPath.set('dirty', true);
-            selectedChartLine.addWithUpdate();
-            selectedChartLine.setCoords();
-            fabricCanvasRef.current?.renderAll();
-            fabricCanvasRef.current?.requestRenderAll();
-            console.log(`Updated opacity to ${value} for element:`, selectedChartLine.type, 'Current path opacity:', chartPath.opacity);
-          }
-          break;
-
-        case 'smoothness':
-          // Store current element positions before regenerating
-          const currentPosition = {
-            left: selectedChartLine.left,
-            top: selectedChartLine.top,
-            scaleX: selectedChartLine.scaleX,
-            scaleY: selectedChartLine.scaleY
-          };
+          // Update path directly
+          chartPath.opacity = value;
+          chartPath.set('opacity', value);
           
-          // Update smoothness and regenerate chart
-          setLineProperties(prev => ({ ...prev, smoothness: value }));
+          // Force complete re-render
+          selectedChartLine.removeWithUpdate();
+          fabricCanvasRef.current?.add(selectedChartLine);
+          fabricCanvasRef.current?.renderAll();
           
-          // Clear current chart and regenerate with new smoothness
-          fabricCanvasRef.current?.remove(selectedChartLine);
-          
-          // Regenerate immediately with new smoothness
-          renderChart();
-          
-          console.log(`Updated smoothness to ${value} for element:`, 'financial-chart-line', 'Regenerating chart...');
+          console.log(`UPDATED opacity to ${value} - Path opacity now:`, chartPath.opacity);
           break;
 
         case 'color':
-          if (chartPath) {
-            chartPath.set('stroke', value);
-            chartPath.set('dirty', true);
-            selectedChartLine.addWithUpdate();
-            selectedChartLine.setCoords();
-            fabricCanvasRef.current?.renderAll();
-            fabricCanvasRef.current?.requestRenderAll();
-            console.log(`Updated color to ${value} for element:`, selectedChartLine.type, 'Current path stroke:', chartPath.stroke);
-          }
+          // Update path directly
+          chartPath.stroke = value;
+          chartPath.set('stroke', value);
+          
+          // Force complete re-render  
+          selectedChartLine.removeWithUpdate();
+          fabricCanvasRef.current?.add(selectedChartLine);
+          fabricCanvasRef.current?.renderAll();
+          
+          console.log(`UPDATED color to ${value} - Path stroke now:`, chartPath.stroke);
           break;
 
         case 'visible':
-          if (chartPath) {
-            chartPath.set('visible', value);
-            chartPath.set('dirty', true);
-            selectedChartLine.set('visible', value);
-            selectedChartLine.addWithUpdate();
-            selectedChartLine.setCoords();
-            fabricCanvasRef.current?.renderAll();
-            fabricCanvasRef.current?.requestRenderAll();
-            console.log(`Updated visibility to ${value} for element:`, selectedChartLine.type, 'Current visibility:', chartPath.visible);
+          if (value) {
+            selectedChartLine.set('visible', true);
+            chartPath.set('visible', true);
+          } else {
+            selectedChartLine.set('visible', false); 
+            chartPath.set('visible', false);
           }
+          fabricCanvasRef.current?.renderAll();
+          console.log(`UPDATED visibility to ${value}`);
+          break;
+
+        case 'smoothness':
+          // Store current position and regenerate
+          const currentPos = { left: selectedChartLine.left, top: selectedChartLine.top };
+          setLineProperties(prev => ({ ...prev, smoothness: value }));
+          
+          // Remove and regenerate
+          fabricCanvasRef.current?.remove(selectedChartLine);
+          renderChart();
+          
+          console.log(`UPDATED smoothness to ${value} - Regenerating chart`);
           break;
       }
+
+      // Ensure canvas updates
+      fabricCanvasRef.current?.requestRenderAll();
     }
   };
 
