@@ -570,6 +570,23 @@ export function ElementPropertiesPanel({
                     onChange={(e) => onUpdateProperty('fill', e.target.value)}
                     className="w-12 h-8 rounded border border-gray-300 cursor-pointer"
                   />
+                  <input
+                    type="text"
+                    value={properties.properties.fill}
+                    onChange={(e) => onUpdateProperty('fill', e.target.value)}
+                    onBlur={(e) => {
+                      const value = e.target.value.trim();
+                      const normalizedValue = value.startsWith('#') ? value : `#${value}`;
+                      if (normalizedValue.match(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/)) {
+                        onUpdateProperty('fill', normalizedValue.toUpperCase());
+                      } else {
+                        onUpdateProperty('fill', properties.properties.fill);
+                      }
+                    }}
+                    placeholder="#666666"
+                    className="flex-1 text-xs font-mono"
+                    title="Enter hex color code"
+                  />
                 </div>
               </div>
 
@@ -581,10 +598,25 @@ export function ElementPropertiesPanel({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Inter, sans-serif">Inter</SelectItem>
+                    <SelectItem value="Roboto, sans-serif">Roboto</SelectItem>
+                    <SelectItem value="Open Sans, sans-serif">Open Sans</SelectItem>
+                    <SelectItem value="Lato, sans-serif">Lato</SelectItem>
+                    <SelectItem value="Montserrat, sans-serif">Montserrat</SelectItem>
+                    <SelectItem value="Poppins, sans-serif">Poppins</SelectItem>
+                    <SelectItem value="Source Sans Pro, sans-serif">Source Sans Pro</SelectItem>
+                    <SelectItem value="Nunito, sans-serif">Nunito</SelectItem>
+                    <SelectItem value="Work Sans, sans-serif">Work Sans</SelectItem>
                     <SelectItem value="Arial, sans-serif">Arial</SelectItem>
                     <SelectItem value="Helvetica, sans-serif">Helvetica</SelectItem>
+                    <SelectItem value="Playfair Display, serif">Playfair Display</SelectItem>
+                    <SelectItem value="Merriweather, serif">Merriweather</SelectItem>
+                    <SelectItem value="Lora, serif">Lora</SelectItem>
+                    <SelectItem value="Source Serif Pro, serif">Source Serif Pro</SelectItem>
                     <SelectItem value="Times New Roman, serif">Times New Roman</SelectItem>
                     <SelectItem value="Georgia, serif">Georgia</SelectItem>
+                    <SelectItem value="Fira Code, monospace">Fira Code</SelectItem>
+                    <SelectItem value="Source Code Pro, monospace">Source Code Pro</SelectItem>
+                    <SelectItem value="JetBrains Mono, monospace">JetBrains Mono</SelectItem>
                     <SelectItem value="Courier New, monospace">Courier New</SelectItem>
                   </SelectContent>
                 </Select>
@@ -603,6 +635,127 @@ export function ElementPropertiesPanel({
                     <SelectItem value="300">Light</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+              
+              {/* Axis Line Design Controls */}
+              <div className="space-y-4 mt-6 pt-4 border-t border-gray-200">
+                <h4 className="text-sm font-semibold text-gray-800">Related Axis Line</h4>
+                
+                <div>
+                  <Label className="text-xs">Line Thickness: 1px</Label>
+                  <Slider
+                    value={[1]}
+                    onValueChange={([value]) => {
+                      // Update the corresponding axis line thickness
+                      const property = elementType === 'y-axis-labels' ? 'yAxisLineStroke' : 'xAxisLineStroke';
+                      onUpdateProperty(property, value);
+                    }}
+                    min={0.5}
+                    max={5}
+                    step={0.5}
+                    className="mt-2"
+                  />
+                </div>
+                
+                <div>
+                  <Label className="text-xs">Line Color</Label>
+                  <div className="mt-2 flex gap-2">
+                    <input
+                      type="color"
+                      value="#d1d5db"
+                      onChange={(e) => {
+                        const property = elementType === 'y-axis-labels' ? 'yAxisLineColor' : 'xAxisLineColor';
+                        onUpdateProperty(property, e.target.value);
+                      }}
+                      className="w-12 h-8 rounded border border-gray-300 cursor-pointer"
+                    />
+                    <input
+                      type="text"
+                      value="#d1d5db"
+                      onChange={(e) => {
+                        const property = elementType === 'y-axis-labels' ? 'yAxisLineColor' : 'xAxisLineColor';
+                        onUpdateProperty(property, e.target.value);
+                      }}
+                      onBlur={(e) => {
+                        const value = e.target.value.trim();
+                        const normalizedValue = value.startsWith('#') ? value : `#${value}`;
+                        if (normalizedValue.match(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/)) {
+                          const property = elementType === 'y-axis-labels' ? 'yAxisLineColor' : 'xAxisLineColor';
+                          onUpdateProperty(property, normalizedValue.toUpperCase());
+                        }
+                      }}
+                      placeholder="#D1D5DB"
+                      className="flex-1 text-xs font-mono"
+                      title="Enter hex color code for axis line"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <Label className="text-xs">Line Style</Label>
+                  <Select value="solid" onValueChange={(value) => {
+                    const property = elementType === 'y-axis-labels' ? 'yAxisLineStyle' : 'xAxisLineStyle';
+                    onUpdateProperty(property, value);
+                  }}>
+                    <SelectTrigger className="mt-2">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="solid">Solid</SelectItem>
+                      <SelectItem value="dashed">Dashed</SelectItem>
+                      <SelectItem value="dotted">Dotted</SelectItem>
+                      <SelectItem value="dash-dot">Dash-Dot</SelectItem>
+                      <SelectItem value="long-dash">Long Dash</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <Label className="text-xs">Line Opacity: 100%</Label>
+                  <Slider
+                    value={[1]}
+                    onValueChange={([value]) => {
+                      const property = elementType === 'y-axis-labels' ? 'yAxisLineOpacity' : 'xAxisLineOpacity';
+                      onUpdateProperty(property, value);
+                    }}
+                    min={0}
+                    max={1}
+                    step={0.1}
+                    className="mt-2"
+                  />
+                </div>
+              </div>
+              
+              {/* Visibility Section */}
+              <div className="space-y-4 mt-6 pt-4 border-t border-gray-200">
+                <h4 className="text-sm font-semibold text-gray-800">Visibility</h4>
+                
+                <div>
+                  <Label className="text-xs">Show/Hide Labels</Label>
+                  <Button
+                    variant={properties.properties.visible !== false ? "default" : "outline"}
+                    size="sm"
+                    className="w-full mt-1"
+                    onClick={() => onUpdateProperty('visible', properties.properties.visible === false)}
+                  >
+                    {properties.properties.visible !== false ? 'Visible' : 'Hidden'}
+                  </Button>
+                </div>
+                
+                <div>
+                  <Label className="text-xs">Show/Hide Axis Line</Label>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full mt-1"
+                    onClick={() => {
+                      const property = elementType === 'y-axis-labels' ? 'yAxisLineVisible' : 'xAxisLineVisible';
+                      onUpdateProperty(property, true);
+                    }}
+                  >
+                    Toggle Line
+                  </Button>
+                </div>
               </div>
             </>
           )}
