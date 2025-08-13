@@ -523,8 +523,9 @@ export function FinancialChartCanvas({
     
     const chartWidth = Math.min(canvasWidth - margin.left - margin.right, 680);
     const chartHeight = Math.min(canvasHeight - margin.top - margin.bottom, 280);
+    const chartStartX = margin.left + 40; // Same as chart positioning
     
-    // Calculate scales
+    // Calculate scales to match chart rendering
     const xScale = d3.scaleTime()
       .domain(d3.extent(chartData, d => new Date(d.timestamp)) as [Date, Date])
       .range([0, chartWidth]);
@@ -536,14 +537,12 @@ export function FinancialChartCanvas({
       .domain([calculatedYMin, calculatedYMax])
       .range([chartHeight, 0]);
     
-    // Create Y-axis labels
+    // Create Y-axis labels with proper positioning
     const yTicks = yScale.ticks(5);
-    const chartStartX = margin.left + 40;
-    
     const yAxisLabels = yTicks.map((price: number) => new (window as any).fabric.Text(
       `$${price.toFixed(2)}`, {
         left: chartStartX - 45,
-        top: 120 + yScale(price) - 6,
+        top: margin.top + yScale(price) - 6,
         fontSize: 11,
         fontFamily: 'Inter, sans-serif',
         fill: '#666666',
@@ -554,12 +553,12 @@ export function FinancialChartCanvas({
       }
     ));
     
-    // Create X-axis labels
+    // Create X-axis labels with proper positioning
     const xTicks = xScale.ticks(5);
     const xAxisLabels = xTicks.map((date: Date) => new (window as any).fabric.Text(
       date.toLocaleDateString('en-US', { month: 'short', day: '2-digit' }), {
         left: chartStartX + xScale(date) - 20,
-        top: 120 + chartHeight + 15,
+        top: margin.top + chartHeight + 15,
         fontSize: 11,
         fontFamily: 'Inter, sans-serif',
         fill: '#666666',
@@ -570,8 +569,13 @@ export function FinancialChartCanvas({
       }
     ));
     
-    // Create axis lines
-    const yAxisLine = new (window as any).fabric.Line([chartStartX - 5, 120, chartStartX - 5, 120 + chartHeight], {
+    // Create axis lines with proper positioning
+    const yAxisLine = new (window as any).fabric.Line([
+      chartStartX - 5, 
+      margin.top, 
+      chartStartX - 5, 
+      margin.top + chartHeight
+    ], {
       stroke: '#666666',
       strokeWidth: 1,
       selectable: true,
@@ -580,7 +584,12 @@ export function FinancialChartCanvas({
       type: 'y-axis-line'
     });
     
-    const xAxisLine = new (window as any).fabric.Line([chartStartX, 120 + chartHeight + 5, chartStartX + chartWidth, 120 + chartHeight + 5], {
+    const xAxisLine = new (window as any).fabric.Line([
+      chartStartX, 
+      margin.top + chartHeight + 5, 
+      chartStartX + chartWidth, 
+      margin.top + chartHeight + 5
+    ], {
       stroke: '#666666',
       strokeWidth: 1,
       selectable: true,
