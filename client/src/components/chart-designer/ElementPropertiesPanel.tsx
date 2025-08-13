@@ -41,7 +41,11 @@ export function ElementPropertiesPanel({
             <Move className="h-4 w-4 text-gray-600" />
           )}
           <h3 className="text-sm font-medium">
-            {isChartGroup ? 'Financial Chart Line' : elementType === 'y-axis-labels' ? 'Y-Axis Labels' : elementType === 'x-axis-labels' ? 'X-Axis Labels' : 'Chart Element'}
+            {isChartGroup ? 'Financial Chart Line' : 
+             elementType === 'y-axis-labels' ? 'Y-Axis Labels' : 
+             elementType === 'x-axis-labels' ? 'X-Axis Labels' :
+             elementType === 'y-axis-line' ? 'Y-Axis Line' :
+             elementType === 'x-axis-line' ? 'X-Axis Line' : 'Chart Element'}
           </h3>
           {isChartGroup && (
             <Badge variant="outline" className="text-xs">
@@ -112,6 +116,60 @@ export function ElementPropertiesPanel({
                 ))}
               </div>
             </div>
+          )}
+
+          {/* Visibility toggle for chart line */}
+          {isChartGroup && properties.properties && (
+            <div>
+              <Label className="text-xs">Visibility</Label>
+              <Button
+                variant={properties.properties.visible !== false ? "default" : "outline"}
+                size="sm"
+                className="w-full mt-1"
+                onClick={() => onUpdateProperty('visible', properties.properties.visible === false)}
+              >
+                {properties.properties.visible !== false ? 'Visible' : 'Hidden'}
+              </Button>
+            </div>
+          )}
+          
+          {/* Axis line controls */}
+          {(elementType === 'y-axis-line' || elementType === 'x-axis-line') && properties.properties && (
+            <>
+              <div>
+                <Label className="text-xs">Line Thickness: {properties.properties.strokeWidth || 1}px</Label>
+                <Slider
+                  value={[properties.properties.strokeWidth || 1]}
+                  onValueChange={([value]) => onUpdateProperty('strokeWidth', value)}
+                  min={1}
+                  max={10}
+                  step={1}
+                  className="mt-2"
+                />
+              </div>
+              <div>
+                <Label className="text-xs">Opacity: {Math.round((properties.properties.opacity || 1) * 100)}%</Label>
+                <Slider
+                  value={[properties.properties.opacity || 1]}
+                  onValueChange={([value]) => onUpdateProperty('opacity', value)}
+                  min={0.1}
+                  max={1}
+                  step={0.1}
+                  className="mt-2"
+                />
+              </div>
+              <div>
+                <Label className="text-xs">Visibility</Label>
+                <Button
+                  variant={properties.properties.visible !== false ? "default" : "outline"}
+                  size="sm"
+                  className="w-full mt-1"
+                  onClick={() => onUpdateProperty('visible', properties.properties.visible === false)}
+                >
+                  {properties.properties.visible !== false ? 'Visible' : 'Hidden'}
+                </Button>
+              </div>
+            </>
           )}
 
           {/* Axis label properties */}

@@ -426,7 +426,7 @@ export function FinancialChartCanvas({
       }
     });
 
-    // Set up event handlers for axis text groups
+    // Set up event handlers for axis text groups with relative positioning
     yAxisGroup.on('selected', () => {
       if (onElementSelect) {
         onElementSelect(yAxisGroup, {
@@ -441,6 +441,7 @@ export function FinancialChartCanvas({
             });
             yAxisGroup.addWithUpdate();
             fabricCanvasRef.current?.renderAll();
+            console.log(`Updated ${property} to ${value} for element:`, 'y-axis-labels');
           }
         });
       }
@@ -460,6 +461,42 @@ export function FinancialChartCanvas({
             });
             xAxisGroup.addWithUpdate();
             fabricCanvasRef.current?.renderAll();
+            console.log(`Updated ${property} to ${value} for element:`, 'x-axis-labels');
+          }
+        });
+      }
+    });
+
+    // Set up event handlers for axis lines
+    yAxisLine.on('selected', () => {
+      if (onElementSelect) {
+        onElementSelect(yAxisLine, {
+          type: 'y-axis-line',
+          properties: { strokeWidth: 1, stroke: '#666', opacity: 1, visible: true },
+          updateFunction: (property: string, value: any) => {
+            if (property === 'strokeWidth') yAxisLine.set('strokeWidth', value);
+            if (property === 'stroke') yAxisLine.set('stroke', value);
+            if (property === 'opacity') yAxisLine.set('opacity', value);
+            if (property === 'visible') yAxisLine.set('visible', value);
+            fabricCanvasRef.current?.renderAll();
+            console.log(`Updated ${property} to ${value} for element:`, 'y-axis-line');
+          }
+        });
+      }
+    });
+
+    xAxisLine.on('selected', () => {
+      if (onElementSelect) {
+        onElementSelect(xAxisLine, {
+          type: 'x-axis-line',
+          properties: { strokeWidth: 1, stroke: '#666', opacity: 1, visible: true },
+          updateFunction: (property: string, value: any) => {
+            if (property === 'strokeWidth') xAxisLine.set('strokeWidth', value);
+            if (property === 'stroke') xAxisLine.set('stroke', value);
+            if (property === 'opacity') xAxisLine.set('opacity', value);
+            if (property === 'visible') xAxisLine.set('visible', value);
+            fabricCanvasRef.current?.renderAll();
+            console.log(`Updated ${property} to ${value} for element:`, 'x-axis-line');
           }
         });
       }
@@ -534,6 +571,16 @@ export function FinancialChartCanvas({
             chartPath.set('stroke', value);
             selectedChartLine.addWithUpdate();
             fabricCanvasRef.current?.renderAll();
+            console.log(`Updated color to ${value} for element:`, selectedChartLine.type);
+          }
+          break;
+
+        case 'visible':
+          if (chartPath) {
+            chartPath.set('visible', value);
+            selectedChartLine.addWithUpdate();
+            fabricCanvasRef.current?.renderAll();
+            console.log(`Updated visibility to ${value} for element:`, selectedChartLine.type);
           }
           break;
       }

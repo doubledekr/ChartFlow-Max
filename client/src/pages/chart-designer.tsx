@@ -20,6 +20,8 @@ export default function ChartDesigner() {
   const [selectedInstance, setSelectedInstance] = useState<ChartInstance | null>(null);
   const [selectedElement, setSelectedElement] = useState<any>(null);
   const [elementProperties, setElementProperties] = useState<any>(null);
+  const [canvasHistory, setCanvasHistory] = useState<any[]>([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
   const { toast } = useToast();
 
   const handleDataUpdate = () => {
@@ -31,8 +33,27 @@ export default function ChartDesigner() {
     setElementProperties(properties);
   };
 
+  const saveCanvasState = () => {
+    // Save canvas state for undo/redo
+    const canvasState = {
+      timestamp: Date.now(),
+      elements: selectedElement ? [{
+        type: selectedElement.type,
+        properties: elementProperties?.properties
+      }] : []
+    };
+    
+    const newHistory = canvasHistory.slice(0, historyIndex + 1);
+    newHistory.push(canvasState);
+    setCanvasHistory(newHistory);
+    setHistoryIndex(newHistory.length - 1);
+  };
+
   const handlePropertyUpdate = (property: string, value: any) => {
     if (!selectedElement || !elementProperties) return;
+
+    // Save state before change for undo functionality
+    saveCanvasState();
 
     // Update local properties state
     setElementProperties((prev: any) => ({
@@ -58,17 +79,55 @@ export default function ChartDesigner() {
   };
 
   const handleUndo = () => {
-    toast({
-      title: "Undo",
-      description: "Last action undone.",
-    });
+    if (historyIndex > 0) {
+      const previousState = canvasHistory[historyIndex - 1];
+      setHistoryIndex(historyIndex - 1);
+      
+      // Apply previous state to canvas
+      if (previousState && selectedElement && elementProperties?.updateFunction) {
+        const elementState = previousState.elements.find((el: any) => el.type === selectedElement.type);
+        if (elementState) {
+          Object.entries(elementState.properties).forEach(([prop, value]) => {
+            elementProperties.updateFunction(prop, value);
+          });
+          setElementProperties((prev: any) => ({
+            ...prev,
+            properties: elementState.properties
+          }));
+        }
+      }
+      
+      toast({
+        title: "Undo",
+        description: "Last action undone.",
+      });
+    }
   };
 
   const handleRedo = () => {
-    toast({
-      title: "Redo",
-      description: "Action redone.",
-    });
+    if (historyIndex < canvasHistory.length - 1) {
+      const nextState = canvasHistory[historyIndex + 1];
+      setHistoryIndex(historyIndex + 1);
+      
+      // Apply next state to canvas
+      if (nextState && selectedElement && elementProperties?.updateFunction) {
+        const elementState = nextState.elements.find((el: any) => el.type === selectedElement.type);
+        if (elementState) {
+          Object.entries(elementState.properties).forEach(([prop, value]) => {
+            elementProperties.updateFunction(prop, value);
+          });
+          setElementProperties((prev: any) => ({
+            ...prev,
+            properties: elementState.properties
+          }));
+        }
+      }
+      
+      toast({
+        title: "Redo", 
+        description: "Action redone.",
+      });
+    }
   };
 
   return (
