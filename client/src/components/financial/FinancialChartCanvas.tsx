@@ -118,7 +118,7 @@ export function FinancialChartCanvas({
 
     if (data.length === 0) return;
 
-    const margin = { top: 140, right: 40, bottom: 60, left: 80 }; // Moved down with less bottom space
+    const margin = { top: 120, right: 40, bottom: 80, left: 80 }; // Moved up slightly with balanced spacing
     const chartWidth = Math.min(width - margin.left - margin.right, 680); // Adjusted for proper label spacing
     const chartHeight = Math.min(height - margin.top - margin.bottom, 280); // Same height
 
@@ -344,10 +344,10 @@ export function FinancialChartCanvas({
     const totalChartWidth = chartWidth + 60; // Chart + Y-axis label space  
     const chartStartX = canvasCenter - (totalChartWidth / 2) + 60; // True center with Y-axis space
     
-    // Position axis lines centered horizontally and moved down toward bottom
+    // Position axis lines centered horizontally with optimal spacing
     yAxisLine.set({
       left: chartStartX,   // Centered position with Y-axis label clearance
-      top: 140,            // Moved further down toward bottom
+      top: 120,            // Moved up slightly for better balance
       selectable: true,
       hasControls: true,
       hasBorders: true,
@@ -356,17 +356,17 @@ export function FinancialChartCanvas({
 
     xAxisLine.set({
       left: chartStartX,   // Match Y-axis positioning
-      top: 140 + chartHeight,  // Below chart area, moved down
+      top: 120 + chartHeight,  // Below chart area with balanced positioning
       selectable: true,
       hasControls: true,
       hasBorders: true,
       type: 'x-axis-line'
     });
 
-    // Position axis text groups moved down toward bottom
+    // Position axis text groups with optimal vertical placement
     yAxisGroup.set({
       left: chartStartX - 60,  // Y-axis labels positioned left of the centered chart
-      top: 140,                // Moved down to match chart positioning
+      top: 120,                // Moved up to match chart positioning
       selectable: true,
       hasControls: true,
       hasBorders: true,
@@ -375,17 +375,17 @@ export function FinancialChartCanvas({
 
     xAxisGroup.set({
       left: chartStartX,       // Match axis positioning
-      top: 140 + chartHeight + 25,  // Below axis line, moved toward bottom
+      top: 120 + chartHeight + 25,  // Below axis line with proper clearance
       selectable: true,
       hasControls: true,
       hasBorders: true,
       type: 'x-axis-labels'
     });
 
-    // Create draggable chart line centered and moved toward bottom
+    // Create draggable chart line with optimal positioning
     const chartLine = new (window as any).fabric.Group([fabricPath], {
       left: chartStartX,   // Centered positioning
-      top: 140,            // Moved down toward bottom of canvas
+      top: 120,            // Balanced positioning on canvas
       selectable: true,
       hasControls: true,
       hasBorders: true,
