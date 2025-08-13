@@ -551,10 +551,29 @@ export function FinancialChartCanvas({
   };
 
   const updateChartLineProperties = (property: string, value: any) => {
-    if (!selectedChartLine || selectedChartLine.type !== 'financial-chart-line') return;
+    console.log('=== PROPERTY UPDATE DEBUG ===');
+    console.log('Property:', property, 'Value:', value);
+    console.log('Selected chart line:', selectedChartLine);
+    console.log('Chart line type:', selectedChartLine?.type);
+    console.log('Current lineProperties state:', lineProperties);
+    
+    if (!selectedChartLine || selectedChartLine.type !== 'financial-chart-line') {
+      console.log('❌ ABORT: No selected chart line or wrong type');
+      return;
+    }
+
+    // Log current chart line properties BEFORE update
+    console.log('BEFORE UPDATE - Chart line properties:', {
+      strokeWidth: selectedChartLine.strokeWidth,
+      stroke: selectedChartLine.stroke,
+      opacity: selectedChartLine.opacity,
+      visible: selectedChartLine.visible,
+      fill: selectedChartLine.fill
+    });
 
     // Create updated properties object
     const newProperties = { ...lineProperties, [property]: value };
+    console.log('New properties object:', newProperties);
     
     // Update state for UI consistency
     setLineProperties(newProperties);
@@ -562,54 +581,105 @@ export function FinancialChartCanvas({
     // Immediate update attempt on existing chart line
     const immediateSuccess = updateExistingChartLineImmediate(property, value);
     
+    // Log AFTER immediate update attempt
+    console.log('AFTER IMMEDIATE UPDATE - Chart line properties:', {
+      strokeWidth: selectedChartLine.strokeWidth,
+      stroke: selectedChartLine.stroke,
+      opacity: selectedChartLine.opacity,
+      visible: selectedChartLine.visible,
+      fill: selectedChartLine.fill
+    });
+    
     // Fallback: regenerate with new properties if immediate update failed
     if (!immediateSuccess) {
+      console.log('⚠️ Immediate update failed, falling back to regeneration');
       setTimeout(() => {
         renderChartWithProperties(newProperties);
-        console.log(`REGENERATED chart with ${property} = ${value}`);
+        console.log(`🔄 REGENERATED chart with ${property} = ${value}`);
       }, 0);
     } else {
-      console.log(`IMMEDIATE UPDATE ${property} = ${value}`);
+      console.log(`✅ IMMEDIATE UPDATE ${property} = ${value}`);
     }
+    
+    console.log('=== END PROPERTY UPDATE DEBUG ===');
   };
 
   const updateExistingChartLineImmediate = (property: string, value: any): boolean => {
-    if (!fabricCanvasRef.current || !selectedChartLine) return false;
+    console.log('--- IMMEDIATE UPDATE ATTEMPT ---');
+    console.log('Fabric canvas exists:', !!fabricCanvasRef.current);
+    console.log('Selected chart line exists:', !!selectedChartLine);
+    
+    if (!fabricCanvasRef.current || !selectedChartLine) {
+      console.log('❌ Missing fabric canvas or selected chart line');
+      return false;
+    }
     
     try {
+      console.log(`Applying ${property} = ${value} to chart line...`);
+      
+      // Log current property value before change
+      const beforeValue = selectedChartLine[property === 'color' ? 'stroke' : property];
+      console.log(`Before: ${property === 'color' ? 'stroke' : property} =`, beforeValue);
+      
       // Apply property directly to the selected chart line
       switch (property) {
         case 'strokeWidth':
           selectedChartLine.set({ strokeWidth: value });
+          console.log('Applied strokeWidth via set()');
           break;
         case 'opacity':
           selectedChartLine.set({ opacity: value });
+          console.log('Applied opacity via set()');
           break;
         case 'color':
           selectedChartLine.set({ stroke: value });
+          console.log('Applied color as stroke via set()');
           break;
         case 'visible':
           selectedChartLine.set({ visible: value });
+          console.log('Applied visible via set()');
           break;
         case 'smoothness':
-          // Smoothness requires regeneration
+          console.log('Smoothness requires regeneration - returning false');
           return false;
         default:
+          console.log('❌ Unknown property:', property);
           return false;
       }
       
+      // Log property value after change
+      const afterValue = selectedChartLine[property === 'color' ? 'stroke' : property];
+      console.log(`After: ${property === 'color' ? 'stroke' : property} =`, afterValue);
+      
       // Force visual update with multiple approaches
+      console.log('Calling setCoords()...');
       selectedChartLine.setCoords();
+      
+      console.log('Setting dirty = true...');
       selectedChartLine.dirty = true;
+      
+      console.log('Calling renderAll()...');
       fabricCanvasRef.current.renderAll();
+      
+      console.log('Calling requestRenderAll()...');
       fabricCanvasRef.current.requestRenderAll();
       
       // Additional force repaint
-      setTimeout(() => fabricCanvasRef.current?.renderAll(), 0);
+      setTimeout(() => {
+        console.log('Force repaint renderAll() after timeout...');
+        fabricCanvasRef.current?.renderAll();
+      }, 0);
       
+      // Check if the canvas actually has the object
+      const objectsOnCanvas = fabricCanvasRef.current.getObjects();
+      const chartLineIndex = objectsOnCanvas.indexOf(selectedChartLine);
+      console.log('Chart line index on canvas:', chartLineIndex);
+      console.log('Total objects on canvas:', objectsOnCanvas.length);
+      
+      console.log('✅ Immediate update completed successfully');
       return true;
     } catch (error) {
-      console.error('Immediate update failed:', error);
+      console.error('❌ Immediate update failed with error:', error);
       return false;
     }
   };
