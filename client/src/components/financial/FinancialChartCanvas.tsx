@@ -880,6 +880,55 @@ export function FinancialChartCanvas({
     (fabricCanvasRef.current as any).yGridLines = yGridLines;
     (fabricCanvasRef.current as any).xGridLines = xGridLines;
 
+    // Store updateFunction directly on the yAxisLine object
+    const yAxisUpdateFunction = (property: string, value: any) => {
+      console.log(`🔧 Updating Y-axis line: ${property} = ${value}`);
+      if (property === 'strokeWidth') yAxisLine.set('strokeWidth', value);
+      if (property === 'opacity') yAxisLine.set('opacity', value);
+      if (property === 'color') yAxisLine.set('stroke', value);
+      if (property === 'visible') yAxisLine.set('visible', value);
+      if (property === 'gridLinesVisible') {
+        console.log('🔧 CANVAS: Grid line visibility toggle triggered:', value);
+        const yGridLines = (fabricCanvasRef.current as any)?.yGridLines || [];
+        console.log('🔧 CANVAS: Y Grid Lines stored:', yGridLines.length);
+        console.log('🔧 CANVAS: Canvas objects before:', fabricCanvasRef.current?.getObjects().length);
+        
+        if (value) {
+          // Remove existing grid lines first
+          const existingGridLines = fabricCanvasRef.current?.getObjects().filter((obj: any) => obj.type === 'y-grid-line');
+          console.log('🔧 CANVAS: Removing existing grid lines:', existingGridLines.length);
+          existingGridLines.forEach((gridLine: any) => {
+            fabricCanvasRef.current?.remove(gridLine);
+          });
+          
+          // Add individual grid lines to canvas
+          console.log('🔧 CANVAS: Adding grid lines:', yGridLines.length);
+          yGridLines.forEach((gridLine: any, index: number) => {
+            console.log(`🔧 CANVAS: Adding grid line ${index}:`, gridLine.stroke, gridLine.strokeWidth, gridLine.opacity);
+            fabricCanvasRef.current?.add(gridLine);
+          });
+          fabricCanvasRef.current?.renderAll();
+          console.log('🔧 CANVAS: Canvas objects after:', fabricCanvasRef.current?.getObjects().length);
+        } else {
+          // Remove individual grid lines from canvas
+          const existingGridLines = fabricCanvasRef.current?.getObjects().filter((obj: any) => obj.type === 'y-grid-line');
+          console.log('🔧 CANVAS: Removing grid lines:', existingGridLines.length);
+          existingGridLines.forEach((gridLine: any) => {
+            fabricCanvasRef.current?.remove(gridLine);
+          });
+          fabricCanvasRef.current?.renderAll();
+          console.log('🔧 CANVAS: Canvas objects after removal:', fabricCanvasRef.current?.getObjects().length);
+        }
+      } else {
+        console.log('🔧 CANVAS: Other property update:', property, '=', value);
+      }
+      fabricCanvasRef.current?.renderAll();
+      console.log(`Updated ${property} to ${value} for Y-axis line`);
+    };
+
+    // Store updateFunction directly on the yAxisLine object
+    yAxisLine.updateFunction = yAxisUpdateFunction;
+
     // Set up event handlers for Y-axis line with grid line controls
     yAxisLine.on('selected', () => {
       console.log('Y-axis line selected');
@@ -893,50 +942,7 @@ export function FinancialChartCanvas({
             visible: true,
             gridLinesVisible: false
           },
-          updateFunction: (property: string, value: any) => {
-            console.log(`🔧 Updating Y-axis line: ${property} = ${value}`);
-            if (property === 'strokeWidth') yAxisLine.set('strokeWidth', value);
-            if (property === 'opacity') yAxisLine.set('opacity', value);
-            if (property === 'color') yAxisLine.set('stroke', value);
-            if (property === 'visible') yAxisLine.set('visible', value);
-            if (property === 'gridLinesVisible') {
-              console.log('🔧 CANVAS: Grid line visibility toggle triggered:', value);
-              const yGridLines = (fabricCanvasRef.current as any)?.yGridLines || [];
-              console.log('🔧 CANVAS: Y Grid Lines stored:', yGridLines.length);
-              console.log('🔧 CANVAS: Canvas objects before:', fabricCanvasRef.current?.getObjects().length);
-              
-              if (value) {
-                // Remove existing grid lines first
-                const existingGridLines = fabricCanvasRef.current?.getObjects().filter((obj: any) => obj.type === 'y-grid-line');
-                console.log('🔧 CANVAS: Removing existing grid lines:', existingGridLines.length);
-                existingGridLines.forEach((gridLine: any) => {
-                  fabricCanvasRef.current?.remove(gridLine);
-                });
-                
-                // Add individual grid lines to canvas
-                console.log('🔧 CANVAS: Adding grid lines:', yGridLines.length);
-                yGridLines.forEach((gridLine: any, index: number) => {
-                  console.log(`🔧 CANVAS: Adding grid line ${index}:`, gridLine.stroke, gridLine.strokeWidth, gridLine.opacity);
-                  fabricCanvasRef.current?.add(gridLine);
-                });
-                fabricCanvasRef.current?.renderAll();
-                console.log('🔧 CANVAS: Canvas objects after:', fabricCanvasRef.current?.getObjects().length);
-              } else {
-                // Remove individual grid lines from canvas
-                const existingGridLines = fabricCanvasRef.current?.getObjects().filter((obj: any) => obj.type === 'y-grid-line');
-                console.log('🔧 CANVAS: Removing grid lines:', existingGridLines.length);
-                existingGridLines.forEach((gridLine: any) => {
-                  fabricCanvasRef.current?.remove(gridLine);
-                });
-                fabricCanvasRef.current?.renderAll();
-                console.log('🔧 CANVAS: Canvas objects after removal:', fabricCanvasRef.current?.getObjects().length);
-              }
-            } else {
-              console.log('🔧 CANVAS: Other property update:', property, '=', value);
-            }
-            fabricCanvasRef.current?.renderAll();
-            console.log(`Updated ${property} to ${value} for Y-axis line`);
-          }
+          updateFunction: yAxisUpdateFunction
         });
       }
     });

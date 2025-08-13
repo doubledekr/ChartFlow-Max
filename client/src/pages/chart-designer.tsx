@@ -305,6 +305,9 @@ export default function ChartDesigner() {
             if (selectedElement && selectedElement.updateFunction) {
               console.log('🔧 Chart Designer - Found updateFunction on selectedElement, calling it');
               selectedElement.updateFunction(property, value);
+            } else {
+              console.log('🔧 Chart Designer - No updateFunction found on selectedElement either');
+              console.log('🔧 Chart Designer - selectedElement keys:', selectedElement ? Object.keys(selectedElement) : 'selectedElement is null');
             }
           }
         }
