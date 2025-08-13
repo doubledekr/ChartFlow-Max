@@ -383,26 +383,27 @@ export function ElementPropertiesPanel({
                         className="w-10 h-8 rounded border border-gray-300 cursor-pointer"
                         title="Color picker"
                       />
-                      <input
+                      <Input
                         type="text"
                         value={properties.properties.color}
                         onChange={(e) => {
-                          const value = e.target.value;
-                          if (value.match(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/)) {
-                            onUpdateProperty('color', value);
-                          }
+                          // Allow typing without immediate validation
+                          onUpdateProperty('color', e.target.value);
                         }}
                         onBlur={(e) => {
-                          const value = e.target.value;
-                          if (value.match(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/)) {
-                            onUpdateProperty('color', value.toUpperCase());
+                          const value = e.target.value.trim();
+                          // Add # if missing
+                          const normalizedValue = value.startsWith('#') ? value : `#${value}`;
+                          
+                          if (normalizedValue.match(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/)) {
+                            onUpdateProperty('color', normalizedValue.toUpperCase());
                           } else {
-                            e.target.value = properties.properties.color;
+                            // Reset to previous valid color if invalid
+                            onUpdateProperty('color', properties.properties.color);
                           }
                         }}
                         placeholder="#3B82F6"
-                        className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded font-mono"
-                        pattern="^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$"
+                        className="flex-1 text-xs font-mono"
                         title="Enter hex color code (e.g., #3B82F6)"
                       />
                     </div>
