@@ -413,12 +413,23 @@ export function FinancialChartCanvas({
       console.log('Chart line selected');
       setSelectedChartLine(chartLine);
       
+      // Get current properties from the actual Fabric.js element
+      const objects = chartLine.getObjects();
+      const chartPath = objects.find((obj: any) => obj.type === 'path');
+      const currentProperties = chartPath ? {
+        strokeWidth: chartPath.strokeWidth || lineProperties.strokeWidth,
+        opacity: chartPath.opacity || lineProperties.opacity,
+        smoothness: lineProperties.smoothness,
+        color: chartPath.stroke || lineProperties.color,
+        visible: chartPath.visible !== false
+      } : lineProperties;
+      
       if (onElementSelect) {
         onElementSelect(chartLine, {
           type: 'financial-chart-line',
           symbol,
           timeframe,
-          properties: lineProperties,
+          properties: currentProperties,
           updateFunction: updateChartLineProperties,
           duplicateFunction: duplicateChartLine,
           deleteFunction: deleteChartLine
@@ -526,6 +537,7 @@ export function FinancialChartCanvas({
   const updateChartLineProperties = (property: string, value: any) => {
     if (!selectedChartLine) return;
 
+    // Update local state
     const newProperties = { ...lineProperties, [property]: value };
     setLineProperties(newProperties);
 
@@ -541,6 +553,20 @@ export function FinancialChartCanvas({
             selectedChartLine.addWithUpdate();
             fabricCanvasRef.current?.renderAll();
             console.log(`Updated strokeWidth to ${value} for element:`, selectedChartLine.type);
+            
+            // Force re-select to update property panel
+            if (onElementSelect) {
+              const updatedProperties = { ...newProperties, strokeWidth: value };
+              onElementSelect(selectedChartLine, {
+                type: 'financial-chart-line',
+                symbol: selectedChartLine.symbol,
+                timeframe: selectedChartLine.timeframe,
+                properties: updatedProperties,
+                updateFunction: updateChartLineProperties,
+                duplicateFunction: duplicateChartLine,
+                deleteFunction: deleteChartLine
+              });
+            }
           }
           break;
 
@@ -550,19 +576,42 @@ export function FinancialChartCanvas({
             selectedChartLine.addWithUpdate();
             fabricCanvasRef.current?.renderAll();
             console.log(`Updated opacity to ${value} for element:`, selectedChartLine.type);
+            
+            // Force re-select to update property panel
+            if (onElementSelect) {
+              const updatedProperties = { ...newProperties, opacity: value };
+              onElementSelect(selectedChartLine, {
+                type: 'financial-chart-line',
+                symbol: selectedChartLine.symbol,
+                timeframe: selectedChartLine.timeframe,
+                properties: updatedProperties,
+                updateFunction: updateChartLineProperties,
+                duplicateFunction: duplicateChartLine,
+                deleteFunction: deleteChartLine
+              });
+            }
           }
           break;
 
         case 'smoothness':
-          // Regenerate the chart with new smoothness while preserving positions
+          // Update smoothness in state and regenerate chart
           const allObjects = fabricCanvasRef.current?.getObjects() || [];
           const positions = allObjects.map((obj: any) => ({
             type: obj.type,
             left: obj.left,
-            top: obj.top
+            top: obj.top,
+            scaleX: obj.scaleX,
+            scaleY: obj.scaleY
           }));
           
-          renderChart();
+          // Store the smoothness value before regenerating
+          setLineProperties(prev => ({ ...prev, smoothness: value }));
+          
+          // Regenerate chart with new smoothness
+          setTimeout(() => {
+            renderChart();
+          }, 10);
+          
           console.log(`Updated smoothness to ${value} for element:`, selectedChartLine.type);
           break;
 
@@ -572,6 +621,20 @@ export function FinancialChartCanvas({
             selectedChartLine.addWithUpdate();
             fabricCanvasRef.current?.renderAll();
             console.log(`Updated color to ${value} for element:`, selectedChartLine.type);
+            
+            // Force re-select to update property panel
+            if (onElementSelect) {
+              const updatedProperties = { ...newProperties, color: value };
+              onElementSelect(selectedChartLine, {
+                type: 'financial-chart-line',
+                symbol: selectedChartLine.symbol,
+                timeframe: selectedChartLine.timeframe,
+                properties: updatedProperties,
+                updateFunction: updateChartLineProperties,
+                duplicateFunction: duplicateChartLine,
+                deleteFunction: deleteChartLine
+              });
+            }
           }
           break;
 
