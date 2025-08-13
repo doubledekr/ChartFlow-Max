@@ -875,6 +875,7 @@ export function FinancialChartCanvas({
     console.log('Storing Y grid lines:', yGridLines.length);
     console.log('Storing X grid lines:', xGridLines.length);
     console.log('Sample Y grid line:', yGridLines[0]);
+    console.log('Sample Y grid line stroke:', yGridLines[0]?.stroke);
     (fabricCanvasRef.current as any).yGridLines = yGridLines;
     (fabricCanvasRef.current as any).xGridLines = xGridLines;
 
@@ -910,14 +911,19 @@ export function FinancialChartCanvas({
             const chartStart = 140; // Chart starts at x=140 (margin.left + yAxis offset)
             const chartEnd = 820;   // Chart ends at x=820 (140 + 680 chart width)
             
+            // Ensure stroke color is valid (never empty or undefined)
+            const safeStroke = gridLine.stroke || '#e5e7eb';
+            
             const newGridLine = new (window as any).fabric.Line([chartStart, gridLine.top, chartEnd, gridLine.top], {
-              stroke: gridLine.stroke,
-              strokeWidth: gridLine.strokeWidth,
-              opacity: gridLine.opacity,
+              stroke: safeStroke,
+              strokeWidth: gridLine.strokeWidth || 0.5,
+              opacity: gridLine.opacity || 0.3,
               selectable: false,
               evented: false,
               type: 'y-grid-line'
             });
+            
+            console.log(`🔧 CANVAS: Grid line ${index} created with stroke:`, safeStroke);
             
             console.log(`🔧 CANVAS: Created new grid line at:`, newGridLine.left, newGridLine.top);
             fabricCanvasRef.current?.add(newGridLine);
