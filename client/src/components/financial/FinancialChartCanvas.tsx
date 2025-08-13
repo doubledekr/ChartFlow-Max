@@ -759,6 +759,42 @@ export function FinancialChartCanvas({
       hasBorders: true,
       type: 'x-axis-line'
     });
+
+    // Create horizontal grid lines (extending from Y-axis line to align with Y-axis labels)
+    const yGridLines: any[] = [];
+    yTicks.forEach((price: number) => {
+      const yPos = margin.top + yScale(price);
+      const gridLine = new (window as any).fabric.Line([
+        chartStartX, yPos, chartStartX + chartWidth, yPos
+      ], {
+        stroke: '#e5e7eb',
+        strokeWidth: 0.5,
+        selectable: false,
+        evented: false,
+        type: 'y-grid-line',
+        opacity: 0,
+        visible: false
+      });
+      yGridLines.push(gridLine);
+    });
+
+    // Create vertical grid lines (extending from X-axis line to align with X-axis labels)  
+    const xGridLines: any[] = [];
+    xTicks.forEach((date: Date) => {
+      const xPos = chartStartX + xScale(date);
+      const gridLine = new (window as any).fabric.Line([
+        xPos, margin.top, xPos, margin.top + chartHeight
+      ], {
+        stroke: '#e5e7eb',
+        strokeWidth: 0.5,
+        selectable: false,
+        evented: false,
+        type: 'x-grid-line',
+        opacity: 0,
+        visible: false
+      });
+      xGridLines.push(gridLine);
+    });
     
     // Create separate groups for Y-axis and X-axis labels
     const yAxisLabelsGroup = new (window as any).fabric.Group(yAxisLabels, {
@@ -830,6 +866,74 @@ export function FinancialChartCanvas({
             xAxisLabelsGroup.addWithUpdate();
             fabricCanvasRef.current?.renderAll();
             console.log(`Updated ${property} to ${value} for X-axis labels`);
+          }
+        });
+      }
+    });
+
+    // Add grid lines to canvas (initially hidden)
+    yGridLines.forEach(gridLine => fabricCanvasRef.current!.add(gridLine));
+    xGridLines.forEach(gridLine => fabricCanvasRef.current!.add(gridLine));
+
+    // Set up event handlers for Y-axis line with grid line controls
+    yAxisLine.on('selected', () => {
+      console.log('Y-axis line selected');
+      if (onElementSelect) {
+        onElementSelect(yAxisLine, {
+          type: 'y-axis-line',
+          properties: { 
+            strokeWidth: 1, 
+            opacity: 1, 
+            color: '#666666', 
+            visible: true,
+            gridLinesVisible: yGridLines[0]?.visible || false
+          },
+          updateFunction: (property: string, value: any) => {
+            console.log(`Updating Y-axis line: ${property} = ${value}`);
+            if (property === 'strokeWidth') yAxisLine.set('strokeWidth', value);
+            if (property === 'opacity') yAxisLine.set('opacity', value);
+            if (property === 'color') yAxisLine.set('stroke', value);
+            if (property === 'visible') yAxisLine.set('visible', value);
+            if (property === 'gridLinesVisible') {
+              yGridLines.forEach(gridLine => {
+                gridLine.set('visible', value);
+                gridLine.set('opacity', value ? 0.6 : 0);
+              });
+            }
+            fabricCanvasRef.current?.renderAll();
+            console.log(`Updated ${property} to ${value} for Y-axis line`);
+          }
+        });
+      }
+    });
+
+    // Set up event handlers for X-axis line with grid line controls
+    xAxisLine.on('selected', () => {
+      console.log('X-axis line selected');
+      if (onElementSelect) {
+        onElementSelect(xAxisLine, {
+          type: 'x-axis-line',
+          properties: { 
+            strokeWidth: 1, 
+            opacity: 1, 
+            color: '#666666', 
+            visible: true,
+            gridLinesVisible: xGridLines[0]?.visible || false
+          },
+          updateFunction: (property: string, value: any) => {
+            console.log(`Updating X-axis line: ${property} = ${value}`);
+            if (property === 'strokeWidth') xAxisLine.set('strokeWidth', value);
+            if (property === 'opacity') xAxisLine.set('opacity', value);
+            if (property === 'color') xAxisLine.set('stroke', value);
+            if (property === 'visible') xAxisLine.set('visible', value);
+            if (property === 'gridLinesVisible') {
+              xGridLines.forEach(gridLine => {
+                gridLine.set('visible', value);
+                gridLine.set('opacity', value ? 0.6 : 0);
+              });
+            }
+            fabricCanvasRef.current?.renderAll();
+            console.log(`Updated ${property} to ${value} for X-axis line`);
           }
         });
       }

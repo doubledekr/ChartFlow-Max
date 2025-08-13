@@ -539,6 +539,21 @@ export function ElementPropertiesPanel({
                     {properties.properties.visible !== false ? 'Visible' : 'Hidden'}
                   </Button>
                 </div>
+                
+                {/* Grid lines control */}
+                <div>
+                  <Label className="text-xs">
+                    {elementType === 'y-axis-line' ? 'Show Horizontal Grid Lines' : 'Show Vertical Grid Lines'}
+                  </Label>
+                  <Button
+                    variant={properties.properties.gridLinesVisible ? "default" : "outline"}
+                    size="sm"
+                    className="w-full mt-1"
+                    onClick={() => onUpdateProperty('gridLinesVisible', !properties.properties.gridLinesVisible)}
+                  >
+                    {properties.properties.gridLinesVisible ? 'Grid Lines On' : 'Grid Lines Off'}
+                  </Button>
+                </div>
               </div>
             </>
           )}
