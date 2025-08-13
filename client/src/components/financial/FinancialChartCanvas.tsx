@@ -900,33 +900,14 @@ export function FinancialChartCanvas({
             fabricCanvasRef.current?.remove(gridLine);
           });
           
-          // Add individual grid lines to canvas
+          // Add individual grid lines to canvas - use the stored grid lines
           console.log('🔧 CANVAS: Adding grid lines:', yGridLines.length);
           yGridLines.forEach((gridLine: any, index: number) => {
             console.log(`🔧 CANVAS: Adding grid line ${index}:`, gridLine.stroke, gridLine.strokeWidth, gridLine.opacity);
-            console.log(`🔧 CANVAS: Grid line position:`, gridLine.left, gridLine.top, 'width:', gridLine.width, 'height:', gridLine.height);
             
-            // Create a new grid line object with proper positioning
-            // Grid line coordinates need to be absolute: from chart start (140) to chart end (820)
-            const chartStart = 140; // Chart starts at x=140 (margin.left + yAxis offset)
-            const chartEnd = 820;   // Chart ends at x=820 (140 + 680 chart width)
-            
-            // Ensure stroke color is valid (never empty or undefined)
-            const safeStroke = gridLine.stroke || '#e5e7eb';
-            
-            const newGridLine = new (window as any).fabric.Line([chartStart, gridLine.top, chartEnd, gridLine.top], {
-              stroke: safeStroke,
-              strokeWidth: gridLine.strokeWidth || 0.5,
-              opacity: gridLine.opacity || 0.3,
-              selectable: false,
-              evented: false,
-              type: 'y-grid-line'
-            });
-            
-            console.log(`🔧 CANVAS: Grid line ${index} created with stroke:`, safeStroke);
-            console.log(`🔧 CANVAS: Grid line coordinates:`, newGridLine.x1, newGridLine.y1, newGridLine.x2, newGridLine.y2);
-            console.log(`🔧 CANVAS: Created new grid line at:`, newGridLine.left, newGridLine.top);
-            fabricCanvasRef.current?.add(newGridLine);
+            // Instead of creating new lines, add the original stored grid lines directly
+            console.log(`🔧 CANVAS: Adding stored grid line directly`);
+            fabricCanvasRef.current?.add(gridLine);
           });
           fabricCanvasRef.current?.renderAll();
           console.log('🔧 CANVAS: Canvas objects after:', fabricCanvasRef.current?.getObjects().length);
