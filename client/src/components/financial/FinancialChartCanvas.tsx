@@ -716,42 +716,52 @@ export function FinancialChartCanvas({
       }
     });
     
-    // Create chart with specific properties
+    // Use the standard chart creation method that includes all elements
     setTimeout(() => {
-      createDraggableChartGroupWithProperties(currentProperties);
+      const svg = d3.select(svgRef.current);
+      if (data.length === 0) return;
+
+      const margin = { top: 120, right: 40, bottom: 80, left: 80 };
+      const chartWidth = Math.min(width - margin.left - margin.right, 680);
+      const chartHeight = Math.min(height - margin.top - margin.bottom, 280);
+
+      const xScale = d3.scaleTime()
+        .domain(d3.extent(data, d => new Date(d.timestamp)) as [Date, Date])
+        .range([0, chartWidth]);
+
+      const yScale = d3.scaleLinear()
+        .domain(d3.extent(data, d => d.high) as [number, number])
+        .range([chartHeight, 0]);
+
+      // Create smoothed data based on properties
+      const smoothingFactor = Math.max(1, Math.floor((1 - currentProperties.smoothness) * 10) + 1);
+      const smoothedData = data.filter((_, index) => index % smoothingFactor === 0);
+      
+      if (smoothedData[smoothedData.length - 1] !== data[data.length - 1]) {
+        smoothedData.push(data[data.length - 1]);
+      }
+
+      const line = d3.line<ChartDataPoint>()
+        .x(d => xScale(new Date(d.timestamp)))
+        .y(d => yScale(d.close))
+        .curve(d3.curveCatmullRom.alpha(0.5));
+
+      const pathData = line(smoothedData) || '';
+
+      // Create draggable chart group with all elements and updated properties
+      createDraggableChartGroupWithProperties(pathData, margin, xScale, yScale, chartWidth, chartHeight, currentProperties);
     }, 10);
   };
 
-  const createDraggableChartGroupWithProperties = (properties: any) => {
-    const svg = d3.select(svgRef.current);
-    if (data.length === 0) return;
-
-    const margin = { top: 120, right: 40, bottom: 80, left: 80 };
-    const chartWidth = Math.min(width - margin.left - margin.right, 680);
-    const chartHeight = Math.min(height - margin.top - margin.bottom, 280);
-
-    const xScale = d3.scaleTime()
-      .domain(d3.extent(data, d => new Date(d.timestamp)) as [Date, Date])
-      .range([0, chartWidth]);
-
-    const yScale = d3.scaleLinear()
-      .domain(d3.extent(data, d => d.high) as [number, number])
-      .range([chartHeight, 0]);
-
-    // Create smoothed data based on properties
-    const smoothingFactor = Math.max(1, Math.floor((1 - properties.smoothness) * 10) + 1);
-    const smoothedData = data.filter((_, index) => index % smoothingFactor === 0);
-    
-    if (smoothedData[smoothedData.length - 1] !== data[data.length - 1]) {
-      smoothedData.push(data[data.length - 1]);
-    }
-
-    const line = d3.line<ChartDataPoint>()
-      .x(d => xScale(new Date(d.timestamp)))
-      .y(d => yScale(d.close))
-      .curve(d3.curveCatmullRom.alpha(0.5));
-
-    const pathData = line(smoothedData) || '';
+  const createDraggableChartGroupWithProperties = (
+    pathData: string,
+    margin: any,
+    xScale: any,
+    yScale: any,
+    chartWidth: number,
+    chartHeight: number,
+    properties: any
+  ) => {
     
     // Create chart elements with passed properties
     const fabricPath = new (window as any).fabric.Path(pathData, {
@@ -777,8 +787,82 @@ export function FinancialChartCanvas({
       top: 120
     });
 
+    // Convert D3 axis data to Fabric.js text objects  
+    const yTicks = yScale.ticks(6);
+    const xTicks = xScale.ticks(5);
+
+    // Y-axis price labels (left side) 
+    const yAxisLabels = yTicks.map((price: number, index: number) => new (window as any).fabric.Text(
+      `$${price.toFixed(2)}`, {
+        left: chartStartX - 60,
+        top: 120 + yScale(price) - 8,
+        fontSize: 11,
+        fontFamily: 'Inter, sans-serif',
+        fill: '#666666',
+        selectable: true,
+        hasControls: false,
+        hasBorders: true,
+        type: 'y-axis-label'
+      }
+    ));
+
+    // X-axis date labels (bottom)
+    const xAxisLabels = xTicks.map((date: Date, index: number) => new (window as any).fabric.Text(
+      date.toLocaleDateString('en-US', { month: 'short', day: '2-digit' }), {
+        left: chartStartX + xScale(date) - 20,
+        top: 120 + chartHeight + 15,
+        fontSize: 11,
+        fontFamily: 'Inter, sans-serif',
+        fill: '#666666',
+        selectable: true,
+        hasControls: false,
+        hasBorders: true,
+        type: 'x-axis-label'
+      }
+    ));
+
+    // Create axis lines
+    const yAxisLine = new (window as any).fabric.Line([chartStartX - 5, 120, chartStartX - 5, 120 + chartHeight], {
+      stroke: '#666666',
+      strokeWidth: 1,
+      selectable: true,
+      hasControls: false,
+      hasBorders: true,
+      type: 'y-axis-line'
+    });
+
+    const xAxisLine = new (window as any).fabric.Line([chartStartX, 120 + chartHeight + 5, chartStartX + chartWidth, 120 + chartHeight + 5], {
+      stroke: '#666666',
+      strokeWidth: 1,
+      selectable: true,
+      hasControls: false,
+      hasBorders: true,
+      type: 'x-axis-line'
+    });
+
+    // Create grouped elements
+    const yAxisGroup = new (window as any).fabric.Group(yAxisLabels, {
+      selectable: true,
+      hasControls: false,
+      hasBorders: true,
+      type: 'y-axis-labels'
+    });
+
+    const xAxisGroup = new (window as any).fabric.Group(xAxisLabels, {
+      selectable: true,
+      hasControls: false,
+      hasBorders: true,
+      type: 'x-axis-labels'
+    });
+
+    // Add all elements to canvas for independent selection
+    fabricCanvasRef.current.add(yAxisLine);
+    fabricCanvasRef.current.add(xAxisLine);
+    fabricCanvasRef.current.add(yAxisGroup);
+    fabricCanvasRef.current.add(xAxisGroup);
     fabricCanvasRef.current.add(fabricPath);
-    
+
+    // Set up event handlers for chart line selection
     fabricPath.on('selected', () => {
       console.log('Chart line selected');
       setSelectedChartLine(fabricPath);
@@ -796,6 +880,9 @@ export function FinancialChartCanvas({
       }
     });
 
+    // Auto-select the chart line and render canvas
+    fabricCanvasRef.current.setActiveObject(fabricPath);
+    setSelectedChartLine(fabricPath);
     fabricCanvasRef.current.renderAll();
   };
 
