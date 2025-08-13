@@ -894,39 +894,42 @@ export function FinancialChartCanvas({
             gridLinesVisible: false
           },
           updateFunction: (property: string, value: any) => {
-            console.log(`Updating Y-axis line: ${property} = ${value}`);
+            console.log(`🔧 Updating Y-axis line: ${property} = ${value}`);
             if (property === 'strokeWidth') yAxisLine.set('strokeWidth', value);
             if (property === 'opacity') yAxisLine.set('opacity', value);
             if (property === 'color') yAxisLine.set('stroke', value);
             if (property === 'visible') yAxisLine.set('visible', value);
             if (property === 'gridLinesVisible') {
-              console.log('Grid line visibility toggle triggered:', value);
+              console.log('🔧 Grid line visibility toggle triggered:', value);
               const yGridLines = (fabricCanvasRef.current as any)?.yGridLines || [];
-              console.log('Y Grid Lines stored:', yGridLines.length);
-              console.log('Available grid lines:', yGridLines);
+              console.log('🔧 Y Grid Lines stored:', yGridLines.length);
+              console.log('🔧 Canvas objects before:', fabricCanvasRef.current?.getObjects().length);
               
               if (value) {
                 // Remove existing grid lines first
                 const existingGridLines = fabricCanvasRef.current?.getObjects().filter((obj: any) => obj.type === 'y-grid-line');
+                console.log('🔧 Removing existing grid lines:', existingGridLines.length);
                 existingGridLines.forEach((gridLine: any) => {
                   fabricCanvasRef.current?.remove(gridLine);
                 });
                 
                 // Add individual grid lines to canvas
+                console.log('🔧 Adding grid lines:', yGridLines.length);
                 yGridLines.forEach((gridLine: any, index: number) => {
-                  console.log(`Adding grid line ${index}:`, gridLine);
+                  console.log(`🔧 Adding grid line ${index}:`, gridLine.stroke, gridLine.strokeWidth, gridLine.opacity);
                   fabricCanvasRef.current?.add(gridLine);
                 });
                 fabricCanvasRef.current?.renderAll();
-                console.log('Added Y grid lines to canvas individually:', yGridLines.length);
+                console.log('🔧 Canvas objects after:', fabricCanvasRef.current?.getObjects().length);
               } else {
                 // Remove individual grid lines from canvas
                 const existingGridLines = fabricCanvasRef.current?.getObjects().filter((obj: any) => obj.type === 'y-grid-line');
+                console.log('🔧 Removing grid lines:', existingGridLines.length);
                 existingGridLines.forEach((gridLine: any) => {
                   fabricCanvasRef.current?.remove(gridLine);
                 });
                 fabricCanvasRef.current?.renderAll();
-                console.log('Removed Y grid lines from canvas');
+                console.log('🔧 Canvas objects after removal:', fabricCanvasRef.current?.getObjects().length);
               }
             }
             fabricCanvasRef.current?.renderAll();
