@@ -871,22 +871,10 @@ export function FinancialChartCanvas({
       }
     });
 
-    // Create grid line groups for better layer management
-    const yGridLinesGroup = new (window as any).fabric.Group(yGridLines, {
-      type: 'y-grid-lines-group',
-      selectable: false,
-      evented: false
-    });
-    
-    const xGridLinesGroup = new (window as any).fabric.Group(xGridLines, {
-      type: 'x-grid-lines-group', 
-      selectable: false,
-      evented: false
-    });
-
-    // Add grid line groups to canvas
-    fabricCanvasRef.current.add(yGridLinesGroup);
-    fabricCanvasRef.current.add(xGridLinesGroup);
+    // Initially don't add grid lines to canvas - they'll be added when toggled on
+    // Store grid lines for later use
+    (fabricCanvasRef.current as any).yGridLines = yGridLines;
+    (fabricCanvasRef.current as any).xGridLines = xGridLines;
 
     // Set up event handlers for Y-axis line with grid line controls
     yAxisLine.on('selected', () => {
@@ -899,10 +887,7 @@ export function FinancialChartCanvas({
             opacity: 1, 
             color: '#666666', 
             visible: true,
-            gridLinesVisible: (() => {
-              const yGridGroup = fabricCanvasRef.current?.getObjects().find((obj: any) => obj.type === 'y-grid-lines-group');
-              return yGridGroup?.visible && yGridGroup?.opacity > 0;
-            })()
+            gridLinesVisible: false
           },
           updateFunction: (property: string, value: any) => {
             console.log(`Updating Y-axis line: ${property} = ${value}`);
@@ -911,17 +896,23 @@ export function FinancialChartCanvas({
             if (property === 'color') yAxisLine.set('stroke', value);
             if (property === 'visible') yAxisLine.set('visible', value);
             if (property === 'gridLinesVisible') {
-              // Find and control the Y grid lines group
-              const yGridGroup = fabricCanvasRef.current?.getObjects().find((obj: any) => obj.type === 'y-grid-lines-group');
-              if (yGridGroup) {
-                yGridGroup.set('visible', value);
-                yGridGroup.set('opacity', value ? 0.3 : 0);
-                if (value) {
-                  if (!fabricCanvasRef.current?.getObjects().includes(yGridGroup)) {
-                    fabricCanvasRef.current?.add(yGridGroup);
-                  }
-                } else {
+              const yGridLines = (fabricCanvasRef.current as any)?.yGridLines || [];
+              if (value) {
+                // Create grid group and add to canvas
+                const yGridGroup = new (window as any).fabric.Group(yGridLines, {
+                  type: 'y-grid-lines-group',
+                  selectable: false,
+                  evented: false,
+                  opacity: 0.3
+                });
+                fabricCanvasRef.current?.add(yGridGroup);
+                console.log('Added Y grid lines to canvas');
+              } else {
+                // Remove grid group from canvas
+                const yGridGroup = fabricCanvasRef.current?.getObjects().find((obj: any) => obj.type === 'y-grid-lines-group');
+                if (yGridGroup) {
                   fabricCanvasRef.current?.remove(yGridGroup);
+                  console.log('Removed Y grid lines from canvas');
                 }
               }
             }
@@ -943,10 +934,7 @@ export function FinancialChartCanvas({
             opacity: 1, 
             color: '#666666', 
             visible: true,
-            gridLinesVisible: (() => {
-              const xGridGroup = fabricCanvasRef.current?.getObjects().find((obj: any) => obj.type === 'x-grid-lines-group');
-              return xGridGroup?.visible && xGridGroup?.opacity > 0;
-            })()
+            gridLinesVisible: false
           },
           updateFunction: (property: string, value: any) => {
             console.log(`Updating X-axis line: ${property} = ${value}`);
@@ -955,17 +943,23 @@ export function FinancialChartCanvas({
             if (property === 'color') xAxisLine.set('stroke', value);
             if (property === 'visible') xAxisLine.set('visible', value);
             if (property === 'gridLinesVisible') {
-              // Find and control the X grid lines group
-              const xGridGroup = fabricCanvasRef.current?.getObjects().find((obj: any) => obj.type === 'x-grid-lines-group');
-              if (xGridGroup) {
-                xGridGroup.set('visible', value);
-                xGridGroup.set('opacity', value ? 0.3 : 0);
-                if (value) {
-                  if (!fabricCanvasRef.current?.getObjects().includes(xGridGroup)) {
-                    fabricCanvasRef.current?.add(xGridGroup);
-                  }
-                } else {
+              const xGridLines = (fabricCanvasRef.current as any)?.xGridLines || [];
+              if (value) {
+                // Create grid group and add to canvas
+                const xGridGroup = new (window as any).fabric.Group(xGridLines, {
+                  type: 'x-grid-lines-group',
+                  selectable: false,
+                  evented: false,
+                  opacity: 0.3
+                });
+                fabricCanvasRef.current?.add(xGridGroup);
+                console.log('Added X grid lines to canvas');
+              } else {
+                // Remove grid group from canvas
+                const xGridGroup = fabricCanvasRef.current?.getObjects().find((obj: any) => obj.type === 'x-grid-lines-group');
+                if (xGridGroup) {
                   fabricCanvasRef.current?.remove(xGridGroup);
+                  console.log('Removed X grid lines from canvas');
                 }
               }
             }
@@ -1658,7 +1652,7 @@ export function FinancialChartCanvas({
       console.log('📊 REGENERATION - Generated path data with smoothness:', currentProperties.smoothness, 'Path length:', pathData.length);
 
       // Create draggable chart group with all elements and updated properties
-      createDraggableChartGroupWithProperties(pathData, margin, xScale, yScale, chartWidth, chartHeight, currentProperties, minPrice, maxPrice);
+      createDraggableChartGroupWithProperties(pathData, margin, xScale, yScale, chartWidth, chartHeight, currentProperties, yMin, yMax);
     }, 10);
   };
 
