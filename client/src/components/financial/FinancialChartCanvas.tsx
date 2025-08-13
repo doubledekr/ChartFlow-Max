@@ -900,21 +900,8 @@ export function FinancialChartCanvas({
             fabricCanvasRef.current?.remove(gridLine);
           });
           
-          // Create test grid lines to verify they can be visible
-          console.log('🔧 CANVAS: Creating test grid lines');
-          
-          // Create one bright red test line that should definitely be visible
-          const testLine = new (window as any).fabric.Line([140, 250, 820, 250], {
-            stroke: '#ff0000',
-            strokeWidth: 3,
-            opacity: 1,
-            selectable: true,
-            evented: true,
-            type: 'test-grid-line'
-          });
-          
-          console.log('🔧 CANVAS: Adding bright red test line at Y=250');
-          fabricCanvasRef.current?.add(testLine);
+          // Create horizontal grid lines
+          console.log('🔧 CANVAS: Creating horizontal grid lines:', yGridLines.length);
           
           // Create actual grid lines
           yGridLines.forEach((gridLine: any, index: number) => {
@@ -934,14 +921,14 @@ export function FinancialChartCanvas({
           fabricCanvasRef.current?.renderAll();
           console.log('🔧 CANVAS: Canvas objects after:', fabricCanvasRef.current?.getObjects().length);
         } else {
-          // Remove individual grid lines from canvas
-          const existingGridLines = fabricCanvasRef.current?.getObjects().filter((obj: any) => obj.type === 'y-grid-line');
-          console.log('🔧 CANVAS: Removing grid lines:', existingGridLines.length);
+          // Remove horizontal grid lines from canvas
+          const existingGridLines = fabricCanvasRef.current?.getObjects().filter((obj: any) => 
+            obj.type === 'y-grid-line' || obj.type === 'test-grid-line');
+          console.log('🔧 CANVAS: Removing horizontal grid lines:', existingGridLines.length);
           existingGridLines.forEach((gridLine: any) => {
             fabricCanvasRef.current?.remove(gridLine);
           });
           fabricCanvasRef.current?.renderAll();
-          console.log('🔧 CANVAS: Canvas objects after removal:', fabricCanvasRef.current?.getObjects().length);
         }
       } else {
         console.log('🔧 CANVAS: Other property update:', property, '=', value);
@@ -985,33 +972,53 @@ export function FinancialChartCanvas({
             gridLinesVisible: false
           },
           updateFunction: (property: string, value: any) => {
-            console.log(`Updating X-axis line: ${property} = ${value}`);
+            console.log(`🔧 Updating X-axis line: ${property} = ${value}`);
             if (property === 'strokeWidth') xAxisLine.set('strokeWidth', value);
             if (property === 'opacity') xAxisLine.set('opacity', value);
             if (property === 'color') xAxisLine.set('stroke', value);
             if (property === 'visible') xAxisLine.set('visible', value);
             if (property === 'gridLinesVisible') {
+              console.log('🔧 CANVAS: X-Grid line visibility toggle triggered:', value);
               const xGridLines = (fabricCanvasRef.current as any)?.xGridLines || [];
-              console.log('X Grid Lines stored:', xGridLines.length);
+              console.log('🔧 CANVAS: X Grid Lines stored:', xGridLines.length);
               
               if (value) {
-                // Remove existing grid group first
-                const existingXGridGroup = fabricCanvasRef.current?.getObjects().find((obj: any) => obj.type === 'x-grid-lines-group');
-                if (existingXGridGroup) {
-                  fabricCanvasRef.current?.remove(existingXGridGroup);
-                }
-                
-                // Add individual grid lines to canvas
-                xGridLines.forEach((gridLine: any) => {
-                  fabricCanvasRef.current?.add(gridLine);
-                });
-                console.log('Added X grid lines to canvas individually:', xGridLines.length);
-              } else {
-                // Remove individual grid lines from canvas
-                xGridLines.forEach((gridLine: any) => {
+                // Remove existing vertical grid lines first
+                const existingGridLines = fabricCanvasRef.current?.getObjects().filter((obj: any) => 
+                  obj.type === 'x-grid-line' || obj.type === 'test-x-grid-line');
+                console.log('🔧 CANVAS: Removing existing X grid lines:', existingGridLines.length);
+                existingGridLines.forEach((gridLine: any) => {
                   fabricCanvasRef.current?.remove(gridLine);
                 });
-                console.log('Removed X grid lines from canvas');
+                
+                // Create vertical grid lines
+                console.log('🔧 CANVAS: Creating vertical grid lines');
+                
+                // Create vertical grid lines from stored X grid data
+                
+                // Create actual vertical grid lines
+                xGridLines.forEach((gridLine: any, index: number) => {
+                  const xPos = gridLine.left + (gridLine.width / 2); // Center of the grid line
+                  const freshGridLine = new (window as any).fabric.Line([xPos, 120, xPos, 400], {
+                    stroke: '#e5e7eb',
+                    strokeWidth: 1,
+                    opacity: 0.8,
+                    selectable: false,
+                    evented: false,
+                    type: 'x-grid-line'
+                  });
+                  
+                  console.log(`🔧 CANVAS: Created X grid line ${index} at X=${xPos}`);
+                  fabricCanvasRef.current?.add(freshGridLine);
+                });
+              } else {
+                // Remove vertical grid lines from canvas
+                const existingGridLines = fabricCanvasRef.current?.getObjects().filter((obj: any) => 
+                  obj.type === 'x-grid-line' || obj.type === 'test-x-grid-line');
+                console.log('🔧 CANVAS: Removing X grid lines:', existingGridLines.length);
+                existingGridLines.forEach((gridLine: any) => {
+                  fabricCanvasRef.current?.remove(gridLine);
+                });
               }
             }
             fabricCanvasRef.current?.renderAll();
