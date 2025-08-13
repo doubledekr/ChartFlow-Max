@@ -51,6 +51,32 @@ export function FinancialChartCanvas({
     visible: true,
     strokeDashArray: null as number[] | null
   });
+  const [xAxisDateFormat, setXAxisDateFormat] = useState('short-date'); // Default format
+
+  // Date formatting function for X-axis labels
+  const formatXAxisDate = (date: Date, format: string): string => {
+    switch (format) {
+      case 'short-date': // "Jan 15"
+        return date.toLocaleDateString('en-US', { month: 'short', day: '2-digit' });
+      case 'month-year': // "Jan 2024"
+        return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+      case 'numeric-short': // "01/15"
+        return date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
+      case 'numeric-full': // "01/15/24"
+        return date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: '2-digit' });
+      case 'long-date': // "15 Jan"
+        return date.toLocaleDateString('en-US', { day: '2-digit', month: 'short' });
+      case 'weekday-short': // "Mon 15"
+        return date.toLocaleDateString('en-US', { weekday: 'short', day: '2-digit' });
+      case 'iso-date': // "2024-01-15"
+        return date.toISOString().split('T')[0];
+      case 'quarter': // "Q1 2024"
+        const quarter = Math.floor((date.getMonth() / 3)) + 1;
+        return `Q${quarter} ${date.getFullYear()}`;
+      default:
+        return date.toLocaleDateString('en-US', { month: 'short', day: '2-digit' });
+    }
+  };
 
   // Load data when symbol or timeframe changes
   useEffect(() => {
@@ -715,10 +741,10 @@ export function FinancialChartCanvas({
       }
     ));
     
-    // Create X-axis labels with proper positioning
+    // Create X-axis labels with proper positioning and custom formatting
     const xTicks = xScale.ticks(5);
     const xAxisLabels = xTicks.map((date: Date) => new (window as any).fabric.Text(
-      date.toLocaleDateString('en-US', { month: 'short', day: '2-digit' }), {
+      formatXAxisDate(date, xAxisDateFormat), {
         left: chartStartX + xScale(date) - 20,
         top: margin.top + chartHeight + 10, // Closer to axis line
         fontSize: 11,
@@ -852,17 +878,35 @@ export function FinancialChartCanvas({
             fontSize: 11, 
             fill: '#666666', 
             fontFamily: 'Inter, sans-serif', 
-            fontWeight: 'normal' 
+            fontWeight: 'normal',
+            dateFormat: xAxisDateFormat
           },
           updateFunction: (property: string, value: any) => {
             console.log(`Updating X-axis labels: ${property} = ${value}`);
-            const objects = xAxisLabelsGroup.getObjects();
-            objects.forEach((obj: any) => {
-              if (property === 'fontSize') obj.set('fontSize', value);
-              if (property === 'fill') obj.set('fill', value);
-              if (property === 'fontFamily') obj.set('fontFamily', value);
-              if (property === 'fontWeight') obj.set('fontWeight', value);
-            });
+            
+            if (property === 'dateFormat') {
+              // Update the date format and regenerate labels
+              setXAxisDateFormat(value);
+              
+              // Regenerate the labels with new format
+              const objects = xAxisLabelsGroup.getObjects();
+              objects.forEach((obj: any, index: number) => {
+                if (xTicks[index]) {
+                  const newText = formatXAxisDate(xTicks[index], value);
+                  obj.set('text', newText);
+                }
+              });
+            } else {
+              // Handle other properties normally
+              const objects = xAxisLabelsGroup.getObjects();
+              objects.forEach((obj: any) => {
+                if (property === 'fontSize') obj.set('fontSize', value);
+                if (property === 'fill') obj.set('fill', value);
+                if (property === 'fontFamily') obj.set('fontFamily', value);
+                if (property === 'fontWeight') obj.set('fontWeight', value);
+              });
+            }
+            
             xAxisLabelsGroup.addWithUpdate();
             fabricCanvasRef.current?.renderAll();
             console.log(`Updated ${property} to ${value} for X-axis labels`);

@@ -608,6 +608,31 @@ export function ElementPropertiesPanel({
                   />
                 </div>
               </div>
+              
+              {/* Date Format Selection for X-axis labels only */}
+              {elementType === 'x-axis-labels' && (
+                <div>
+                  <Label className="text-xs">Date Format</Label>
+                  <Select 
+                    value={properties.properties.dateFormat || 'short-date'}
+                    onValueChange={(value) => onUpdateProperty('dateFormat', value)}
+                  >
+                    <SelectTrigger className="mt-2">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="short-date">Short Date (Jan 15)</SelectItem>
+                      <SelectItem value="month-year">Month Year (Jan 2024)</SelectItem>
+                      <SelectItem value="numeric-short">Numeric Short (01/15)</SelectItem>
+                      <SelectItem value="numeric-full">Numeric Full (01/15/24)</SelectItem>
+                      <SelectItem value="long-date">Long Date (15 Jan)</SelectItem>
+                      <SelectItem value="weekday-short">Weekday Short (Mon 15)</SelectItem>
+                      <SelectItem value="iso-date">ISO Date (2024-01-15)</SelectItem>
+                      <SelectItem value="quarter">Quarter (Q1 2024)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
               <div>
                 <Label className="text-xs">Font Family</Label>
