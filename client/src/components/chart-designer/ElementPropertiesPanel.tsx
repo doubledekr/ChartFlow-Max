@@ -17,6 +17,9 @@ export function ElementPropertiesPanel({
   properties, 
   onUpdateProperty 
 }: ElementPropertiesPanelProps) {
+  console.log('ElementPropertiesPanel - selectedElement:', selectedElement);
+  console.log('ElementPropertiesPanel - properties:', properties);
+  
   if (!selectedElement || !properties) {
     return (
       <Card>
@@ -30,6 +33,10 @@ export function ElementPropertiesPanel({
 
   const isChartGroup = properties.type === 'financial-chart-group' || properties.type === 'financial-chart-line';
   const elementType = properties.type;
+  
+  console.log('ElementPropertiesPanel - elementType:', elementType);
+  console.log('ElementPropertiesPanel - isChartGroup:', isChartGroup);
+  console.log('ElementPropertiesPanel - properties.properties:', properties.properties);
 
   return (
     <Card>

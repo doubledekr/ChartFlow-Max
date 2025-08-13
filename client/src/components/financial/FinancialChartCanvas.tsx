@@ -450,6 +450,7 @@ export function FinancialChartCanvas({
 
     // Set up event handlers for axis text groups with relative positioning
     yAxisGroup.on('selected', () => {
+      console.log('Y-axis labels selected');
       if (onElementSelect) {
         onElementSelect(yAxisGroup, {
           type: 'y-axis-labels',
@@ -460,6 +461,7 @@ export function FinancialChartCanvas({
             fontWeight: 'normal' 
           },
           updateFunction: (property: string, value: any) => {
+            console.log(`Updating Y-axis labels: ${property} = ${value}`);
             const objects = yAxisGroup.getObjects();
             objects.forEach((obj: any) => {
               if (property === 'fontSize') obj.set('fontSize', value);
@@ -476,6 +478,7 @@ export function FinancialChartCanvas({
     });
 
     xAxisGroup.on('selected', () => {
+      console.log('X-axis labels selected');
       if (onElementSelect) {
         onElementSelect(xAxisGroup, {
           type: 'x-axis-labels',
@@ -486,6 +489,7 @@ export function FinancialChartCanvas({
             fontWeight: 'normal' 
           },
           updateFunction: (property: string, value: any) => {
+            console.log(`Updating X-axis labels: ${property} = ${value}`);
             const objects = xAxisGroup.getObjects();
             objects.forEach((obj: any) => {
               if (property === 'fontSize') obj.set('fontSize', value);
