@@ -226,8 +226,19 @@ export function FinancialChartCanvas({
     setError(null);
     
     try {
-      const chartData = await PolygonClient.getStockData(symbol, timeframe);
-      setData(chartData);
+      const response = await PolygonClient.getStockData(symbol, timeframe);
+      
+      // Handle multi-symbol response structure
+      if (response && typeof response === 'object' && 'isMultiSymbol' in response) {
+        // Use combined data for Y-axis scaling but store series info
+        setData((response as any).combinedData);
+        // Store series data for multi-line rendering
+        (window as any).multiSymbolData = response;
+      } else {
+        // Single symbol response
+        setData(response as ChartDataPoint[]);
+        (window as any).multiSymbolData = null;
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load stock data');
       console.error('Error loading stock data:', err);
@@ -245,6 +256,10 @@ export function FinancialChartCanvas({
     const margin = { top: 120, right: 40, bottom: 80, left: 80 };
     const chartWidth = Math.min(width - margin.left - margin.right, 680);
     const chartHeight = Math.min(height - margin.top - margin.bottom, 280);
+
+    // Check if we have multi-symbol data
+    const multiSymbolData = (window as any).multiSymbolData;
+    const isMultiSymbol = multiSymbolData?.isMultiSymbol;
 
     const xScale = d3.scaleTime()
       .domain(d3.extent(data, d => new Date(d.timestamp)) as [Date, Date])
@@ -347,17 +362,49 @@ export function FinancialChartCanvas({
       return curve;
     };
 
-    const line = d3.line<ChartDataPoint>()
-      .x(d => xScale(new Date(d.timestamp)))
-      .y(d => yScale(d.close))
-      .curve(getCurveType(lineProperties.smoothness));
+    // Render multiple lines for multi-symbol data or single line for single symbol
+    if (isMultiSymbol && multiSymbolData?.series) {
+      console.log(`📊 Rendering ${multiSymbolData.series.length} symbol lines with unified Y-axis`);
+      
+      // Predefined colors for different symbols
+      const symbolColors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4'];
+      
+      multiSymbolData.series.forEach((series: any, index: number) => {
+        const line = d3.line<ChartDataPoint>()
+          .x(d => xScale(new Date(d.timestamp)))
+          .y(d => yScale(d.close))
+          .curve(getCurveType(lineProperties.smoothness));
 
-    const pathData = line(data) || '';
+        const pathData = line(series.data) || '';
+        const color = symbolColors[index % symbolColors.length];
+        
+        console.log(`📈 Creating line for ${series.symbol}: ${series.data.length} points, color: ${color}`);
+        
+        // Create draggable chart group with symbol-specific properties
+        setTimeout(() => {
+          createDraggableChartGroup(pathData, margin, xScale, yScale, chartWidth, chartHeight, {
+            symbol: series.symbol,
+            color: color,
+            strokeWidth: lineProperties.strokeWidth,
+            opacity: lineProperties.opacity
+          });
+        }, 100 + (index * 50)); // Stagger creation slightly
+      });
+    } else {
+      // Single symbol rendering
+      const line = d3.line<ChartDataPoint>()
+        .x(d => xScale(new Date(d.timestamp)))
+        .y(d => yScale(d.close))
+        .curve(getCurveType(lineProperties.smoothness));
 
-    // Create draggable chart group with axis text conversion
-    setTimeout(() => {
-      createDraggableChartGroup(pathData, margin, xScale, yScale, chartWidth, chartHeight);
-    }, 100);
+      const pathData = line(data) || '';
+      console.log('📊 Generated single symbol path data with smoothness:', lineProperties.smoothness, 'Path length:', pathData.length);
+
+      // Create draggable chart group with axis text conversion
+      setTimeout(() => {
+        createDraggableChartGroup(pathData, margin, xScale, yScale, chartWidth, chartHeight);
+      }, 100);
+    }
   };
 
   const addAnnotation = () => {
@@ -403,16 +450,21 @@ export function FinancialChartCanvas({
     xScale: any, 
     yScale: any, 
     chartWidth: number, 
-    chartHeight: number
+    chartHeight: number,
+    symbolOptions?: any
   ) => {
     if (!fabricCanvasRef.current || !pathData || data.length === 0) return;
 
-    // Convert SVG path to Fabric.js Path object with proper styling
+    // Convert SVG path to Fabric.js Path object with symbol-specific styling
+    const chartColor = symbolOptions?.color || lineProperties.color;
+    const chartStrokeWidth = symbolOptions?.strokeWidth || lineProperties.strokeWidth;
+    const chartOpacity = symbolOptions?.opacity || lineProperties.opacity;
+    
     const fabricPath = new (window as any).fabric.Path(pathData, {
       fill: '',
-      stroke: lineProperties.color,
-      strokeWidth: lineProperties.strokeWidth,
-      opacity: lineProperties.opacity,
+      stroke: chartColor,
+      strokeWidth: chartStrokeWidth,
+      opacity: chartOpacity,
       left: 0,  // Will be positioned later to match axis elements
       top: 0,   // Will be positioned later to match axis elements  
       selectable: false,
@@ -421,6 +473,7 @@ export function FinancialChartCanvas({
       strokeLineCap: 'round',
       strokeLineJoin: 'round',
       elementType: 'chartline',
+      symbol: symbolOptions?.symbol || symbol,
       strokeDashArray: lineProperties.strokeDashArray || null
     });
 

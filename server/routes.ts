@@ -60,16 +60,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
           })
         );
         
-        // Combine all data points for unified Y-axis scaling
-        const combinedData = allData.reduce((acc, { data }) => {
+        // Return structured data with separate series for each symbol
+        // but include combined data for unified Y-axis calculation
+        const combinedDataPoints = allData.reduce((acc, { data }) => {
           return acc.concat(data);
         }, [] as any[]);
         
-        // Sort combined data by timestamp for proper chart rendering
-        combinedData.sort((a, b) => a.timestamp - b.timestamp);
+        const response = {
+          isMultiSymbol: true,
+          symbols: symbols,
+          series: allData.map(({ symbol: sym, data }) => ({
+            symbol: sym,
+            data: data.sort((a, b) => a.timestamp - b.timestamp)
+          })),
+          combinedData: combinedDataPoints.sort((a, b) => a.timestamp - b.timestamp)
+        };
         
-        console.log(`Combined ${combinedData.length} data points from ${symbols.length} symbols`);
-        res.json(combinedData);
+        console.log(`Returning multi-symbol data: ${symbols.length} symbols, ${combinedDataPoints.length} total points`);
+        res.json(response);
       } else {
         // Single symbol - use existing logic
         const data = await polygonService.getStockData(symbol, timeframe);
