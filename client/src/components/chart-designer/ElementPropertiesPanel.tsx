@@ -108,19 +108,57 @@ export function ElementPropertiesPanel({
           {isChartGroup && properties.properties && (
             <div>
               <Label className="text-xs">Line Color</Label>
-              <div className="flex gap-2 mt-2">
-                {['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'].map(color => (
+              <div className="flex gap-2 mt-2 flex-wrap">
+                {['#000000', '#ffffff', '#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'].map(color => (
                   <button
                     key={color}
                     className={`w-6 h-6 rounded border-2 transition-all ${
                       properties.properties.color === color 
                         ? 'border-gray-800 scale-110' 
                         : 'border-gray-300 hover:border-gray-400'
-                    }`}
+                    } ${color === '#ffffff' ? 'border-gray-400' : ''}`}
                     style={{ backgroundColor: color }}
                     onClick={() => onUpdateProperty('color', color)}
+                    title={color === '#000000' ? 'Black' : color === '#ffffff' ? 'White' : color}
                   />
                 ))}
+              </div>
+              <div className="mt-3">
+                <Label className="text-xs">Custom Color (Hex)</Label>
+                <div className="flex gap-2 mt-2">
+                  <input
+                    type="color"
+                    value={properties.properties.color}
+                    onChange={(e) => onUpdateProperty('color', e.target.value)}
+                    className="w-10 h-8 rounded border border-gray-300 cursor-pointer"
+                    title="Color picker"
+                  />
+                  <input
+                    type="text"
+                    value={properties.properties.color}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      // Allow input while typing, validate on blur
+                      if (value.match(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/)) {
+                        onUpdateProperty('color', value);
+                      }
+                    }}
+                    onBlur={(e) => {
+                      const value = e.target.value;
+                      // Validate and correct format on blur
+                      if (value.match(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/)) {
+                        onUpdateProperty('color', value.toUpperCase());
+                      } else {
+                        // Reset to current color if invalid
+                        e.target.value = properties.properties.color;
+                      }
+                    }}
+                    placeholder="#3B82F6"
+                    className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded font-mono"
+                    pattern="^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$"
+                    title="Enter hex color code (e.g., #3B82F6)"
+                  />
+                </div>
               </div>
             </div>
           )}
@@ -308,14 +346,7 @@ export function ElementPropertiesPanel({
           )}
         </div>
 
-        {isChartGroup && (
-          <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-            <p className="text-xs text-blue-700 font-medium mb-1">Interactive Features:</p>
-            <p className="text-xs text-blue-600">• Double-click axis labels to edit text</p>
-            <p className="text-xs text-blue-600">• Drag to move chart and labels together</p>
-            <p className="text-xs text-blue-600">• Scale handles resize entire chart group</p>
-          </div>
-        )}
+
 
         {isChartGroup && (
           <div className="mt-4 pt-4 border-t border-gray-200">
