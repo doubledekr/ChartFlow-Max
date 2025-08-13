@@ -242,17 +242,25 @@ export function FinancialChartCanvas({
 
     // Apply smoothness to curve interpolation instead of data filtering
     const getCurveType = (smoothness: number) => {
+      console.log('🎯 getCurveType called with smoothness:', smoothness);
+      let curve;
       if (smoothness <= 0.2) {
-        return d3.curveLinear; // Very angular, sharp lines
+        curve = d3.curveLinear; // Very angular, sharp lines
+        console.log('📐 Using linear curve');
       } else if (smoothness <= 0.4) {
-        return d3.curveCardinal.tension(0.2); // Slightly curved
+        curve = d3.curveCardinal.tension(0.2); // Slightly curved
+        console.log('📈 Using cardinal curve with low tension');
       } else if (smoothness <= 0.6) {
-        return d3.curveCardinal.tension(0.5); // Moderately curved
+        curve = d3.curveCardinal.tension(0.5); // Moderately curved
+        console.log('📈 Using cardinal curve with medium tension');
       } else if (smoothness <= 0.8) {
-        return d3.curveCatmullRom.alpha(0.3); // Smooth curves
+        curve = d3.curveCatmullRom.alpha(0.3); // Smooth curves
+        console.log('🌊 Using catmull-rom curve with low alpha');
       } else {
-        return d3.curveCatmullRom.alpha(0.8); // Very smooth, flowing curves
+        curve = d3.curveCatmullRom.alpha(0.8); // Very smooth, flowing curves
+        console.log('🌊 Using catmull-rom curve with high alpha');
       }
+      return curve;
     };
 
     const line = d3.line<ChartDataPoint>()
@@ -838,6 +846,7 @@ export function FinancialChartCanvas({
 
   const renderChartWithProperties = (overrideProperties: any = null) => {
     const currentProperties = overrideProperties || lineProperties;
+    console.log('🔄 renderChartWithProperties called with:', currentProperties);
     
     if (!fabricCanvasRef.current || data.length === 0) return;
     
@@ -869,17 +878,25 @@ export function FinancialChartCanvas({
 
       // Apply smoothness to curve interpolation instead of data filtering
       const getCurveType = (smoothness: number) => {
+        console.log('🎯 getCurveType called with smoothness:', smoothness);
+        let curve;
         if (smoothness <= 0.2) {
-          return d3.curveLinear; // Very angular, sharp lines
+          curve = d3.curveLinear; // Very angular, sharp lines
+          console.log('📐 Using linear curve');
         } else if (smoothness <= 0.4) {
-          return d3.curveCardinal.tension(0.2); // Slightly curved
+          curve = d3.curveCardinal.tension(0.2); // Slightly curved
+          console.log('📈 Using cardinal curve with low tension');
         } else if (smoothness <= 0.6) {
-          return d3.curveCardinal.tension(0.5); // Moderately curved
+          curve = d3.curveCardinal.tension(0.5); // Moderately curved
+          console.log('📈 Using cardinal curve with medium tension');
         } else if (smoothness <= 0.8) {
-          return d3.curveCatmullRom.alpha(0.3); // Smooth curves
+          curve = d3.curveCatmullRom.alpha(0.3); // Smooth curves
+          console.log('🌊 Using catmull-rom curve with low alpha');
         } else {
-          return d3.curveCatmullRom.alpha(0.8); // Very smooth, flowing curves
+          curve = d3.curveCatmullRom.alpha(0.8); // Very smooth, flowing curves
+          console.log('🌊 Using catmull-rom curve with high alpha');
         }
+        return curve;
       };
 
       const line = d3.line<ChartDataPoint>()
