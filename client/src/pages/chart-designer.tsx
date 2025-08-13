@@ -29,8 +29,10 @@ export default function ChartDesigner() {
   };
 
   const handleElementSelect = (element: any, properties: any) => {
+    console.log('chart-designer.tsx - handleElementSelect called with:', element?.type, properties?.type);
     setSelectedElement(element);
     setElementProperties(properties);
+    console.log('chart-designer.tsx - State set to:', element?.type, properties?.type);
   };
 
   const saveCanvasState = () => {

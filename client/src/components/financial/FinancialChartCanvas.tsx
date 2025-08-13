@@ -85,6 +85,20 @@ export function FinancialChartCanvas({
         document.body.style.cursor = 'default';
       });
 
+      // Prevent canvas from clearing selections on click
+      canvas.on('selection:cleared', function(e: any) {
+        console.log('Canvas selection cleared - this might be the issue!');
+      });
+
+      // Listen for selection updates
+      canvas.on('selection:created', function(e: any) {
+        console.log('Canvas selection created:', e.selected?.[0]?.type);
+      });
+
+      canvas.on('selection:updated', function(e: any) {
+        console.log('Canvas selection updated:', e.selected?.[0]?.type);
+      });
+
       return () => {
         canvas.dispose();
       };
