@@ -291,6 +291,14 @@ export default function ChartDesigner() {
           }
         }
         
+        // For axis lines with custom update functions (like grid line controls)
+        if (elementProperties?.type === 'y-axis-line' || elementProperties?.type === 'x-axis-line') {
+          console.log(`🔧 Chart Designer - Calling custom updateFunction for ${elementProperties.type}: ${property} = ${value}`);
+          if (elementProperties.updateFunction) {
+            elementProperties.updateFunction(property, value);
+          }
+        }
+        
         // Trigger canvas re-render
         fabricCanvas.renderAll();
       }
