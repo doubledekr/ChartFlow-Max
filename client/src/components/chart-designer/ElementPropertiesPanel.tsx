@@ -51,59 +51,96 @@ export function ElementPropertiesPanel({
         </div>
 
         <div className="space-y-4">
-          <div>
-            <Label className="text-xs">Line Thickness: {properties.properties.strokeWidth}px</Label>
-            <Slider
-              value={[properties.properties.strokeWidth]}
-              onValueChange={([value]) => onUpdateProperty('strokeWidth', value)}
-              min={1}
-              max={20}
-              step={1}
-              className="mt-2"
-            />
-          </div>
-          
-          <div>
-            <Label className="text-xs">Opacity: {Math.round(properties.properties.opacity * 100)}%</Label>
-            <Slider
-              value={[properties.properties.opacity]}
-              onValueChange={([value]) => onUpdateProperty('opacity', value)}
-              min={0.1}
-              max={1}
-              step={0.1}
-              className="mt-2"
-            />
-          </div>
-
-          <div>
-            <Label className="text-xs">Smoothness: {Math.round(properties.properties.smoothness * 100)}%</Label>
-            <Slider
-              value={[properties.properties.smoothness]}
-              onValueChange={([value]) => onUpdateProperty('smoothness', value)}
-              min={0}
-              max={1}
-              step={0.1}
-              className="mt-2"
-            />
-          </div>
-
-          <div>
-            <Label className="text-xs">Line Color</Label>
-            <div className="flex gap-2 mt-2">
-              {['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'].map(color => (
-                <button
-                  key={color}
-                  className={`w-6 h-6 rounded border-2 transition-all ${
-                    properties.properties.color === color 
-                      ? 'border-gray-800 scale-110' 
-                      : 'border-gray-300 hover:border-gray-400'
-                  }`}
-                  style={{ backgroundColor: color }}
-                  onClick={() => onUpdateProperty('color', color)}
-                />
-              ))}
+          {/* Chart line properties - only show if properties exist */}
+          {isChartGroup && properties.properties && (
+            <div>
+              <Label className="text-xs">Line Thickness: {properties.properties.strokeWidth}px</Label>
+              <Slider
+                value={[properties.properties.strokeWidth]}
+                onValueChange={([value]) => onUpdateProperty('strokeWidth', value)}
+                min={1}
+                max={20}
+                step={1}
+                className="mt-2"
+              />
             </div>
-          </div>
+          )}
+          
+          {isChartGroup && properties.properties && (
+            <div>
+              <Label className="text-xs">Opacity: {Math.round(properties.properties.opacity * 100)}%</Label>
+              <Slider
+                value={[properties.properties.opacity]}
+                onValueChange={([value]) => onUpdateProperty('opacity', value)}
+                min={0.1}
+                max={1}
+                step={0.1}
+                className="mt-2"
+              />
+            </div>
+          )}
+
+          {isChartGroup && properties.properties && (
+            <div>
+              <Label className="text-xs">Smoothness: {Math.round(properties.properties.smoothness * 100)}%</Label>
+              <Slider
+                value={[properties.properties.smoothness]}
+                onValueChange={([value]) => onUpdateProperty('smoothness', value)}
+                min={0}
+                max={1}
+                step={0.1}
+                className="mt-2"
+              />
+            </div>
+          )}
+
+          {isChartGroup && properties.properties && (
+            <div>
+              <Label className="text-xs">Line Color</Label>
+              <div className="flex gap-2 mt-2">
+                {['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'].map(color => (
+                  <button
+                    key={color}
+                    className={`w-6 h-6 rounded border-2 transition-all ${
+                      properties.properties.color === color 
+                        ? 'border-gray-800 scale-110' 
+                        : 'border-gray-300 hover:border-gray-400'
+                    }`}
+                    style={{ backgroundColor: color }}
+                    onClick={() => onUpdateProperty('color', color)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Axis label properties */}
+          {(elementType === 'y-axis-labels' || elementType === 'x-axis-labels') && (
+            <>
+              <div>
+                <Label className="text-xs">Font Size</Label>
+                <Slider
+                  value={[12]}
+                  onValueChange={([value]) => onUpdateProperty('fontSize', value)}
+                  min={8}
+                  max={24}
+                  className="mt-2"
+                />
+              </div>
+              
+              <div>
+                <Label className="text-xs">Font Color</Label>
+                <div className="mt-2 flex gap-2">
+                  <input
+                    type="color"
+                    value="#666666"
+                    onChange={(e) => onUpdateProperty('fill', e.target.value)}
+                    className="w-12 h-8 rounded border border-gray-300 cursor-pointer"
+                  />
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
         {isChartGroup && (

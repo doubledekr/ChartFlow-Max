@@ -339,9 +339,10 @@ export function FinancialChartCanvas({
 
     // Add elements separately for independent selection and editing
     
-    // Calculate center position for the chart on canvas
+    // Calculate true center position accounting for all elements
     const canvasCenter = width / 2;
-    const chartStartX = canvasCenter - (chartWidth / 2) - 40; // Center chart with Y-axis label space
+    const totalChartWidth = chartWidth + 60; // Chart + Y-axis label space  
+    const chartStartX = canvasCenter - (totalChartWidth / 2) + 60; // True center with Y-axis space
     
     // Position axis lines centered horizontally with proper spacing
     yAxisLine.set({
