@@ -45,8 +45,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/stocks/:symbol/:timeframe", async (req, res) => {
     try {
       const { symbol, timeframe } = req.params;
-      const data = await polygonService.getStockData(symbol, timeframe);
-      res.json(data);
+      
+      // Check if multiple symbols are provided (comma or space separated)
+      const symbols = symbol.split(/[,\s]+/).map(s => s.trim()).filter(s => s.length > 0);
+      
+      if (symbols.length > 1) {
+        // Multiple symbols - fetch data for each and combine for unified Y-axis
+        console.log(`Fetching data for multiple symbols: ${symbols.join(', ')}`);
+        
+        const allData = await Promise.all(
+          symbols.map(async (sym) => {
+            const data = await polygonService.getStockData(sym, timeframe);
+            return { symbol: sym, data };
+          })
+        );
+        
+        // Combine all data points for unified Y-axis scaling
+        const combinedData = allData.reduce((acc, { data }) => {
+          return acc.concat(data);
+        }, [] as any[]);
+        
+        // Sort combined data by timestamp for proper chart rendering
+        combinedData.sort((a, b) => a.timestamp - b.timestamp);
+        
+        console.log(`Combined ${combinedData.length} data points from ${symbols.length} symbols`);
+        res.json(combinedData);
+      } else {
+        // Single symbol - use existing logic
+        const data = await polygonService.getStockData(symbol, timeframe);
+        res.json(data);
+      }
     } catch (error) {
       console.error("Error fetching stock data:", error);
       res.status(500).json({ message: "Failed to fetch stock data" });
