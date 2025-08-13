@@ -294,8 +294,18 @@ export default function ChartDesigner() {
         // For axis lines with custom update functions (like grid line controls)
         if (elementProperties?.type === 'y-axis-line' || elementProperties?.type === 'x-axis-line') {
           console.log(`🔧 Chart Designer - Calling custom updateFunction for ${elementProperties.type}: ${property} = ${value}`);
+          console.log('🔧 Chart Designer - elementProperties.updateFunction exists:', !!elementProperties.updateFunction);
           if (elementProperties.updateFunction) {
+            console.log('🔧 Chart Designer - About to call updateFunction');
             elementProperties.updateFunction(property, value);
+            console.log('🔧 Chart Designer - updateFunction called');
+          } else {
+            console.log('🔧 Chart Designer - No updateFunction found in elementProperties');
+            // Try to find the updateFunction directly from the selected element
+            if (selectedElement && selectedElement.updateFunction) {
+              console.log('🔧 Chart Designer - Found updateFunction on selectedElement, calling it');
+              selectedElement.updateFunction(property, value);
+            }
           }
         }
         
