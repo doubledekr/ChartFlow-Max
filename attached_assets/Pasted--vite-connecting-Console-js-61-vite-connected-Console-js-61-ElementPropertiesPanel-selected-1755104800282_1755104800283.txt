@@ -1,0 +1,40 @@
+[vite] connecting...
+Console.js:61 [vite] connected.
+Console.js:61 ElementPropertiesPanel - selectedElement: null
+Console.js:61 ElementPropertiesPanel - properties: null
+101The provided value 'alphabetical' is not a valid enum value of type CanvasTextBaseline.Understand this warning
+Console.js:61 ElementPropertiesPanel - selectedElement: null
+Console.js:61 ElementPropertiesPanel - properties: null
+44548022-3aeb-460b-b6e0-6757401244d2-00-y4r7pzhaz1jx.spock.replit.dev/api/logos:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+44548022-3aeb-460b-b6e0-6757401244d2-00-y4r7pzhaz1jx.spock.replit.dev/api/instances:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+44548022-3aeb-460b-b6e0-6757401244d2-00-y4r7pzhaz1jx.spock.replit.dev/api/templates:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+Console.js:61 ElementPropertiesPanel - selectedElement: null
+Console.js:61 ElementPropertiesPanel - properties: null
+Console.js:61 DataSourcePanel - handleSymbolChange: input="AAPL, GOOGL, TSLA", formatted="AAPL, GOOGL, TSLA"
+Console.js:61 chart-designer.tsx - handleSymbolChange: "AAPL, GOOGL, TSLA"
+Console.js:61 ElementPropertiesPanel - selectedElement: null
+Console.js:61 ElementPropertiesPanel - properties: null
+Console.js:61 📊 Loading data for symbol: AAPL, timeframe: 1Y
+Console.js:61 ElementPropertiesPanel - selectedElement: null
+Console.js:61 ElementPropertiesPanel - properties: null
+Console.js:61 📊 API Response: isMultiSymbol=undefined, isMultiSymbolRequest=false
+Console.js:61 📊 stockData.symbols: undefined
+Console.js:61 📊 Loading single symbol data: AAPL
+Console.js:61 📊 Rendering chart - isMultiSymbol: false symbols: undefined
+Console.js:61 📊 Y-axis scaling: Symbol(s): AAPL, GOOGL, TSLA, Range: $280.00 - $350.00, Data points: 261
+Console.js:61 🎯 getCurveType called with smoothness: 0.5
+Console.js:61 📈 Using cardinal curve with medium tension
+Console.js:61 📊 Generated single symbol path data with smoothness: 0.5 Path length: 11386
+4Console.js:61 Object added: undefined
+Console.js:61 Object added: chartline
+Console.js:61 Chart line selected
+Console.js:61 chart-designer.tsx - handleElementSelect called with: financial-chart-line financial-chart-line
+Console.js:61 chart-designer.tsx - State set to: financial-chart-line financial-chart-line
+Console.js:61 Canvas selection created: chartline
+Console.js:61 chart-designer.tsx - handleElementSelect called with: financial-chart-line chartline
+Console.js:61 chart-designer.tsx - State set to: financial-chart-line chartline
+Console.js:61 ElementPropertiesPanel - selectedElement: i
+Console.js:61 ElementPropertiesPanel - properties: Object
+Console.js:61 ElementPropertiesPanel - elementType: chartline
+Console.js:61 ElementPropertiesPanel - isChartGroup: true
+Console.js:61 ElementPropertiesPanel - properties.properties: Object

@@ -34,6 +34,7 @@ export function FinancialChartCanvas({
   
   // Update symbol and timeframe when props change
   useEffect(() => {
+    console.log(`📊 FinancialChartCanvas - useEffect: propSymbol="${propSymbol}", propTimeframe="${propTimeframe}"`);
     setSymbol(propSymbol);
     setTimeframe(propTimeframe);
   }, [propSymbol, propTimeframe]);
@@ -247,7 +248,7 @@ export function FinancialChartCanvas({
     setError(null);
     
     try {
-      console.log(`📊 Loading data for symbol: ${symbol}, timeframe: ${timeframe}`);
+      console.log(`📊 FinancialChartCanvas.loadStockData - symbol prop: "${symbol}", timeframe: ${timeframe}`);
       
       // Check if symbol contains multiple tickers (comma separated after processing in DataSourcePanel)
       const symbolsArray = symbol.split(',').map(s => s.trim()).filter(s => s.length > 0);
