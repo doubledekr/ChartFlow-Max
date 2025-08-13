@@ -319,46 +319,18 @@ export function FinancialChartCanvas({
       
       // For multiple symbols with very different ranges, use adaptive scaling
       if (symbol.includes(',') || symbol.includes(' ')) {
-        // Multiple symbols detected - use percentage-based padding for better visualization
-        const paddingPercent = Math.max(0.1, Math.min(0.2, priceRange / averagePrice * 0.1));
-        const padding = priceRange * paddingPercent;
-        
+        // Multiple symbols - use minimal padding for tight fit
+        const padding = priceRange * 0.01; // Very minimal 1% padding
         yMin = Math.max(0, rawMin - padding);
         yMax = rawMax + padding;
-        
-        // Ensure minimum visual range for readability
-        const minVisualRange = averagePrice * 0.1;
-        if ((yMax - yMin) < minVisualRange) {
-          const center = (yMax + yMin) / 2;
-          yMin = center - minVisualRange / 2;
-          yMax = center + minVisualRange / 2;
-        }
       } else {
-        // Single symbol - use traditional scaling with smart padding
-        const paddingPercent = 0.05;
-        const padding = priceRange * paddingPercent;
-        
+        // Single symbol - use minimal padding for tight fit  
+        const padding = priceRange * 0.02; // Minimal 2% padding
         yMin = Math.max(0, rawMin - padding);
         yMax = rawMax + padding;
       }
       
-      // Round to nice numbers for cleaner axis labels
-      const roundToNiceNumber = (value: number) => {
-        const magnitude = Math.pow(10, Math.floor(Math.log10(Math.abs(value))));
-        const normalized = value / magnitude;
-        let niceNormalized;
-        
-        if (normalized <= 1) niceNormalized = 1;
-        else if (normalized <= 2) niceNormalized = 2;
-        else if (normalized <= 5) niceNormalized = 5;
-        else niceNormalized = 10;
-        
-        return niceNormalized * magnitude;
-      };
-      
-      // Apply nice rounding to min/max
-      yMin = Math.floor(yMin / roundToNiceNumber(priceRange * 0.1)) * roundToNiceNumber(priceRange * 0.1);
-      yMax = Math.ceil(yMax / roundToNiceNumber(priceRange * 0.1)) * roundToNiceNumber(priceRange * 0.1);
+      // Skip nice number rounding for tighter axis fit - use actual price bounds
       
       const yScale = d3.scaleLinear()
         .domain([yMin, yMax])
