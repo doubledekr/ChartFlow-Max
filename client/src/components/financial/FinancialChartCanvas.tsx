@@ -113,51 +113,8 @@ export function FinancialChartCanvas({
   };
 
   const renderChart = () => {
-    const svg = d3.select(svgRef.current);
-    svg.selectAll('*').remove();
-
-    if (data.length === 0) return;
-
-    const margin = { top: 120, right: 40, bottom: 80, left: 80 }; // Moved up slightly with balanced spacing
-    const chartWidth = Math.min(width - margin.left - margin.right, 680); // Adjusted for proper label spacing
-    const chartHeight = Math.min(height - margin.top - margin.bottom, 280); // Same height
-
-    const xScale = d3.scaleTime()
-      .domain(d3.extent(data, d => new Date(d.timestamp)) as [Date, Date])
-      .range([0, chartWidth]);
-
-    const yScale = d3.scaleLinear()
-      .domain(d3.extent(data, d => d.high) as [number, number])
-      .range([chartHeight, 0]);
-
-    const g = svg.append('g')
-      .attr('transform', `translate(${margin.left}, ${margin.top})`);
-
-    // No D3 background elements - only Fabric.js vectors
-
-    // Create smoothed data based on smoothness parameter (reduce points for smoother lines)
-    const smoothingFactor = Math.max(1, Math.floor((1 - lineProperties.smoothness) * 10) + 1);
-    const smoothedData = data.filter((_, index) => index % smoothingFactor === 0);
-    
-    // Add the last point to ensure we complete the chart
-    if (smoothedData[smoothedData.length - 1] !== data[data.length - 1]) {
-      smoothedData.push(data[data.length - 1]);
-    }
-
-    // Create chart path with smoothed data points
-    const line = d3.line<ChartDataPoint>()
-      .x(d => xScale(new Date(d.timestamp)))
-      .y(d => yScale(d.close))
-      .curve(d3.curveCatmullRom.alpha(0.5));
-
-    const pathData = line(smoothedData) || '';
-
-    // Create draggable chart group with axis text conversion
-    setTimeout(() => {
-      createDraggableChartGroup(pathData, margin, xScale, yScale, chartWidth, chartHeight);
-    }, 100);
-
-    // No background dots - clean vector-only interface
+    // Use the properties-aware version
+    renderChartWithProperties(lineProperties);
   };
 
   const addAnnotation = () => {
@@ -195,7 +152,7 @@ export function FinancialChartCanvas({
     fabricCanvasRef.current.renderAll();
   };
 
-  const createDraggableChartGroup = (
+  const oldCreateDraggableChartGroup = (
     pathData: string, 
     margin: any, 
     xScale: any, 
@@ -559,40 +516,162 @@ export function FinancialChartCanvas({
   const updateChartLineProperties = (property: string, value: any) => {
     if (!selectedChartLine || selectedChartLine.type !== 'financial-chart-line') return;
 
-    // Update local state
+    // Create updated properties object
     const newProperties = { ...lineProperties, [property]: value };
+    
+    // Update state for UI consistency
     setLineProperties(newProperties);
 
-    // Regenerate the entire chart with new properties for reliable updates
-    switch (property) {
-      case 'strokeWidth':
-      case 'opacity':
-      case 'color':
-      case 'visible':
-        // Remove current chart line
-        if (selectedChartLine) {
-          fabricCanvasRef.current?.remove(selectedChartLine);
-        }
-        
-        // Update state and regenerate chart
-        setTimeout(() => {
-          renderChart();
-          console.log(`REGENERATED chart with ${property} = ${value}`);
-        }, 10);
-        break;
-
-      case 'smoothness':
-        // Store current position and regenerate
-        const currentPos = { left: selectedChartLine.left, top: selectedChartLine.top };
-        setLineProperties(prev => ({ ...prev, smoothness: value }));
-        
-        // Remove and regenerate with preserved position
-        fabricCanvasRef.current?.remove(selectedChartLine);
-        renderChart();
-        
-        console.log(`VISUAL UPDATED smoothness to ${value} - Regenerating chart`);
-        break;
+    // Immediate update attempt on existing chart line
+    const immediateSuccess = updateExistingChartLineImmediate(property, value);
+    
+    // Fallback: regenerate with new properties if immediate update failed
+    if (!immediateSuccess) {
+      setTimeout(() => {
+        renderChartWithProperties(newProperties);
+        console.log(`REGENERATED chart with ${property} = ${value}`);
+      }, 0);
+    } else {
+      console.log(`IMMEDIATE UPDATE ${property} = ${value}`);
     }
+  };
+
+  const updateExistingChartLineImmediate = (property: string, value: any): boolean => {
+    if (!fabricCanvasRef.current || !selectedChartLine) return false;
+    
+    try {
+      // Apply property directly to the selected chart line
+      switch (property) {
+        case 'strokeWidth':
+          selectedChartLine.set({ strokeWidth: value });
+          break;
+        case 'opacity':
+          selectedChartLine.set({ opacity: value });
+          break;
+        case 'color':
+          selectedChartLine.set({ stroke: value });
+          break;
+        case 'visible':
+          selectedChartLine.set({ visible: value });
+          break;
+        case 'smoothness':
+          // Smoothness requires regeneration
+          return false;
+        default:
+          return false;
+      }
+      
+      // Force visual update with multiple approaches
+      selectedChartLine.setCoords();
+      selectedChartLine.dirty = true;
+      fabricCanvasRef.current.renderAll();
+      fabricCanvasRef.current.requestRenderAll();
+      
+      // Additional force repaint
+      setTimeout(() => fabricCanvasRef.current?.renderAll(), 0);
+      
+      return true;
+    } catch (error) {
+      console.error('Immediate update failed:', error);
+      return false;
+    }
+  };
+
+  const renderChartWithProperties = (overrideProperties: any = null) => {
+    const currentProperties = overrideProperties || lineProperties;
+    
+    if (!fabricCanvasRef.current || data.length === 0) return;
+    
+    // Remove existing chart elements
+    const objects = fabricCanvasRef.current.getObjects();
+    objects.forEach((obj: any) => {
+      if (obj.type === 'financial-chart-line' || obj.type === 'x-axis-line' || obj.type === 'y-axis-line' || 
+          obj.type === 'x-axis-labels' || obj.type === 'y-axis-labels') {
+        fabricCanvasRef.current?.remove(obj);
+      }
+    });
+    
+    // Create chart with specific properties
+    setTimeout(() => {
+      createDraggableChartGroupWithProperties(currentProperties);
+    }, 10);
+  };
+
+  const createDraggableChartGroupWithProperties = (properties: any) => {
+    const svg = d3.select(svgRef.current);
+    if (data.length === 0) return;
+
+    const margin = { top: 120, right: 40, bottom: 80, left: 80 };
+    const chartWidth = Math.min(width - margin.left - margin.right, 680);
+    const chartHeight = Math.min(height - margin.top - margin.bottom, 280);
+
+    const xScale = d3.scaleTime()
+      .domain(d3.extent(data, d => new Date(d.timestamp)) as [Date, Date])
+      .range([0, chartWidth]);
+
+    const yScale = d3.scaleLinear()
+      .domain(d3.extent(data, d => d.high) as [number, number])
+      .range([chartHeight, 0]);
+
+    // Create smoothed data based on properties
+    const smoothingFactor = Math.max(1, Math.floor((1 - properties.smoothness) * 10) + 1);
+    const smoothedData = data.filter((_, index) => index % smoothingFactor === 0);
+    
+    if (smoothedData[smoothedData.length - 1] !== data[data.length - 1]) {
+      smoothedData.push(data[data.length - 1]);
+    }
+
+    const line = d3.line<ChartDataPoint>()
+      .x(d => xScale(new Date(d.timestamp)))
+      .y(d => yScale(d.close))
+      .curve(d3.curveCatmullRom.alpha(0.5));
+
+    const pathData = line(smoothedData) || '';
+    
+    // Create chart elements with passed properties
+    const fabricPath = new (window as any).fabric.Path(pathData, {
+      fill: '',
+      strokeWidth: properties.strokeWidth,
+      stroke: properties.color,
+      opacity: properties.opacity,
+      visible: properties.visible !== false,
+      selectable: true,
+      hasControls: true,
+      hasBorders: true,
+      type: 'financial-chart-line',
+      symbol,
+      timeframe,
+      properties
+    });
+
+    // Add to canvas and set up selection
+    const chartStartX = (width - chartWidth) / 2 + margin.left - 80;
+    
+    fabricPath.set({
+      left: chartStartX,
+      top: 120
+    });
+
+    fabricCanvasRef.current.add(fabricPath);
+    
+    fabricPath.on('selected', () => {
+      console.log('Chart line selected');
+      setSelectedChartLine(fabricPath);
+      
+      if (onElementSelect) {
+        onElementSelect(fabricPath, {
+          type: 'financial-chart-line',
+          symbol,
+          timeframe,
+          properties,
+          updateFunction: updateChartLineProperties,
+          duplicateFunction: duplicateChartLine,
+          deleteFunction: deleteChartLine
+        });
+      }
+    });
+
+    fabricCanvasRef.current.renderAll();
   };
 
   const duplicateChartLine = () => {
