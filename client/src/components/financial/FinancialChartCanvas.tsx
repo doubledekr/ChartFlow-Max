@@ -339,10 +339,14 @@ export function FinancialChartCanvas({
 
     // Add elements separately for independent selection and editing
     
-    // Position axis lines with proper spacing to avoid text overlap
+    // Calculate center position for the chart on canvas
+    const canvasCenter = width / 2;
+    const chartStartX = canvasCenter - (chartWidth / 2) - 40; // Center chart with Y-axis label space
+    
+    // Position axis lines centered horizontally with proper spacing
     yAxisLine.set({
-      left: 80,   // Shifted right to clear Y-axis labels
-      top: 100,   // Further down from top
+      left: chartStartX,   // Centered position with Y-axis label clearance
+      top: 100,            // Further down from top
       selectable: true,
       hasControls: true,
       hasBorders: true,
@@ -350,7 +354,7 @@ export function FinancialChartCanvas({
     });
 
     xAxisLine.set({
-      left: 80,   // Match Y-axis positioning
+      left: chartStartX,   // Match Y-axis positioning
       top: 100 + chartHeight,  // Below chart area
       selectable: true,
       hasControls: true,
@@ -358,10 +362,10 @@ export function FinancialChartCanvas({
       type: 'x-axis-line'
     });
 
-    // Position axis text groups with proper clearance
+    // Position axis text groups with proper clearance from centered chart
     yAxisGroup.set({
-      left: 20,   // Space for Y-axis labels before the line
-      top: 100,   // Match chart positioning
+      left: chartStartX - 60,  // Y-axis labels positioned left of the centered chart
+      top: 100,                // Match chart positioning
       selectable: true,
       hasControls: true,
       hasBorders: true,
@@ -369,7 +373,7 @@ export function FinancialChartCanvas({
     });
 
     xAxisGroup.set({
-      left: 80,   // Match axis positioning
+      left: chartStartX,       // Match axis positioning
       top: 100 + chartHeight + 25,  // Below axis line with clearance
       selectable: true,
       hasControls: true,
@@ -377,10 +381,10 @@ export function FinancialChartCanvas({
       type: 'x-axis-labels'
     });
 
-    // Create draggable chart line with proper alignment
+    // Create draggable chart line centered horizontally
     const chartLine = new (window as any).fabric.Group([fabricPath], {
-      left: 80,   // Match axis line positioning
-      top: 100,   // Further down to avoid title/subtitle overlap
+      left: chartStartX,   // Centered positioning
+      top: 100,            // Further down to avoid title/subtitle overlap
       selectable: true,
       hasControls: true,
       hasBorders: true,
