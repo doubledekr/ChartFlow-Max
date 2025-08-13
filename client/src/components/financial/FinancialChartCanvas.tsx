@@ -384,9 +384,9 @@ export function FinancialChartCanvas({
 
     // Create draggable chart line as standalone Path (no Group wrapper)
     const chartLine = fabricPath;
+    
+    // Set the path properties without changing its generated coordinates
     chartLine.set({
-      left: chartStartX,   // Centered positioning
-      top: 120,            // Balanced positioning on canvas
       strokeWidth: lineProperties.strokeWidth,
       stroke: lineProperties.color,
       opacity: lineProperties.opacity,
@@ -405,6 +405,13 @@ export function FinancialChartCanvas({
       timeframe,
       properties: lineProperties
     });
+    
+    // Position the path correctly after it's been created with proper coordinates
+    const pathBounds = chartLine.getBoundingRect();
+    chartLine.set({
+      left: chartStartX - pathBounds.width/2,  // Center the path horizontally
+      top: 120                                 // Fixed vertical position
+    });
 
     // Add all elements to canvas for independent selection
     fabricCanvasRef.current.add(yAxisLine);
@@ -413,10 +420,22 @@ export function FinancialChartCanvas({
     fabricCanvasRef.current.add(xAxisGroup);
     fabricCanvasRef.current.add(chartLine);
 
-    // Set up event handlers for chart line selection
+    // Set up event handlers for chart line selection with position locking
     chartLine.on('selected', () => {
       console.log('Chart line selected');
       setSelectedChartLine(chartLine);
+      
+      // Lock the position to prevent unwanted movement
+      const currentLeft = chartLine.left;
+      const currentTop = chartLine.top;
+      
+      chartLine.on('moving', () => {
+        // Allow controlled movement but prevent jumping
+        if (Math.abs(chartLine.left - currentLeft) > 200 || Math.abs(chartLine.top - currentTop) > 100) {
+          chartLine.set({ left: currentLeft, top: currentTop });
+          fabricCanvasRef.current?.renderAll();
+        }
+      });
       
       // Get current properties from the standalone path element
       const currentProperties = {
@@ -524,7 +543,12 @@ export function FinancialChartCanvas({
       }
     };
 
-    chartLine.on('deselected', handleDeselection);
+    chartLine.on('deselected', () => {
+      // Remove movement listeners when deselected
+      chartLine.off('moving');
+      handleDeselection();
+    });
+    
     yAxisGroup.on('deselected', handleDeselection);
     xAxisGroup.on('deselected', handleDeselection);
     yAxisLine.on('deselected', handleDeselection);
