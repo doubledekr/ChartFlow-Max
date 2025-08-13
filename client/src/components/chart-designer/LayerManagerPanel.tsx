@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Eye, EyeOff, Lock, Unlock, Move, Trash2, Group, Ungroup, ChevronDown, ChevronRight } from 'lucide-react';
+import { Eye, EyeOff, Lock, Unlock, Move, Trash2, Group, Ungroup, ChevronDown, ChevronRight, GripVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -30,6 +30,7 @@ export function LayerManagerPanel({ canvas, selectedElement, onElementSelect }: 
   const [layers, setLayers] = useState<LayerItem[]>([]);
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
   const [draggedLayer, setDraggedLayer] = useState<LayerItem | null>(null);
+  const [dragOverLayerId, setDragOverLayerId] = useState<string | null>(null);
 
   // Update layers when canvas changes
   useEffect(() => {
@@ -291,22 +292,128 @@ export function LayerManagerPanel({ canvas, selectedElement, onElementSelect }: 
     return undefined;
   };
 
+  const handleDragStart = (e: React.DragEvent, layer: LayerItem) => {
+    setDraggedLayer(layer);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', layer.id);
+  };
+
+  const handleDragOver = (e: React.DragEvent, targetLayerId: string) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverLayerId(targetLayerId);
+  };
+
+  const handleDragLeave = () => {
+    setDragOverLayerId(null);
+  };
+
+  const handleDrop = (e: React.DragEvent, targetLayerId: string) => {
+    e.preventDefault();
+    setDragOverLayerId(null);
+    
+    if (!draggedLayer || draggedLayer.id === targetLayerId) {
+      setDraggedLayer(null);
+      return;
+    }
+
+    // Reorder layers in canvas
+    reorderLayers(draggedLayer.id, targetLayerId);
+    setDraggedLayer(null);
+  };
+
+  const reorderLayers = (draggedId: string, targetId: string) => {
+    if (!canvas) return;
+
+    const objects = canvas.getObjects();
+    const draggedObj = objects.find((o: any) => (o.id || `layer_${objects.indexOf(o)}`) === draggedId);
+    const targetObj = objects.find((o: any) => (o.id || `layer_${objects.indexOf(o)}`) === targetId);
+
+    if (draggedObj && targetObj) {
+      const draggedIndex = objects.indexOf(draggedObj);
+      const targetIndex = objects.indexOf(targetObj);
+
+      // Remove dragged object and insert at target position
+      canvas.remove(draggedObj);
+      canvas.insertAt(draggedObj, targetIndex);
+      canvas.renderAll();
+    }
+  };
+
+  const groupLayers = (layerIds: string[]) => {
+    if (!canvas || layerIds.length < 2) return;
+
+    const objects = canvas.getObjects();
+    const layersToGroup = objects.filter((o: any) => 
+      layerIds.includes(o.id || `layer_${objects.indexOf(o)}`)
+    );
+
+    if (layersToGroup.length < 2) return;
+
+    const group = new (window as any).fabric.Group(layersToGroup, {
+      selectable: true,
+      hasControls: true,
+      hasBorders: true
+    });
+
+    // Remove individual objects and add group
+    layersToGroup.forEach(obj => canvas.remove(obj));
+    canvas.add(group);
+    canvas.renderAll();
+  };
+
+  const ungroupLayer = (groupId: string) => {
+    if (!canvas) return;
+
+    const objects = canvas.getObjects();
+    const group = objects.find((o: any) => (o.id || `layer_${objects.indexOf(o)}`) === groupId);
+
+    if (group && group.type === 'group') {
+      const groupObjects = group.getObjects();
+      canvas.remove(group);
+      
+      groupObjects.forEach((obj: any) => {
+        canvas.add(obj);
+      });
+      
+      canvas.renderAll();
+    }
+  };
+
   const renderLayer = (layer: LayerItem, depth = 0) => {
     const isSelected = selectedElement && (
       (selectedElement.id || `layer_${canvas?.getObjects().indexOf(selectedElement)}`) === layer.id
     );
     const isExpanded = expandedGroups.has(layer.id);
+    const isDraggedOver = dragOverLayerId === layer.id;
 
     return (
-      <div key={layer.id} className={`${depth > 0 ? 'ml-4' : ''}`}>
+      <div 
+        key={layer.id} 
+        className={`${depth > 0 ? 'ml-4' : ''}`}
+        draggable={!layer.isGroup}
+        onDragStart={(e) => handleDragStart(e, layer)}
+        onDragOver={(e) => handleDragOver(e, layer.id)}
+        onDragLeave={handleDragLeave}
+        onDrop={(e) => handleDrop(e, layer.id)}
+      >
         <div 
-          className={`flex items-center justify-between p-2 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer ${
+          className={`flex items-center justify-between p-2 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors ${
             isSelected ? 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800' : ''
+          } ${
+            isDraggedOver ? 'border-2 border-blue-400 border-dashed' : ''
           }`}
           onClick={() => layer.isGroup ? toggleGroupExpansion(layer.id) : selectLayer(layer.id)}
           data-testid={`layer-item-${layer.id}`}
         >
           <div className="flex items-center gap-2 flex-1">
+            {/* Drag handle */}
+            {!layer.isGroup && (
+              <div className="drag-handle cursor-move p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded">
+                <GripVertical className="w-3 h-3 text-gray-400" />
+              </div>
+            )}
+
             {layer.isGroup && (
               <button
                 onClick={(e) => {
@@ -363,6 +470,22 @@ export function LayerManagerPanel({ canvas, selectedElement, onElementSelect }: 
               {layer.locked ? <Lock className="w-3 h-3" /> : <Unlock className="w-3 h-3" />}
             </Button>
 
+            {layer.isGroup && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  ungroupLayer(layer.id);
+                }}
+                className="w-6 h-6 p-0"
+                data-testid={`ungroup-${layer.id}`}
+                title="Ungroup layers"
+              >
+                <Ungroup className="w-3 h-3" />
+              </Button>
+            )}
+
             {!layer.isGroup && (
               <>
                 <Button
@@ -374,6 +497,7 @@ export function LayerManagerPanel({ canvas, selectedElement, onElementSelect }: 
                   }}
                   className="w-6 h-6 p-0"
                   data-testid={`move-up-${layer.id}`}
+                  title="Move layer up"
                 >
                   <Move className="w-3 h-3" />
                 </Button>
@@ -387,6 +511,7 @@ export function LayerManagerPanel({ canvas, selectedElement, onElementSelect }: 
                   }}
                   className="w-6 h-6 p-0 text-red-500 hover:text-red-700"
                   data-testid={`delete-layer-${layer.id}`}
+                  title="Delete layer"
                 >
                   <Trash2 className="w-3 h-3" />
                 </Button>

@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Undo, Redo, Save, Download, TrendingUp } from 'lucide-react';
+import { Undo, Redo, Save, Download, TrendingUp, Move } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DataSourcePanel } from '@/components/chart-designer/DataSourcePanel';
 import { ColorPalettePanel } from '@/components/chart-designer/ColorPalettePanel';
@@ -9,7 +9,7 @@ import { TypographyPanel } from '@/components/chart-designer/TypographyPanel';
 import { AxisFormattingPanel } from '@/components/chart-designer/AxisFormattingPanel';
 import { ElementLibraryPanel } from '@/components/chart-designer/ElementLibraryPanel';
 import { LogoPanel } from '@/components/chart-designer/LogoPanel';
-import { LayerPanel } from '@/components/chart-designer/LayerPanel';
+
 import { LayerManagerPanel } from '@/components/chart-designer/LayerManagerPanel';
 import { FinancialChartCanvas } from '@/components/financial';
 import { TemplateManager, InstanceManager } from '@/components/templates';
@@ -56,7 +56,7 @@ export default function ChartDesigner() {
     console.log('chart-designer.tsx - State set to:', element?.type, properties?.type);
     
     // Show/hide layer manager based on selection
-    setShowLayerManager(!element); // Show when no element is selected
+    setShowLayerManager(!!element); // Show when element is selected
     
     // Update layers when canvas changes
     updateLayers();
@@ -76,97 +76,6 @@ export default function ChartDesigner() {
     }));
     
     setLayers(layerItems);
-  };
-
-  const handleLayerSelect = (layerId: string) => {
-    if (!fabricCanvas) return;
-    
-    const object = fabricCanvas.getObjects().find((obj: any) => 
-      (obj.id || `layer-${fabricCanvas.getObjects().indexOf(obj)}`) === layerId
-    );
-    
-    if (object) {
-      fabricCanvas.setActiveObject(object);
-      fabricCanvas.renderAll();
-      
-      // Trigger the same selection logic as clicking on the canvas
-      const properties = {
-        type: object.elementType || object.type,
-        properties: {
-          strokeWidth: object.strokeWidth,
-          opacity: object.opacity,
-          smoothness: object.smoothness,
-          color: object.stroke || object.fill,
-          visible: object.visible !== false,
-          left: object.left,
-          top: object.top,
-          angle: object.angle
-        }
-      };
-      
-      handleElementSelect(object, properties);
-    }
-  };
-
-  const handleToggleVisibility = (layerId: string) => {
-    if (!fabricCanvas) return;
-    
-    const object = fabricCanvas.getObjects().find((obj: any) => 
-      (obj.id || `layer-${fabricCanvas.getObjects().indexOf(obj)}`) === layerId
-    );
-    
-    if (object) {
-      object.set('visible', !object.visible);
-      fabricCanvas.renderAll();
-      updateLayers();
-      saveCanvasState();
-    }
-  };
-
-  const handleMoveLayer = (layerId: string, direction: 'up' | 'down') => {
-    if (!fabricCanvas) return;
-    
-    const object = fabricCanvas.getObjects().find((obj: any) => 
-      (obj.id || `layer-${fabricCanvas.getObjects().indexOf(obj)}`) === layerId
-    );
-    
-    if (object) {
-      if (direction === 'up') {
-        fabricCanvas.bringForward(object);
-      } else {
-        fabricCanvas.sendBackwards(object);
-      }
-      fabricCanvas.renderAll();
-      updateLayers();
-      saveCanvasState();
-    }
-  };
-
-  const handleDeleteLayer = (layerId: string) => {
-    if (!fabricCanvas) return;
-    
-    const object = fabricCanvas.getObjects().find((obj: any) => 
-      (obj.id || `layer-${fabricCanvas.getObjects().indexOf(obj)}`) === layerId
-    );
-    
-    if (object) {
-      fabricCanvas.remove(object);
-      fabricCanvas.renderAll();
-      
-      // Clear selection if deleted object was selected
-      if (selectedElement === object) {
-        setSelectedElement(null);
-        setElementProperties(null);
-      }
-      
-      updateLayers();
-      saveCanvasState();
-      
-      toast({
-        title: "Layer deleted",
-        description: "The selected layer has been removed from the chart.",
-      });
-    }
   };
 
   const saveCanvasState = () => {
@@ -695,7 +604,7 @@ export default function ChartDesigner() {
               className="toolbar-btn text-gray-700 hover:text-gray-900"
               data-testid="button-layers"
             >
-              <TrendingUp className="mr-1" size={16} />
+              <Move className="mr-1" size={16} />
               Layers
             </Button>
           </div>
@@ -769,20 +678,17 @@ export default function ChartDesigner() {
             <h2 className="text-lg font-semibold text-gray-900">Layers & Templates</h2>
           </div>
           
-          {/* Layer Panel Section */}
-          <div className="p-4 border-b border-gray-200">
-            <LayerPanel 
-              layers={layers}
-              selectedLayerId={selectedElement?.id || (selectedElement ? `layer-${fabricCanvas?.getObjects().indexOf(selectedElement)}` : undefined)}
-              onSelectLayer={handleLayerSelect}
-              onToggleVisibility={handleToggleVisibility}
-              onMoveLayer={handleMoveLayer}
-              onDeleteLayer={handleDeleteLayer}
+          {/* Layer Manager Section */}
+          <div className="flex-1 border-b border-gray-200">
+            <LayerManagerPanel 
+              canvas={fabricCanvas}
+              selectedElement={selectedElement}
+              onElementSelect={handleElementSelect}
             />
           </div>
           
           {/* Templates Section */}
-          <div className="p-4 border-b border-gray-200 flex-1 overflow-auto">
+          <div className="p-4 border-b border-gray-200 min-h-0 flex-1 overflow-auto">
             <TemplateManager 
               onSelectTemplate={(template) => {
                 setSelectedTemplate(template);
@@ -792,7 +698,7 @@ export default function ChartDesigner() {
           </div>
 
           {/* Instances Section */}
-          <div className="p-4 flex-1 overflow-auto">
+          <div className="p-4 min-h-0 flex-1 overflow-auto">
             <InstanceManager 
               selectedTemplate={selectedTemplate}
               onSelectInstance={(instance) => {
