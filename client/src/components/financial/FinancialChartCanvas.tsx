@@ -67,7 +67,9 @@ export function FinancialChartCanvas({
         width,
         height,
         backgroundColor: 'rgba(248, 248, 248, 0.8)',
-        selection: false,
+        selection: true,
+        enablePointerEvents: true,
+        allowTouchScrolling: false
       });
 
       fabricCanvasRef.current = canvas;
@@ -152,14 +154,107 @@ export function FinancialChartCanvas({
         document.body.style.cursor = 'default';
       });
 
+      // Add multi-selection support with Shift key
+      let isShiftPressed = false;
+      
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Shift') {
+          isShiftPressed = true;
+        }
+      };
+      
+      const handleKeyUp = (e: KeyboardEvent) => {
+        if (e.key === 'Shift') {
+          isShiftPressed = false;
+        }
+      };
+      
+      document.addEventListener('keydown', handleKeyDown);
+      document.addEventListener('keyup', handleKeyUp);
+      
+      // Override object selection behavior for multi-select
+      canvas.on('mouse:down', function(e: any) {
+        if (isShiftPressed && e.target) {
+          const activeSelection = canvas.getActiveObject();
+          
+          if (activeSelection && activeSelection.type === 'activeSelection') {
+            // Already have a multi-selection, add/remove the clicked object
+            const selection = activeSelection as any;
+            const objects = selection.getObjects();
+            
+            if (objects.includes(e.target)) {
+              // Remove from selection
+              selection.removeWithUpdate(e.target);
+              if (objects.length === 1) {
+                // If only one object left, make it the active object
+                canvas.setActiveObject(objects[0]);
+              }
+            } else {
+              // Add to selection
+              selection.addWithUpdate(e.target);
+            }
+            canvas.renderAll();
+          } else if (activeSelection && activeSelection !== e.target) {
+            // Create new multi-selection
+            const selection = new (window as any).fabric.ActiveSelection([activeSelection, e.target], {
+              canvas: canvas
+            });
+            canvas.setActiveObject(selection);
+            canvas.renderAll();
+          }
+          
+          // Prevent default selection behavior
+          e.e.preventDefault();
+          return false;
+        }
+      });
+
       // Handle element selection for property panel
       canvas.on('selection:created', function(e: any) {
-        const obj = e.selected?.[0];
-        if (obj && onElementSelect) {
+        const activeObject = canvas.getActiveObject();
+        
+        if (activeObject && onElementSelect) {
+          // Handle multi-selection
+          if (activeObject.type === 'activeSelection') {
+            const selection = activeObject as any;
+            const objects = selection.getObjects();
+            console.log(`Canvas multi-selection created: ${objects.length} objects`);
+            
+            // For multi-selection, show properties of the first object as reference
+            const firstObj = objects[0];
+            onElementSelect(firstObj, {
+              type: 'multi-selection',
+              count: objects.length,
+              properties: {
+                strokeWidth: firstObj.strokeWidth || 3,
+                opacity: firstObj.opacity || 1,
+                smoothness: firstObj.smoothness || 0.5,
+                color: firstObj.stroke || firstObj.fill || '#3b82f6',
+                visible: firstObj.visible !== false,
+                left: firstObj.left,
+                top: firstObj.top,
+                angle: firstObj.angle || 0
+              },
+              updateFunction: (property: string, value: any) => {
+                // Apply changes to all selected objects
+                objects.forEach((obj: any) => {
+                  obj.set(property, value);
+                });
+                canvas.renderAll();
+                if (onCanvasChange) {
+                  setTimeout(() => onCanvasChange(), 100);
+                }
+              }
+            });
+            return;
+          }
+          
+          // Single object selection
+          const obj = activeObject;
           console.log('Canvas selection created:', obj.elementType || obj.type);
           
           // Skip default selection handling for axis elements since they have custom handlers
-          if (['y-axis-labels', 'x-axis-labels', 'y-axis-line', 'x-axis-line'].includes(obj.type)) {
+          if (['y-axis-labels', 'x-axis-labels', 'y-axis-line', 'x-axis-line', 'axis-labels'].includes(obj.type)) {
             console.log('Skipping default selection for axis element:', obj.type);
             return;
           }
@@ -189,12 +284,48 @@ export function FinancialChartCanvas({
       });
 
       canvas.on('selection:updated', function(e: any) {
-        const obj = e.selected?.[0];
-        if (obj && onElementSelect) {
+        const activeObject = canvas.getActiveObject();
+        
+        if (activeObject && onElementSelect) {
+          // Handle multi-selection updates
+          if (activeObject.type === 'activeSelection') {
+            const selection = activeObject as any;
+            const objects = selection.getObjects();
+            console.log(`Canvas multi-selection updated: ${objects.length} objects`);
+            
+            const firstObj = objects[0];
+            onElementSelect(firstObj, {
+              type: 'multi-selection',
+              count: objects.length,
+              properties: {
+                strokeWidth: firstObj.strokeWidth || 3,
+                opacity: firstObj.opacity || 1,
+                smoothness: firstObj.smoothness || 0.5,
+                color: firstObj.stroke || firstObj.fill || '#3b82f6',
+                visible: firstObj.visible !== false,
+                left: firstObj.left,
+                top: firstObj.top,
+                angle: firstObj.angle || 0
+              },
+              updateFunction: (property: string, value: any) => {
+                objects.forEach((obj: any) => {
+                  obj.set(property, value);
+                });
+                canvas.renderAll();
+                if (onCanvasChange) {
+                  setTimeout(() => onCanvasChange(), 100);
+                }
+              }
+            });
+            return;
+          }
+          
+          // Single object selection update
+          const obj = activeObject;
           console.log('Canvas selection updated:', obj.elementType || obj.type);
           
           // Skip default selection handling for axis elements since they have custom handlers
-          if (['y-axis-labels', 'x-axis-labels', 'y-axis-line', 'x-axis-line'].includes(obj.type)) {
+          if (['y-axis-labels', 'x-axis-labels', 'y-axis-line', 'x-axis-line', 'axis-labels'].includes(obj.type)) {
             console.log('Skipping default selection update for axis element:', obj.type);
             return;
           }
@@ -231,6 +362,8 @@ export function FinancialChartCanvas({
       });
 
       return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        document.removeEventListener('keyup', handleKeyUp);
         canvas.dispose();
       };
     }
@@ -627,11 +760,49 @@ export function FinancialChartCanvas({
       type: 'x-axis-line'
     });
     
+    // Create grouped axis labels for unified selection and editing
+    const allAxisLabels = [...yAxisLabels, ...xAxisLabels];
+    const axisLabelsGroup = new (window as any).fabric.Group(allAxisLabels, {
+      selectable: true,
+      hasControls: false,
+      hasBorders: true,
+      type: 'axis-labels',
+      evented: true
+    });
+
+    // Set up event handler for axis labels group
+    axisLabelsGroup.on('selected', () => {
+      console.log('All axis labels selected');
+      if (onElementSelect) {
+        onElementSelect(axisLabelsGroup, {
+          type: 'axis-labels',
+          properties: { 
+            fontSize: 11, 
+            fill: '#666666', 
+            fontFamily: 'Inter, sans-serif', 
+            fontWeight: 'normal' 
+          },
+          updateFunction: (property: string, value: any) => {
+            console.log(`Updating all axis labels: ${property} = ${value}`);
+            const objects = axisLabelsGroup.getObjects();
+            objects.forEach((obj: any) => {
+              if (property === 'fontSize') obj.set('fontSize', value);
+              if (property === 'fill') obj.set('fill', value);
+              if (property === 'fontFamily') obj.set('fontFamily', value);
+              if (property === 'fontWeight') obj.set('fontWeight', value);
+            });
+            axisLabelsGroup.addWithUpdate();
+            fabricCanvasRef.current?.renderAll();
+            console.log(`Updated ${property} to ${value} for element:`, 'axis-labels');
+          }
+        });
+      }
+    });
+
     // Add all axis elements
     fabricCanvasRef.current.add(yAxisLine);
     fabricCanvasRef.current.add(xAxisLine);
-    yAxisLabels.forEach(label => fabricCanvasRef.current.add(label));
-    xAxisLabels.forEach(label => fabricCanvasRef.current.add(label));
+    fabricCanvasRef.current.add(axisLabelsGroup);
   };
 
   const createDraggableChartLineOnly = (pathData: string, margin: any, xScale: any, yScale: any, chartWidth: number, chartHeight: number) => {
@@ -1309,7 +1480,7 @@ export function FinancialChartCanvas({
       console.log('📊 REGENERATION - Generated path data with smoothness:', currentProperties.smoothness, 'Path length:', pathData.length);
 
       // Create draggable chart group with all elements and updated properties
-      createDraggableChartGroupWithProperties(pathData, margin, xScale, yScale, chartWidth, chartHeight, currentProperties);
+      createDraggableChartGroupWithProperties(pathData, margin, xScale, yScale, chartWidth, chartHeight, currentProperties, yMinPrice, yMaxPrice);
     }, 10);
   };
 
@@ -1320,7 +1491,9 @@ export function FinancialChartCanvas({
     yScale: any,
     chartWidth: number,
     chartHeight: number,
-    properties: any
+    properties: any,
+    yMin: number,
+    yMax: number
   ) => {
     
     // Create chart elements with passed properties
