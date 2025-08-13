@@ -10,6 +10,7 @@ import { AxisFormattingPanel } from '@/components/chart-designer/AxisFormattingP
 import { ElementLibraryPanel } from '@/components/chart-designer/ElementLibraryPanel';
 import { LogoPanel } from '@/components/chart-designer/LogoPanel';
 import { LayerPanel } from '@/components/chart-designer/LayerPanel';
+import { LayerManagerPanel } from '@/components/chart-designer/LayerManagerPanel';
 import { FinancialChartCanvas } from '@/components/financial';
 import { TemplateManager, InstanceManager } from '@/components/templates';
 import { ElementPropertiesPanel } from '@/components/chart-designer/ElementPropertiesPanel';
@@ -25,6 +26,7 @@ export default function ChartDesigner() {
   const [canvasHistory, setCanvasHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [fabricCanvas, setFabricCanvas] = useState<any>(null);
+  const [showLayerManager, setShowLayerManager] = useState(false);
   const [layers, setLayers] = useState<Array<{
     id: string;
     type: string;
@@ -52,6 +54,9 @@ export default function ChartDesigner() {
     setSelectedElement(element);
     setElementProperties(properties);
     console.log('chart-designer.tsx - State set to:', element?.type, properties?.type);
+    
+    // Show/hide layer manager based on selection
+    setShowLayerManager(!element); // Show when no element is selected
     
     // Update layers when canvas changes
     updateLayers();
@@ -674,6 +679,24 @@ export default function ChartDesigner() {
             >
               <Redo className="mr-1" size={16} />
               Redo
+            </Button>
+            <Button
+              variant={showLayerManager ? "default" : "outline"}
+              size="sm"
+              onClick={() => {
+                setShowLayerManager(!showLayerManager);
+                if (fabricCanvas && !showLayerManager) {
+                  fabricCanvas.discardActiveObject();
+                  fabricCanvas.renderAll();
+                  setSelectedElement(null);
+                  setElementProperties(null);
+                }
+              }}
+              className="toolbar-btn text-gray-700 hover:text-gray-900"
+              data-testid="button-layers"
+            >
+              <TrendingUp className="mr-1" size={16} />
+              Layers
             </Button>
           </div>
         </div>

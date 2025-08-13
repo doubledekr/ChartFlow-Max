@@ -4,6 +4,11 @@ ChartFlow is a professional chart designer application that enables users to cre
 
 ## Recent Changes (January 2025)
 
+- **Multi-Symbol Chart System**: Implemented complete support for multiple stock symbols with distinct colored lines and unified Y-axis scaling
+- **Advanced Layer Management**: Created comprehensive layer management system with grouping, visibility controls, reordering capabilities, and multi-symbol grouping
+- **Symbol-Specific Properties**: Each chart line maintains its own symbol identifier, color assignment, and independent styling controls
+- **Unified Y-Axis Scaling**: Smart Y-axis calculation that accommodates multiple symbols with different price ranges in a single optimized scale
+- **Interactive Layer Panel**: Layer manager panel shows/hides based on selection state, providing full control over overlapping elements and multi-line charts
 - **Independent Component Selection**: Chart line, axis lines, and axis labels are now separate elements that can be selected and edited independently
 - **Optimized Chart Positioning**: Established default positioning at 120px from top, horizontally centered with proper Y-axis label spacing
 - **Clean Vector Interface**: Removed all data information overlays for clean, professional appearance
