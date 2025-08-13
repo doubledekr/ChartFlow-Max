@@ -340,7 +340,8 @@ export function FinancialChartCanvas({
       hasBorders: false,
       strokeLineCap: 'round',
       strokeLineJoin: 'round',
-      elementType: 'chartline'
+      elementType: 'chartline',
+      strokeDashArray: lineProperties.strokeDashArray || null
     });
 
     // Convert D3 axis data to Fabric.js text objects
@@ -855,11 +856,12 @@ export function FinancialChartCanvas({
     
     if (!fabricCanvasRef.current || data.length === 0) return;
     
-    // Remove existing chart elements
+    // Remove existing chart elements including markers and junctions
     const objects = fabricCanvasRef.current.getObjects();
     objects.forEach((obj: any) => {
       if (obj.type === 'financial-chart-line' || obj.type === 'x-axis-line' || obj.type === 'y-axis-line' || 
-          obj.type === 'x-axis-labels' || obj.type === 'y-axis-labels') {
+          obj.type === 'x-axis-labels' || obj.type === 'y-axis-labels' || 
+          obj.type === 'chart-marker' || obj.type === 'chart-junction') {
         fabricCanvasRef.current?.remove(obj);
       }
     });
@@ -944,7 +946,9 @@ export function FinancialChartCanvas({
       type: 'financial-chart-line',
       symbol,
       timeframe,
-      properties
+      properties,
+      strokeDashArray: properties.strokeDashArray || null,
+      strokeLineCap: properties.strokeLineCap || 'round'
     });
 
     // Add to canvas and set up selection
@@ -1025,12 +1029,155 @@ export function FinancialChartCanvas({
       type: 'x-axis-labels'
     });
 
+    // Create point markers if enabled
+    const markers: any[] = [];
+    if (properties.showMarkers) {
+      console.log('🔴 Creating point markers with properties:', properties);
+      
+      const getMarkerFrequencyStep = (frequency: string) => {
+        switch (frequency) {
+          case 'every-2': return 2;
+          case 'every-5': return 5;
+          case 'every-10': return 10;
+          case 'endpoints': return data.length - 1;
+          default: return 1; // 'all'
+        }
+      };
+      
+      const step = getMarkerFrequencyStep(properties.markerFrequency || 'all');
+      const markerSize = properties.markerSize || 4;
+      const markerStyle = properties.markerStyle || 'circle';
+      
+      data.forEach((point, index) => {
+        const shouldShowMarker = step === 1 || 
+          index % step === 0 || 
+          (properties.markerFrequency === 'endpoints' && (index === 0 || index === data.length - 1));
+          
+        if (shouldShowMarker) {
+          const x = chartStartX + xScale(new Date(point.timestamp));
+          const y = 120 + yScale(point.close);
+          
+          let marker;
+          switch (markerStyle) {
+            case 'square':
+              marker = new (window as any).fabric.Rect({
+                left: x - markerSize / 2,
+                top: y - markerSize / 2,
+                width: markerSize,
+                height: markerSize,
+                fill: properties.color,
+                stroke: properties.color,
+                strokeWidth: 1
+              });
+              break;
+            case 'diamond':
+              marker = new (window as any).fabric.Polygon([
+                { x: 0, y: -markerSize / 2 },
+                { x: markerSize / 2, y: 0 },
+                { x: 0, y: markerSize / 2 },
+                { x: -markerSize / 2, y: 0 }
+              ], {
+                left: x,
+                top: y,
+                fill: properties.color,
+                stroke: properties.color,
+                strokeWidth: 1
+              });
+              break;
+            case 'triangle':
+              marker = new (window as any).fabric.Triangle({
+                left: x - markerSize / 2,
+                top: y - markerSize / 2,
+                width: markerSize,
+                height: markerSize,
+                fill: properties.color,
+                stroke: properties.color,
+                strokeWidth: 1
+              });
+              break;
+            case 'cross':
+              const crossPath = `M ${-markerSize/2} 0 L ${markerSize/2} 0 M 0 ${-markerSize/2} L 0 ${markerSize/2}`;
+              marker = new (window as any).fabric.Path(crossPath, {
+                left: x,
+                top: y,
+                stroke: properties.color,
+                strokeWidth: 2,
+                fill: ''
+              });
+              break;
+            case 'plus':
+              const plusPath = `M ${-markerSize/2} 0 L ${markerSize/2} 0 M 0 ${-markerSize/2} L 0 ${markerSize/2}`;
+              marker = new (window as any).fabric.Path(plusPath, {
+                left: x,
+                top: y,
+                stroke: properties.color,
+                strokeWidth: 1,
+                fill: ''
+              });
+              break;
+            default: // circle
+              marker = new (window as any).fabric.Circle({
+                left: x - markerSize / 2,
+                top: y - markerSize / 2,
+                radius: markerSize / 2,
+                fill: properties.color,
+                stroke: properties.color,
+                strokeWidth: 1
+              });
+          }
+          
+          marker.set({
+            selectable: false,
+            evented: false,
+            type: 'chart-marker'
+          });
+          
+          markers.push(marker);
+        }
+      });
+    }
+    
+    // Create junction dots if enabled
+    const junctions: any[] = [];
+    if (properties.showJunctions) {
+      console.log('🟡 Creating junction dots with properties:', properties);
+      
+      const junctionSize = properties.junctionSize || 3;
+      const junctionColor = properties.junctionColor || properties.color;
+      
+      // Add junction dots at key points (every 10th point for performance)
+      data.forEach((point, index) => {
+        if (index % 10 === 0 || index === data.length - 1) {
+          const x = chartStartX + xScale(new Date(point.timestamp));
+          const y = 120 + yScale(point.close);
+          
+          const junction = new (window as any).fabric.Circle({
+            left: x - junctionSize / 2,
+            top: y - junctionSize / 2,
+            radius: junctionSize / 2,
+            fill: junctionColor,
+            stroke: junctionColor,
+            strokeWidth: 1,
+            selectable: false,
+            evented: false,
+            type: 'chart-junction'
+          });
+          
+          junctions.push(junction);
+        }
+      });
+    }
+
     // Add all elements to canvas for independent selection
     fabricCanvasRef.current.add(yAxisLine);
     fabricCanvasRef.current.add(xAxisLine);
     fabricCanvasRef.current.add(yAxisGroup);
     fabricCanvasRef.current.add(xAxisGroup);
     fabricCanvasRef.current.add(fabricPath);
+    
+    // Add markers and junctions
+    markers.forEach(marker => fabricCanvasRef.current.add(marker));
+    junctions.forEach(junction => fabricCanvasRef.current.add(junction));
 
     // Set up event handlers for Y-axis labels
     yAxisGroup.on('selected', () => {
