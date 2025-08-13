@@ -768,7 +768,6 @@ export function FinancialChartCanvas({
         chartStartX, yPos, chartStartX + chartWidth, yPos
       ], {
         stroke: '#e5e7eb',
-        fill: '',
         strokeWidth: 0.5,
         selectable: false,
         evented: false,
@@ -787,7 +786,6 @@ export function FinancialChartCanvas({
         xPos, margin.top, xPos, margin.top + chartHeight
       ], {
         stroke: '#e5e7eb',
-        fill: '',
         strokeWidth: 0.5,
         selectable: false,
         evented: false,
