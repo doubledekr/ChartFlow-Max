@@ -772,8 +772,8 @@ export function FinancialChartCanvas({
         selectable: false,
         evented: false,
         type: 'y-grid-line',
-        opacity: 0,
-        visible: false
+        opacity: 0.3,
+        visible: true
       });
       yGridLines.push(gridLine);
     });
@@ -790,8 +790,8 @@ export function FinancialChartCanvas({
         selectable: false,
         evented: false,
         type: 'x-grid-line',
-        opacity: 0,
-        visible: false
+        opacity: 0.3,
+        visible: true
       });
       xGridLines.push(gridLine);
     });
@@ -886,7 +886,7 @@ export function FinancialChartCanvas({
             opacity: 1, 
             color: '#666666', 
             visible: true,
-            gridLinesVisible: yGridLines[0]?.visible || false
+            gridLinesVisible: yGridLines[0]?.visible && yGridLines[0]?.opacity > 0
           },
           updateFunction: (property: string, value: any) => {
             console.log(`Updating Y-axis line: ${property} = ${value}`);
@@ -918,7 +918,7 @@ export function FinancialChartCanvas({
             opacity: 1, 
             color: '#666666', 
             visible: true,
-            gridLinesVisible: xGridLines[0]?.visible || false
+            gridLinesVisible: xGridLines[0]?.visible && xGridLines[0]?.opacity > 0
           },
           updateFunction: (property: string, value: any) => {
             console.log(`Updating X-axis line: ${property} = ${value}`);
