@@ -113,8 +113,45 @@ export function FinancialChartCanvas({
   };
 
   const renderChart = () => {
-    // Use the properties-aware version
-    renderChartWithProperties(lineProperties);
+    const svg = d3.select(svgRef.current);
+    svg.selectAll('*').remove();
+
+    if (data.length === 0) return;
+
+    const margin = { top: 120, right: 40, bottom: 80, left: 80 };
+    const chartWidth = Math.min(width - margin.left - margin.right, 680);
+    const chartHeight = Math.min(height - margin.top - margin.bottom, 280);
+
+    const xScale = d3.scaleTime()
+      .domain(d3.extent(data, d => new Date(d.timestamp)) as [Date, Date])
+      .range([0, chartWidth]);
+
+    const yScale = d3.scaleLinear()
+      .domain(d3.extent(data, d => d.high) as [number, number])
+      .range([chartHeight, 0]);
+
+    const g = svg.append('g')
+      .attr('transform', `translate(${margin.left}, ${margin.top})`);
+
+    // Create smoothed data based on smoothness parameter
+    const smoothingFactor = Math.max(1, Math.floor((1 - lineProperties.smoothness) * 10) + 1);
+    const smoothedData = data.filter((_, index) => index % smoothingFactor === 0);
+    
+    if (smoothedData[smoothedData.length - 1] !== data[data.length - 1]) {
+      smoothedData.push(data[data.length - 1]);
+    }
+
+    const line = d3.line<ChartDataPoint>()
+      .x(d => xScale(new Date(d.timestamp)))
+      .y(d => yScale(d.close))
+      .curve(d3.curveCatmullRom.alpha(0.5));
+
+    const pathData = line(smoothedData) || '';
+
+    // Create draggable chart group with axis text conversion
+    setTimeout(() => {
+      createDraggableChartGroup(pathData, margin, xScale, yScale, chartWidth, chartHeight);
+    }, 100);
   };
 
   const addAnnotation = () => {
@@ -152,7 +189,7 @@ export function FinancialChartCanvas({
     fabricCanvasRef.current.renderAll();
   };
 
-  const oldCreateDraggableChartGroup = (
+  const createDraggableChartGroup = (
     pathData: string, 
     margin: any, 
     xScale: any, 
