@@ -416,13 +416,27 @@ export function FinancialChartCanvas({
           
           fabricCanvasRef.current.add(fabricPath);
           
+          // Force canvas to render the new path
+          fabricCanvasRef.current.renderAll();
+          
           // Set up selection handler for this line
           fabricPath.on('selected', function() {
             console.log(`Chart line selected for ${seriesData.symbol}`);
             handleChartLineSelection(fabricPath);
           });
+          
+          console.log(`✅ Added ${seriesData.symbol} line to canvas`);
         }
       });
+      
+      // Add timeout to ensure all lines are rendered with axes
+      setTimeout(() => {
+        if (fabricCanvasRef.current && data.length > 0) {
+          // Add axes for multi-symbol chart
+          addAxisElements(data, margin, fabricCanvasRef.current.width, fabricCanvasRef.current.height);
+          fabricCanvasRef.current.renderAll();
+        }
+      }, 200);
     } else {
       // Single symbol rendering
       const line = d3.line<ChartDataPoint>()
@@ -475,6 +489,85 @@ export function FinancialChartCanvas({
 
     fabricCanvasRef.current.add(line);
     fabricCanvasRef.current.renderAll();
+  };
+
+  // Helper function to add axis elements
+  const addAxisElements = (chartData: ChartDataPoint[], margin: any, canvasWidth: number, canvasHeight: number) => {
+    if (!fabricCanvasRef.current) return;
+    
+    const chartWidth = Math.min(canvasWidth - margin.left - margin.right, 680);
+    const chartHeight = Math.min(canvasHeight - margin.top - margin.bottom, 280);
+    
+    // Calculate scales
+    const xScale = d3.scaleTime()
+      .domain(d3.extent(chartData, d => new Date(d.timestamp)) as [Date, Date])
+      .range([0, chartWidth]);
+      
+    const allPrices = chartData.flatMap(d => [d.high, d.low, d.close, d.open]);
+    const yMin = Math.min(...allPrices) * 0.95;
+    const yMax = Math.max(...allPrices) * 1.05;
+    const yScale = d3.scaleLinear()
+      .domain([yMin, yMax])
+      .range([chartHeight, 0]);
+    
+    // Create Y-axis labels
+    const yTicks = yScale.ticks(5);
+    const chartStartX = margin.left + 40;
+    
+    const yAxisLabels = yTicks.map((price: number) => new (window as any).fabric.Text(
+      `$${price.toFixed(2)}`, {
+        left: chartStartX - 45,
+        top: 120 + yScale(price) - 6,
+        fontSize: 11,
+        fontFamily: 'Inter, sans-serif',
+        fill: '#666666',
+        selectable: true,
+        hasControls: false,
+        hasBorders: true,
+        type: 'y-axis-label'
+      }
+    ));
+    
+    // Create X-axis labels
+    const xTicks = xScale.ticks(5);
+    const xAxisLabels = xTicks.map((date: Date) => new (window as any).fabric.Text(
+      date.toLocaleDateString('en-US', { month: 'short', day: '2-digit' }), {
+        left: chartStartX + xScale(date) - 20,
+        top: 120 + chartHeight + 15,
+        fontSize: 11,
+        fontFamily: 'Inter, sans-serif',
+        fill: '#666666',
+        selectable: true,
+        hasControls: false,
+        hasBorders: true,
+        type: 'x-axis-label'
+      }
+    ));
+    
+    // Create axis lines
+    const yAxisLine = new (window as any).fabric.Line([chartStartX - 5, 120, chartStartX - 5, 120 + chartHeight], {
+      stroke: '#666666',
+      strokeWidth: 1,
+      selectable: true,
+      hasControls: false,
+      hasBorders: true,
+      type: 'y-axis-line'
+    });
+    
+    const xAxisLine = new (window as any).fabric.Line([chartStartX, 120 + chartHeight + 5, chartStartX + chartWidth, 120 + chartHeight + 5], {
+      stroke: '#666666',
+      strokeWidth: 1,
+      selectable: true,
+      hasControls: false,
+      hasBorders: true,
+      type: 'x-axis-line'
+    });
+    
+    // Add all axis elements
+    fabricCanvasRef.current.add(yAxisLine);
+    fabricCanvasRef.current.add(xAxisLine);
+    yAxisLabels.forEach(label => fabricCanvasRef.current.add(label));
+    xAxisLabels.forEach(label => fabricCanvasRef.current.add(label));
   };
 
   const createDraggableChartGroup = (
