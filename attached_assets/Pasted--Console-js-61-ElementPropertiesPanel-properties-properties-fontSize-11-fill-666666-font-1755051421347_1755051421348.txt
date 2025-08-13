@@ -1,0 +1,41 @@
+
+Console.js:61 ElementPropertiesPanel - properties.properties: 
+{fontSize: 11, fill: '#666666', fontFamily: 'Inter, sans-serif', fontWeight: 'normal'}
+Console.js:61 chart-designer.tsx - handleElementSelect called with: undefined undefined
+Console.js:61 chart-designer.tsx - State set to: undefined undefined
+Console.js:61 ElementPropertiesPanel - selectedElement: null
+Console.js:61 ElementPropertiesPanel - properties: null
+Console.js:61 X-axis labels selected
+Console.js:61 chart-designer.tsx - handleElementSelect called with: x-axis-labels x-axis-labels
+Console.js:61 chart-designer.tsx - State set to: x-axis-labels x-axis-labels
+Console.js:61 Canvas selection updated: x-axis-labels
+Console.js:61 ElementPropertiesPanel - selectedElement: 
+i {_objects: Array(4), width: 560.552734375, height: 14.559999999999945, left: 139, top: 425, …}
+Console.js:61 ElementPropertiesPanel - properties: 
+{type: 'x-axis-labels', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: x-axis-labels
+Console.js:61 ElementPropertiesPanel - isChartGroup: false
+Console.js:61 ElementPropertiesPanel - properties.properties: 
+{fontSize: 11, fill: '#666666', fontFamily: 'Inter, sans-serif', fontWeight: 'normal'}
+Console.js:61 chart-designer.tsx - handleElementSelect called with: undefined undefined
+Console.js:61 chart-designer.tsx - State set to: undefined undefined
+Console.js:61 ElementPropertiesPanel - selectedElement: null
+Console.js:61 ElementPropertiesPanel - properties: null
+Console.js:61 Y-axis labels selected
+Console.js:61 chart-designer.tsx - handleElementSelect called with: y-axis-labels y-axis-labels
+Console.js:61 chart-designer.tsx - State set to: y-axis-labels y-axis-labels
+Console.js:61 Canvas selection updated: y-axis-labels
+Console.js:61 ElementPropertiesPanel - selectedElement: 
+i {_objects: Array(5), width: 49.580078125, height: 239.48218094186166, left: 80, top: 119, …}
+Console.js:61 ElementPropertiesPanel - properties: 
+{type: 'y-axis-labels', properties: {…}, updateFunction: ƒ}
+Console.js:61 ElementPropertiesPanel - elementType: y-axis-labels
+Console.js:61 ElementPropertiesPanel - isChartGroup: false
+Console.js:61 ElementPropertiesPanel - properties.properties: 
+{fontSize: 11, fill: '#666666', fontFamily: 'Inter, sans-serif', fontWeight: 'normal'}
+Console.js:61 chart-designer.tsx - handleElementSelect called with: undefined undefined
+Console.js:61 chart-designer.tsx - State set to: undefined undefined
+Console.js:61 ElementPropertiesPanel - selectedElement: null
+Console.js:61 ElementPropertiesPanel - properties: null
+﻿
+

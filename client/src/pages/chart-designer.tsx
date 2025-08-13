@@ -30,6 +30,14 @@ export default function ChartDesigner() {
 
   const handleElementSelect = (element: any, properties: any) => {
     console.log('chart-designer.tsx - handleElementSelect called with:', element?.type, properties?.type);
+    console.trace('handleElementSelect call stack'); // This will show us what's calling it
+    
+    // Don't clear selection if called with undefined values
+    if (element === undefined && properties === undefined) {
+      console.log('Ignoring undefined selection call');
+      return;
+    }
+    
     setSelectedElement(element);
     setElementProperties(properties);
     console.log('chart-designer.tsx - State set to:', element?.type, properties?.type);
