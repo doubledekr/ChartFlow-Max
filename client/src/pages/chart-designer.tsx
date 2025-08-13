@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Undo, Redo, Save, Download, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DataSourcePanel } from '@/components/chart-designer/DataSourcePanel';
@@ -24,6 +24,7 @@ export default function ChartDesigner() {
   const [canvasHistory, setCanvasHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [fabricCanvas, setFabricCanvas] = useState<any>(null);
+  const chartUpdateRef = useRef<((property: string, value: any) => void) | null>(null);
   const { toast } = useToast();
 
   const handleDataUpdate = () => {
@@ -164,28 +165,48 @@ export default function ChartDesigner() {
     if (!selectedElement || !fabricCanvas) return;
 
     try {
-      // Set the property on the selected element
-      selectedElement.set(property, value);
-      
-      // For text content changes, update the text property specifically
-      if (property === 'text') {
-        selectedElement.set('text', value);
-      }
-      
-      // For axis labels, we need to update all items in the group
-      if (elementProperties?.type === 'y-axis-labels' || elementProperties?.type === 'x-axis-labels') {
-        if (selectedElement._objects) {
-          selectedElement._objects.forEach((obj: any) => {
-            obj.set(property, value);
-          });
+      // Special handling for chart line elements
+      if (elementProperties?.type === 'chartline') {
+        // Map properties to correct Fabric.js properties
+        const fabricProperty = property === 'color' ? 'stroke' : property;
+        
+        // Update the selected element
+        selectedElement.set(fabricProperty, value);
+        
+        // For smoothness, we need to regenerate the chart path
+        if (property === 'smoothness') {
+          // Trigger chart regeneration with new smoothness
+          if (chartUpdateRef.current) {
+            chartUpdateRef.current(property, value);
+          }
         }
+        
+        // Trigger canvas re-render
+        fabricCanvas.renderAll();
+      } else {
+        // Standard property handling for other elements
+        selectedElement.set(property, value);
+        
+        // For text content changes, update the text property specifically
+        if (property === 'text') {
+          selectedElement.set('text', value);
+        }
+        
+        // For axis labels, we need to update all items in the group
+        if (elementProperties?.type === 'y-axis-labels' || elementProperties?.type === 'x-axis-labels') {
+          if (selectedElement._objects) {
+            selectedElement._objects.forEach((obj: any) => {
+              obj.set(property, value);
+            });
+          }
+        }
+        
+        // Trigger canvas re-render
+        fabricCanvas.renderAll();
       }
-      
-      // Trigger canvas re-render
-      fabricCanvas.renderAll();
       
       // Update the properties state to reflect changes
-      setElementProperties(prev => {
+      setElementProperties((prev: any) => {
         if (!prev) return prev;
         return {
           ...prev,
@@ -587,6 +608,9 @@ export default function ChartDesigner() {
             onElementSelect={handleElementSelect} 
             onCanvasReady={handleCanvasReady}
             onCanvasChange={saveCanvasState}
+            onChartUpdateRef={(updateFn) => {
+              chartUpdateRef.current = updateFn;
+            }}
           />
         </div>
 

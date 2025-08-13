@@ -14,6 +14,7 @@ interface FinancialChartCanvasProps {
   onElementSelect?: (element: any, properties: any) => void;
   onCanvasReady?: (canvas: any) => void;
   onCanvasChange?: () => void;
+  onChartUpdateRef?: (updateFn: (property: string, value: any) => void) => void;
 }
 
 export function FinancialChartCanvas({ 
@@ -21,7 +22,8 @@ export function FinancialChartCanvas({
   height = 500, 
   onElementSelect,
   onCanvasReady,
-  onCanvasChange
+  onCanvasChange,
+  onChartUpdateRef
 }: FinancialChartCanvasProps) {
   
   // Expose update function to parent component
@@ -85,6 +87,11 @@ export function FinancialChartCanvas({
       // Notify parent component that canvas is ready
       if (onCanvasReady) {
         onCanvasReady(canvas);
+      }
+      
+      // Expose the chart update function to parent
+      if (onChartUpdateRef) {
+        onChartUpdateRef(updateChartLineProperties);
       }
 
       // Set up event handlers for undo/redo functionality
