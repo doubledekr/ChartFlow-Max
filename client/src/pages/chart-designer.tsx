@@ -191,8 +191,8 @@ export default function ChartDesigner() {
 
       {/* Main Editor */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Left Panel - Controls */}
-        <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
+        {/* Left Panel - Controls - Fixed Width */}
+        <div className="w-80 min-w-80 max-w-80 bg-white border-r border-gray-200 flex flex-col flex-shrink-0">
           <div className="p-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">Design Controls</h2>
           </div>

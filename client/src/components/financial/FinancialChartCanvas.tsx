@@ -563,29 +563,33 @@ export function FinancialChartCanvas({
     const newProperties = { ...lineProperties, [property]: value };
     setLineProperties(newProperties);
 
-    // Update standalone path directly - no Group wrapper issues
+    // Update standalone path directly - ensure proper rendering
     switch (property) {
       case 'strokeWidth':
-        selectedChartLine.set('strokeWidth', value);
-        fabricCanvasRef.current?.renderAll();
+        selectedChartLine.set({ strokeWidth: value });
+        selectedChartLine.setCoords();
+        fabricCanvasRef.current?.requestRenderAll();
         console.log(`VISUAL UPDATED strokeWidth to ${value} - Path strokeWidth now:`, selectedChartLine.strokeWidth);
         break;
 
       case 'opacity':
-        selectedChartLine.set('opacity', value);
-        fabricCanvasRef.current?.renderAll();
+        selectedChartLine.set({ opacity: value });
+        selectedChartLine.setCoords();
+        fabricCanvasRef.current?.requestRenderAll();
         console.log(`VISUAL UPDATED opacity to ${value} - Path opacity now:`, selectedChartLine.opacity);
         break;
 
       case 'color':
-        selectedChartLine.set('stroke', value);
-        fabricCanvasRef.current?.renderAll();
+        selectedChartLine.set({ stroke: value });
+        selectedChartLine.setCoords();
+        fabricCanvasRef.current?.requestRenderAll();
         console.log(`VISUAL UPDATED color to ${value} - Path stroke now:`, selectedChartLine.stroke);
         break;
 
       case 'visible':
-        selectedChartLine.set('visible', value);
-        fabricCanvasRef.current?.renderAll();
+        selectedChartLine.set({ visible: value });
+        selectedChartLine.setCoords();
+        fabricCanvasRef.current?.requestRenderAll();
         console.log(`VISUAL UPDATED visibility to ${value}`);
         break;
 
