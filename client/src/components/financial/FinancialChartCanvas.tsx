@@ -900,30 +900,35 @@ export function FinancialChartCanvas({
             fabricCanvasRef.current?.remove(gridLine);
           });
           
-          // Create fresh grid lines with absolute coordinates
-          console.log('🔧 CANVAS: Creating fresh grid lines:', yGridLines.length);
+          // Create test grid lines to verify they can be visible
+          console.log('🔧 CANVAS: Creating test grid lines');
+          
+          // Create one bright red test line that should definitely be visible
+          const testLine = new (window as any).fabric.Line([140, 250, 820, 250], {
+            stroke: '#ff0000',
+            strokeWidth: 3,
+            opacity: 1,
+            selectable: true,
+            evented: true,
+            type: 'test-grid-line'
+          });
+          
+          console.log('🔧 CANVAS: Adding bright red test line at Y=250');
+          fabricCanvasRef.current?.add(testLine);
+          
+          // Create actual grid lines
           yGridLines.forEach((gridLine: any, index: number) => {
-            console.log(`🔧 CANVAS: Original grid line ${index}:`, gridLine.left, gridLine.top, gridLine.width);
+            const yPos = gridLine.top;
+            const freshGridLine = new (window as any).fabric.Line([140, yPos, 820, yPos], {
+              stroke: '#e5e7eb',
+              strokeWidth: 1,
+              opacity: 0.8,
+              selectable: false,
+              evented: false,
+              type: 'y-grid-line'
+            });
             
-            // Create a new grid line with absolute coordinates
-            // Use the stored grid line's position but create fresh coordinates
-            const yPos = gridLine.top; // Y position from stored grid line
-            const chartStartX = 140;   // Chart starts at X=140
-            const chartEndX = 820;     // Chart ends at X=820 (140 + 680)
-            
-            const freshGridLine = new (window as any).fabric.Line(
-              [chartStartX, yPos, chartEndX, yPos], 
-              {
-                stroke: '#e5e7eb',
-                strokeWidth: 0.5,
-                opacity: 0.3,
-                selectable: false,
-                evented: false,
-                type: 'y-grid-line'
-              }
-            );
-            
-            console.log(`🔧 CANVAS: Created fresh grid line at Y=${yPos} from X=${chartStartX} to X=${chartEndX}`);
+            console.log(`🔧 CANVAS: Created grid line ${index} at Y=${yPos}`);
             fabricCanvasRef.current?.add(freshGridLine);
           });
           fabricCanvasRef.current?.renderAll();
