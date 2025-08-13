@@ -9,18 +9,23 @@ import { useChartData } from '@/hooks/useChartData';
 
 interface DataSourcePanelProps {
   onDataUpdate: () => void;
+  onSymbolChange?: (symbol: string) => void;
+  onTimeframeChange?: (timeframe: string) => void;
 }
 
-export function DataSourcePanel({ onDataUpdate }: DataSourcePanelProps) {
+export function DataSourcePanel({ onDataUpdate, onSymbolChange, onTimeframeChange }: DataSourcePanelProps) {
   const { config, updateConfig } = useChartDesigner();
   const { loading, refreshData } = useChartData(config.symbol, config.period);
 
   const handleSymbolChange = (value: string) => {
-    updateConfig({ symbol: value.toUpperCase() });
+    const upperValue = value.toUpperCase();
+    updateConfig({ symbol: upperValue });
+    onSymbolChange?.(upperValue);
   };
 
   const handlePeriodChange = (value: string) => {
     updateConfig({ period: value });
+    onTimeframeChange?.(value);
   };
 
   const handleLoadData = () => {

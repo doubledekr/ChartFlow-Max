@@ -11,6 +11,8 @@ import * as d3 from 'd3';
 interface FinancialChartCanvasProps {
   width?: number;
   height?: number;
+  symbol?: string;
+  timeframe?: string;
   onElementSelect?: (element: any, properties: any) => void;
   onCanvasReady?: (canvas: any) => void;
   onCanvasChange?: () => void;
@@ -20,19 +22,27 @@ interface FinancialChartCanvasProps {
 export function FinancialChartCanvas({ 
   width = 900, 
   height = 500, 
+  symbol: propSymbol = 'AAPL',
+  timeframe: propTimeframe = '1Y',
   onElementSelect,
   onCanvasReady,
   onCanvasChange,
   onChartUpdateRef
 }: FinancialChartCanvasProps) {
   
+  // Update symbol and timeframe when props change
+  useEffect(() => {
+    setSymbol(propSymbol);
+    setTimeframe(propTimeframe);
+  }, [propSymbol, propTimeframe]);
+
   // Expose update function to parent component
   const updateChartLinePropertiesRef = useRef<(property: string, value: any) => void>();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<any>(null);
   const svgRef = useRef<SVGSVGElement>(null);
-  const [symbol, setSymbol] = useState('AAPL');
-  const [timeframe, setTimeframe] = useState('1Y');
+  const [symbol, setSymbol] = useState(propSymbol);
+  const [timeframe, setTimeframe] = useState(propTimeframe);
   const [data, setData] = useState<ChartDataPoint[]>([]);
   const [multiSymbolData, setMultiSymbolData] = useState<any>(null);
   const [isMultiSymbol, setIsMultiSymbol] = useState(false);
@@ -1802,42 +1812,9 @@ export function FinancialChartCanvas({
 
   return (
     <div className="relative w-full">
-      {/* Controls */}
+      {/* Annotation Controls */}
       <Card className="mb-4 p-4">
         <div className="flex gap-4 items-center flex-wrap">
-          <div className="flex gap-2 items-center">
-            <label className="text-sm font-medium">Symbol:</label>
-            <Input
-              value={symbol}
-              onChange={(e) => setSymbol(e.target.value.toUpperCase())}
-              className="w-20"
-              placeholder="AAPL"
-            />
-          </div>
-          
-          <div className="flex gap-2 items-center">
-            <label className="text-sm font-medium">Timeframe:</label>
-            <Select value={timeframe} onValueChange={setTimeframe}>
-              <SelectTrigger className="w-24">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1D">1D</SelectItem>
-                <SelectItem value="1W">1W</SelectItem>
-                <SelectItem value="1M">1M</SelectItem>
-                <SelectItem value="3M">3M</SelectItem>
-                <SelectItem value="6M">6M</SelectItem>
-                <SelectItem value="1Y">1Y</SelectItem>
-                <SelectItem value="2Y">2Y</SelectItem>
-                <SelectItem value="5Y">5Y</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <Button onClick={loadStockData} disabled={loading} data-testid="button-load-data">
-            {loading ? 'Loading...' : 'Load Data'}
-          </Button>
-
           <Button onClick={addAnnotation} variant="outline" size="sm" data-testid="button-add-annotation">
             Add Annotation
           </Button>

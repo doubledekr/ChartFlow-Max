@@ -35,6 +35,8 @@ export default function ChartDesigner() {
     locked?: boolean;
     zIndex: number;
   }>>([]);
+  const [chartSymbol, setChartSymbol] = useState('AAPL');
+  const [chartTimeframe, setChartTimeframe] = useState('1Y');
   const chartUpdateRef = useRef<((property: string, value: any) => void) | null>(null);
   const { toast } = useToast();
 
@@ -640,7 +642,11 @@ export default function ChartDesigner() {
           </div>
           
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            <DataSourcePanel onDataUpdate={handleDataUpdate} />
+            <DataSourcePanel 
+              onDataUpdate={handleDataUpdate}
+              onSymbolChange={setChartSymbol}
+              onTimeframeChange={setChartTimeframe}
+            />
             
             {/* Element Properties Panel */}
             <ElementPropertiesPanel 
@@ -663,6 +669,8 @@ export default function ChartDesigner() {
         {/* Center Panel - Canvas */}
         <div className="flex-1 p-4">
           <FinancialChartCanvas 
+            symbol={chartSymbol}
+            timeframe={chartTimeframe}
             onElementSelect={handleElementSelect} 
             onCanvasReady={handleCanvasReady}
             onCanvasChange={saveCanvasState}
