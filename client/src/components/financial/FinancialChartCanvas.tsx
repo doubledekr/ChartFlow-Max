@@ -905,7 +905,22 @@ export function FinancialChartCanvas({
           console.log('🔧 CANVAS: Adding grid lines:', yGridLines.length);
           yGridLines.forEach((gridLine: any, index: number) => {
             console.log(`🔧 CANVAS: Adding grid line ${index}:`, gridLine.stroke, gridLine.strokeWidth, gridLine.opacity);
-            fabricCanvasRef.current?.add(gridLine);
+            console.log(`🔧 CANVAS: Grid line position:`, gridLine.left, gridLine.top, 'width:', gridLine.width, 'height:', gridLine.height);
+            
+            // Create a new grid line object with proper positioning
+            const newGridLine = new fabric.Line([gridLine.x1, gridLine.y1, gridLine.x2, gridLine.y2], {
+              left: gridLine.left,
+              top: gridLine.top,
+              stroke: gridLine.stroke,
+              strokeWidth: gridLine.strokeWidth,
+              opacity: gridLine.opacity,
+              selectable: false,
+              evented: false,
+              type: 'y-grid-line'
+            });
+            
+            console.log(`🔧 CANVAS: Created new grid line at:`, newGridLine.left, newGridLine.top);
+            fabricCanvasRef.current?.add(newGridLine);
           });
           fabricCanvasRef.current?.renderAll();
           console.log('🔧 CANVAS: Canvas objects after:', fabricCanvasRef.current?.getObjects().length);
