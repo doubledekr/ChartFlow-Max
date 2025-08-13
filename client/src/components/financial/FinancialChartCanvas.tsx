@@ -500,9 +500,9 @@ export function FinancialChartCanvas({
         }
       });
 
-      // Create draggable chart group with axis text conversion
+      // Create only the chart line without axis elements
       setTimeout(() => {
-        createDraggableChartGroup(pathData, margin, xScale, yScale, chartWidth, chartHeight);
+        createDraggableChartLineOnly(pathData, margin, xScale, yScale, chartWidth, chartHeight);
         // Add separate axis elements for single symbol
         addAxisElements(data, margin, width, height);
       }, 100);
@@ -632,6 +632,70 @@ export function FinancialChartCanvas({
     fabricCanvasRef.current.add(xAxisLine);
     yAxisLabels.forEach(label => fabricCanvasRef.current.add(label));
     xAxisLabels.forEach(label => fabricCanvasRef.current.add(label));
+  };
+
+  const createDraggableChartLineOnly = (pathData: string, margin: any, xScale: any, yScale: any, chartWidth: number, chartHeight: number) => {
+    if (!fabricCanvasRef.current) return;
+
+    // Create only the chart line path
+    const fabricPath = new (window as any).fabric.Path(pathData, {
+      fill: '',
+      stroke: lineProperties.color,
+      strokeWidth: lineProperties.strokeWidth,
+      strokeLineCap: 'round',
+      strokeLineJoin: 'round',
+      opacity: lineProperties.opacity,
+      strokeDashArray: lineProperties.strokeDashArray || null
+    });
+
+    // Position the chart line at the center
+    const canvasCenter = width / 2;
+    const totalChartWidth = chartWidth + 60;
+    const chartStartX = canvasCenter - (totalChartWidth / 2) + 60;
+    
+    fabricPath.set({
+      left: chartStartX,
+      top: 120,
+      selectable: true,
+      hasControls: true,
+      hasBorders: true,
+      cornerColor: '#3b82f6',
+      cornerStyle: 'circle',
+      transparentCorners: false,
+      cornerSize: 8,
+      type: 'financial-chart-line',
+      symbol,
+      timeframe,
+      properties: lineProperties
+    });
+
+    // Add chart line to canvas
+    fabricCanvasRef.current.add(fabricPath);
+
+    // Set up selection handler
+    fabricPath.on('selected', () => {
+      console.log('Chart line selected');
+      setSelectedChartLine(fabricPath);
+      
+      if (onElementSelect) {
+        onElementSelect(fabricPath, {
+          type: 'financial-chart-line',
+          symbol,
+          properties: {
+            strokeWidth: fabricPath.strokeWidth,
+            opacity: fabricPath.opacity,
+            color: fabricPath.stroke,
+            visible: fabricPath.visible
+          }
+        });
+      }
+    });
+
+    fabricCanvasRef.current.renderAll();
+    
+    // Auto-select the chart line
+    fabricCanvasRef.current.setActiveObject(fabricPath);
+    setSelectedChartLine(fabricPath);
   };
 
   const createDraggableChartGroup = (
