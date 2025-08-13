@@ -28,7 +28,7 @@ export function ElementPropertiesPanel({
     );
   }
 
-  const isChartGroup = properties.type === 'financial-chart-group';
+  const isChartGroup = properties.type === 'financial-chart-group' || properties.type === 'financial-chart-line';
   const elementType = properties.type;
 
   return (
@@ -41,7 +41,7 @@ export function ElementPropertiesPanel({
             <Move className="h-4 w-4 text-gray-600" />
           )}
           <h3 className="text-sm font-medium">
-            {isChartGroup ? 'Financial Chart' : 'Chart Element'}
+            {isChartGroup ? 'Financial Chart Line' : elementType === 'y-axis-labels' ? 'Y-Axis Labels' : elementType === 'x-axis-labels' ? 'X-Axis Labels' : 'Chart Element'}
           </h3>
           {isChartGroup && (
             <Badge variant="outline" className="text-xs">

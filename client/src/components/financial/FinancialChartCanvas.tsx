@@ -337,49 +337,80 @@ export function FinancialChartCanvas({
       type: 'x-axis-labels'
     });
 
-    // Don't add groups separately - they'll be part of the complete chart group
+    // Add elements separately for independent selection and editing
+    
+    // Position axis lines
+    yAxisLine.set({
+      left: 80,
+      top: 60,
+      selectable: true,
+      hasControls: true,
+      hasBorders: true,
+      type: 'y-axis-line'
+    });
 
-    // Create comprehensive chart system with proper z-order and 16:9 positioning
-    const completeChartGroup = new (window as any).fabric.Group(
-      [
-        yAxisLine,   // Bottom layer
-        xAxisLine,   // Bottom layer
-        yAxisGroup,  // Middle layer
-        xAxisGroup,  // Middle layer  
-        fabricPath   // Top layer - line above axes
-      ], 
-      {
-        left: 80,  // Center within canvas bounds
-        top: 60,   // Center within canvas bounds
-        selectable: true,
-        hasControls: true,
-        hasBorders: true,
-        cornerColor: '#3b82f6',
-        cornerStyle: 'circle',
-        transparentCorners: false,
-        cornerSize: 8,
-        lockScalingX: false,
-        lockScalingY: false,
-        subTargetCheck: true, // Allow selection of sub-elements
-      }
-    );
+    xAxisLine.set({
+      left: 80,
+      top: 60 + chartHeight,
+      selectable: true,
+      hasControls: true,
+      hasBorders: true,
+      type: 'x-axis-line'
+    });
 
-    // Set up event handlers for the complete chart system
-    completeChartGroup.set({
-      type: 'financial-chart-group',
+    // Position axis text groups
+    yAxisGroup.set({
+      left: 20,
+      top: 60,
+      selectable: true,
+      hasControls: true,
+      hasBorders: true,
+      type: 'y-axis-labels'
+    });
+
+    xAxisGroup.set({
+      left: 80,
+      top: 60 + chartHeight + 25,
+      selectable: true,
+      hasControls: true,
+      hasBorders: true,
+      type: 'x-axis-labels'
+    });
+
+    // Create draggable chart line
+    const chartLine = new (window as any).fabric.Group([fabricPath], {
+      left: 80,  // Match axis position
+      top: 60,   // Match axis position
+      selectable: true,
+      hasControls: true,
+      hasBorders: true,
+      cornerColor: '#3b82f6',
+      cornerStyle: 'circle',
+      transparentCorners: false,
+      cornerSize: 8,
+      lockScalingX: false,
+      lockScalingY: false,
+      type: 'financial-chart-line',
       symbol,
       timeframe,
       properties: lineProperties
     });
 
-    completeChartGroup.on('selected', () => {
-      console.log('Chart system selected');
-      setSelectedChartLine(completeChartGroup);
+    // Add all elements to canvas for independent selection
+    fabricCanvasRef.current.add(yAxisLine);
+    fabricCanvasRef.current.add(xAxisLine);
+    fabricCanvasRef.current.add(yAxisGroup);
+    fabricCanvasRef.current.add(xAxisGroup);
+    fabricCanvasRef.current.add(chartLine);
+
+    // Set up event handlers for chart line selection
+    chartLine.on('selected', () => {
+      console.log('Chart line selected');
+      setSelectedChartLine(chartLine);
       
-      // Notify parent component about selection
       if (onElementSelect) {
-        onElementSelect(completeChartGroup, {
-          type: 'financial-chart-group',
+        onElementSelect(chartLine, {
+          type: 'financial-chart-line',
           symbol,
           timeframe,
           properties: lineProperties,
@@ -390,49 +421,64 @@ export function FinancialChartCanvas({
       }
     });
 
-    completeChartGroup.on('deselected', () => {
+    // Set up event handlers for axis text groups
+    yAxisGroup.on('selected', () => {
+      if (onElementSelect) {
+        onElementSelect(yAxisGroup, {
+          type: 'y-axis-labels',
+          updateFunction: (property: string, value: any) => {
+            const objects = yAxisGroup.getObjects();
+            objects.forEach((obj: any) => {
+              if (property === 'fontSize') obj.set('fontSize', value);
+              if (property === 'fill') obj.set('fill', value);
+              if (property === 'fontFamily') obj.set('fontFamily', value);
+              if (property === 'fontWeight') obj.set('fontWeight', value);
+            });
+            yAxisGroup.addWithUpdate();
+            fabricCanvasRef.current?.renderAll();
+          }
+        });
+      }
+    });
+
+    xAxisGroup.on('selected', () => {
+      if (onElementSelect) {
+        onElementSelect(xAxisGroup, {
+          type: 'x-axis-labels',
+          updateFunction: (property: string, value: any) => {
+            const objects = xAxisGroup.getObjects();
+            objects.forEach((obj: any) => {
+              if (property === 'fontSize') obj.set('fontSize', value);
+              if (property === 'fill') obj.set('fill', value);
+              if (property === 'fontFamily') obj.set('fontFamily', value);
+              if (property === 'fontWeight') obj.set('fontWeight', value);
+            });
+            xAxisGroup.addWithUpdate();
+            fabricCanvasRef.current?.renderAll();
+          }
+        });
+      }
+    });
+
+    // Set up deselection handler
+    const handleDeselection = () => {
       setSelectedChartLine(null);
-      
-      // Notify parent component about deselection
       if (onElementSelect) {
         onElementSelect(null, null);
       }
-    });
+    };
 
-    // Enable sub-element selection for axis groups
-    completeChartGroup.on('mouse:down', (e: any) => {
-      const target = e.subTargets?.[0];
-      if (target && (target.type === 'y-axis-labels' || target.type === 'x-axis-labels')) {
-        // Allow axis text groups to be selected independently
-        setTimeout(() => {
-          fabricCanvasRef.current?.setActiveObject(target);
-          if (onElementSelect) {
-            onElementSelect(target, {
-              type: target.type,
-              updateFunction: (property: string, value: any) => {
-                const objects = target.getObjects();
-                objects.forEach((obj: any) => {
-                  if (property === 'fontSize') obj.set('fontSize', value);
-                  if (property === 'fill') obj.set('fill', value);
-                  if (property === 'fontFamily') obj.set('fontFamily', value);
-                  if (property === 'fontWeight') obj.set('fontWeight', value);
-                });
-                target.addWithUpdate();
-                fabricCanvasRef.current?.renderAll();
-              }
-            });
-          }
-        }, 10);
-      }
-    });
+    chartLine.on('deselected', handleDeselection);
+    yAxisGroup.on('deselected', handleDeselection);
+    xAxisGroup.on('deselected', handleDeselection);
+    yAxisLine.on('deselected', handleDeselection);
+    xAxisLine.on('deselected', handleDeselection);
 
-    // Add complete chart system
-    fabricCanvasRef.current.add(completeChartGroup);
     fabricCanvasRef.current.renderAll();
 
-    // Auto-select the chart system
-    fabricCanvasRef.current.setActiveObject(completeChartGroup);
-    setSelectedChartLine(completeChartGroup);
+    // Auto-select the chart line
+    fabricCanvasRef.current.setActiveObject(chartLine);
+    setSelectedChartLine(chartLine);
   };
 
   const updateChartLineProperties = (property: string, value: any) => {
@@ -441,11 +487,10 @@ export function FinancialChartCanvas({
     const newProperties = { ...lineProperties, [property]: value };
     setLineProperties(newProperties);
 
-    // Update the chart line within the group
-    if (selectedChartLine.type === 'financial-chart-group') {
+    // Update the chart line properties for separate elements
+    if (selectedChartLine.type === 'financial-chart-line') {
       const objects = selectedChartLine.getObjects();
       const chartPath = objects.find((obj: any) => obj.type === 'path');
-      const chartTitle = objects.find((obj: any) => obj.type === 'chart-title');
 
       switch (property) {
         case 'strokeWidth':
@@ -453,64 +498,41 @@ export function FinancialChartCanvas({
             chartPath.set('strokeWidth', value);
             selectedChartLine.addWithUpdate();
             fabricCanvasRef.current?.renderAll();
+            console.log(`Updated strokeWidth to ${value} for element:`, selectedChartLine.type);
           }
           break;
+
         case 'opacity':
           if (chartPath) {
             chartPath.set('opacity', value);
             selectedChartLine.addWithUpdate();
             fabricCanvasRef.current?.renderAll();
+            console.log(`Updated opacity to ${value} for element:`, selectedChartLine.type);
           }
           break;
+
+        case 'smoothness':
+          // Regenerate the chart with new smoothness while preserving positions
+          const allObjects = fabricCanvasRef.current?.getObjects() || [];
+          const positions = allObjects.map((obj: any) => ({
+            type: obj.type,
+            left: obj.left,
+            top: obj.top
+          }));
+          
+          renderChart();
+          console.log(`Updated smoothness to ${value} for element:`, selectedChartLine.type);
+          break;
+
         case 'color':
           if (chartPath) {
             chartPath.set('stroke', value);
             selectedChartLine.addWithUpdate();
             fabricCanvasRef.current?.renderAll();
           }
-          if (chartTitle) {
-            chartTitle.set('fill', value);
-            selectedChartLine.addWithUpdate();
-            fabricCanvasRef.current?.renderAll();
-          }
-          break;
-        case 'smoothness':
-          console.log('Smoothness changed to:', value);
-          // Clear canvas and regenerate with new smoothness
-          const currentPos = { 
-            left: selectedChartLine.left, 
-            top: selectedChartLine.top 
-          };
-          fabricCanvasRef.current?.clear();
-          setTimeout(() => {
-            renderChart();
-            // Restore position after regeneration
-            setTimeout(() => {
-              const newChartGroup = fabricCanvasRef.current?.getActiveObject();
-              if (newChartGroup) {
-                newChartGroup.set(currentPos);
-                fabricCanvasRef.current?.renderAll();
-              }
-            }, 50);
-          }, 50);
-          break;
-      }
-    } else {
-      // Fallback for direct line objects
-      switch (property) {
-        case 'strokeWidth':
-          selectedChartLine.set('strokeWidth', value);
-          break;
-        case 'opacity':
-          selectedChartLine.set('opacity', value);
-          break;
-        case 'color':
-          selectedChartLine.set('stroke', value);
           break;
       }
     }
-
-    fabricCanvasRef.current?.renderAll();
   };
 
   const duplicateChartLine = () => {
