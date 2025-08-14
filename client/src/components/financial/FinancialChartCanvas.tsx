@@ -121,6 +121,7 @@ export function FinancialChartCanvas({
         selectable: true,
         hasControls: true,
         hasBorders: true,
+        editable: true
       });
 
       const subtitle = new (window as any).fabric.Text('Drag elements to customize', {
@@ -130,6 +131,7 @@ export function FinancialChartCanvas({
         fontSize: 14,
         fill: '#6b7280',
         selectable: true,
+        editable: true
       });
 
       // Add element types for undo/redo tracking
@@ -137,6 +139,18 @@ export function FinancialChartCanvas({
       subtitle.set({ elementType: 'subtitle' });
       
       canvas.add(title, subtitle);
+
+      // Enable text editing on double-click
+      canvas.on('text:editing:entered', function(e: any) {
+        console.log('Text editing started');
+      });
+
+      canvas.on('text:editing:exited', function(e: any) {
+        console.log('Text editing finished');
+        if (onCanvasChange) {
+          setTimeout(() => onCanvasChange(), 100);
+        }
+      });
 
       // Notify parent component that canvas is ready
       if (onCanvasReady) {
@@ -1610,6 +1624,7 @@ export function FinancialChartCanvas({
       junctionColor: lineProperties.junctionColor ?? lineProperties.color
     };
     console.log('New properties object:', newProperties);
+    console.log('🔧 CRITICAL: Data length before regeneration:', data.length);
     
     // Update state for UI consistency
     setLineProperties(newProperties);
@@ -1629,9 +1644,11 @@ export function FinancialChartCanvas({
     // Fallback: regenerate with new properties if immediate update failed
     if (!immediateSuccess) {
       console.log('⚠️ Immediate update failed, falling back to regeneration');
+      console.log('🔧 CRITICAL: Data length BEFORE setTimeout:', data.length);
       setTimeout(() => {
         console.log(`🔄 REGENERATING chart with ${property} = ${value}`);
         console.log('🔄 Passing properties to regeneration:', newProperties);
+        console.log('🔧 CRITICAL: Data length INSIDE setTimeout:', data.length);
         renderChartWithProperties(newProperties);
       }, 0);
     } else {
@@ -1735,8 +1752,20 @@ export function FinancialChartCanvas({
     console.log('🔄 Current showJunctions value:', currentProperties.showJunctions);
     console.log('🔄 Current strokeDashArray value:', currentProperties.strokeDashArray);
     
-    if (!fabricCanvasRef.current || data.length === 0) {
-      console.log('❌ ABORT renderChartWithProperties: fabricCanvas exists:', !!fabricCanvasRef.current, 'data length:', data.length);
+    if (!fabricCanvasRef.current) {
+      console.log('❌ ABORT renderChartWithProperties: fabricCanvas does not exist');
+      return;
+    }
+    
+    if (data.length === 0) {
+      console.log('❌ ABORT renderChartWithProperties: data length is 0, waiting for data...');
+      // Retry after a short delay in case data is loading
+      setTimeout(() => {
+        if (data.length > 0) {
+          console.log('🔄 Data loaded, retrying chart regeneration...');
+          renderChartWithProperties(overrideProperties);
+        }
+      }, 100);
       return;
     }
     
