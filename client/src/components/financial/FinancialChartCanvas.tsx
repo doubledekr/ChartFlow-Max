@@ -550,9 +550,9 @@ export function FinancialChartCanvas({
       let curve;
       
       if (smoothness <= 0.1) {
-        // Step interpolation for very precise financial data
-        curve = d3.curveStepAfter;
-        console.log('📊 Using step-after curve for precise data points');
+        // Linear interpolation for sharp angles without step artifacts
+        curve = d3.curveLinear;
+        console.log('📊 Using LINEAR curve for sharp angles (avoiding step artifacts)');
       } else if (smoothness <= 0.3) {
         // Monotone interpolation - prevents overshooting, ideal for financial data
         curve = d3.curveMonotoneX;
@@ -1822,6 +1822,26 @@ export function FinancialChartCanvas({
     // Use the standard chart creation method that includes all elements
     setTimeout(() => {
       console.log('🔄 Inside setTimeout - starting chart regeneration');
+      console.log('🔄 Data length at regeneration start:', data.length);
+      
+      // Additional cleanup inside setTimeout to ensure clean slate
+      console.log('🧹 ADDITIONAL CLEANUP: Checking for leftover objects');
+      const remainingObjects = fabricCanvasRef.current.getObjects();
+      const additionalCleanup = remainingObjects.filter((obj: any) => {
+        return obj.type === 'financial-chart-line' || 
+               obj.type === 'chart-marker' || 
+               obj.type === 'chart-junction';
+      });
+      
+      if (additionalCleanup.length > 0) {
+        console.log('🧹 ADDITIONAL CLEANUP: Found', additionalCleanup.length, 'leftover objects, removing...');
+        additionalCleanup.forEach((obj: any) => {
+          console.log('🧹 ADDITIONAL CLEANUP: Removing leftover', obj.type);
+          fabricCanvasRef.current?.remove(obj);
+        });
+        fabricCanvasRef.current.renderAll();
+      }
+      
       const svg = d3.select(svgRef.current);
       if (data.length === 0) {
         console.log('❌ ABORT setTimeout: data length is 0');
