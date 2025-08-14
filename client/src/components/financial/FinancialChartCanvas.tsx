@@ -2014,7 +2014,10 @@ export function FinancialChartCanvas({
 
     // Create point markers if enabled
     const markers: any[] = [];
+    console.log('🔴 MARKER DEBUG - All properties:', properties);
     console.log('🔴 Checking showMarkers:', properties.showMarkers, 'typeof:', typeof properties.showMarkers);
+    console.log('🔴 Checking showMarkers === true:', properties.showMarkers === true);
+    console.log('🔴 Checking showMarkers !== false:', properties.showMarkers !== false);
     if (properties.showMarkers === true) {
       console.log('🔴 Creating point markers with properties:', properties);
       
@@ -2123,7 +2126,10 @@ export function FinancialChartCanvas({
     
     // Create junction dots if enabled
     const junctions: any[] = [];
+    console.log('🟡 JUNCTION DEBUG - All properties:', properties);
     console.log('🟡 Checking showJunctions:', properties.showJunctions, 'typeof:', typeof properties.showJunctions);
+    console.log('🟡 Checking showJunctions === true:', properties.showJunctions === true);
+    console.log('🟡 Checking showJunctions !== false:', properties.showJunctions !== false);
     if (properties.showJunctions === true) {
       console.log('🟡 Creating junction dots with properties:', properties);
       
