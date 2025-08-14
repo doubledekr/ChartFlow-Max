@@ -166,7 +166,7 @@ export function FinancialChartCanvas({
       
       // Expose the chart update function to parent
       if (onChartUpdateRef) {
-        updateChartLinePropertiesRef.current = updateChartLineProperties;
+        onChartUpdateRef(updateChartLineProperties);
       }
       
       // Expose load data function to parent
