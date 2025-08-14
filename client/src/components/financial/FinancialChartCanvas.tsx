@@ -49,7 +49,14 @@ export function FinancialChartCanvas({
     smoothness: 0.3, // Optimized for financial data - uses monotone curve
     color: '#3b82f6',
     visible: true,
-    strokeDashArray: null as number[] | null
+    strokeDashArray: null as number[] | null,
+    showMarkers: false,
+    showJunctions: false,
+    markerStyle: 'circle',
+    markerSize: 4,
+    markerFrequency: 'all',
+    junctionSize: 3,
+    junctionColor: '#3b82f6'
   });
   const [xAxisDateFormat, setXAxisDateFormat] = useState('short-date'); // Default format
 
@@ -1581,8 +1588,19 @@ export function FinancialChartCanvas({
       fill: workingChartLine.fill
     });
 
-    // Create updated properties object
-    const newProperties = { ...lineProperties, [property]: value };
+    // Create updated properties object with preserved values
+    const newProperties = { 
+      ...lineProperties, 
+      [property]: value,
+      // Ensure marker/junction properties are preserved during updates
+      showMarkers: lineProperties.showMarkers ?? false,
+      showJunctions: lineProperties.showJunctions ?? false,
+      markerStyle: lineProperties.markerStyle ?? 'circle',
+      markerSize: lineProperties.markerSize ?? 4,
+      markerFrequency: lineProperties.markerFrequency ?? 'all',
+      junctionSize: lineProperties.junctionSize ?? 3,
+      junctionColor: lineProperties.junctionColor ?? lineProperties.color
+    };
     console.log('New properties object:', newProperties);
     
     // Update state for UI consistency
