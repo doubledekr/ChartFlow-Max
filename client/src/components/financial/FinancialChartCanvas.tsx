@@ -1650,7 +1650,9 @@ export function FinancialChartCanvas({
     setLineProperties(newProperties);
 
     // Immediate update attempt on existing chart line using workingChartLine
+    console.log('🚀 CALLING updateExistingChartLineImmediateWithObject now...');
     const immediateSuccess = updateExistingChartLineImmediateWithObject(workingChartLine, property, value);
+    console.log('🚀 immediateSuccess result:', immediateSuccess);
     
     // Log AFTER immediate update attempt
     console.log('AFTER IMMEDIATE UPDATE - Chart line properties:', {
@@ -1730,6 +1732,8 @@ export function FinancialChartCanvas({
           console.log('❌ Unknown property:', property);
           return false;
       }
+      
+      console.log(`✅ Applied ${property} = ${value} directly to chart line`);
       
       // Log property value after change
       const afterValue = chartLineObject[property === 'color' ? 'stroke' : property];
