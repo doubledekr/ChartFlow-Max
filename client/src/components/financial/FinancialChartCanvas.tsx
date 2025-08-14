@@ -1705,6 +1705,10 @@ export function FinancialChartCanvas({
           chartLineObject.set({ visible: value });
           console.log('Applied visible via set()');
           break;
+        case 'strokeLineCap':
+          chartLineObject.set({ strokeLineCap: value });
+          console.log('Applied strokeLineCap via set()');
+          break;
         case 'smoothness':
         case 'showMarkers':
         case 'showJunctions':
@@ -1712,6 +1716,8 @@ export function FinancialChartCanvas({
         case 'strokeDashArray':
         case 'markerStyle':
         case 'markerSize':
+        case 'junctionSize':
+        case 'junctionColor':
           console.log(`${property} requires regeneration - returning false`);
           return false;
         default:
@@ -1789,14 +1795,29 @@ export function FinancialChartCanvas({
     console.log('✅ renderChartWithProperties proceeding: fabricCanvas exists, data length:', data.length);
     
     // Remove existing chart elements including markers and junctions
+    console.log('🧹 CLEANUP: Starting removal of old chart elements');
     const objects = fabricCanvasRef.current.getObjects();
-    objects.forEach((obj: any) => {
-      if (obj.type === 'financial-chart-line' || obj.type === 'x-axis-line' || obj.type === 'y-axis-line' || 
-          obj.type === 'x-axis-labels' || obj.type === 'y-axis-labels' || 
-          obj.type === 'chart-marker' || obj.type === 'chart-junction') {
-        fabricCanvasRef.current?.remove(obj);
+    console.log('🧹 CLEANUP: Total objects on canvas:', objects.length);
+    
+    const objectsToRemove = objects.filter((obj: any) => {
+      const shouldRemove = obj.type === 'financial-chart-line' || 
+                          obj.type === 'x-axis-line' || obj.type === 'y-axis-line' || 
+                          obj.type === 'x-axis-labels' || obj.type === 'y-axis-labels' || 
+                          obj.type === 'chart-marker' || obj.type === 'chart-junction' ||
+                          obj.type === 'y-grid-line' || obj.type === 'x-grid-line';
+      if (shouldRemove) {
+        console.log('🧹 CLEANUP: Removing object type:', obj.type);
       }
+      return shouldRemove;
     });
+    
+    console.log('🧹 CLEANUP: Removing', objectsToRemove.length, 'chart objects');
+    objectsToRemove.forEach((obj: any) => {
+      fabricCanvasRef.current?.remove(obj);
+    });
+    
+    fabricCanvasRef.current.renderAll();
+    console.log('🧹 CLEANUP: Cleanup complete');
     
     // Use the standard chart creation method that includes all elements
     setTimeout(() => {
