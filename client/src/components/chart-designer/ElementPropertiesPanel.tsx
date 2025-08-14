@@ -177,7 +177,13 @@ export function ElementPropertiesPanel({
                   <Label className="text-xs">Curve Style</Label>
                   <Select 
                     value={getCurveStyleFromSmoothness(properties.properties.smoothness)} 
-                    onValueChange={(value) => onUpdateProperty('smoothness', getCurveSmoothnessValue(value))}
+                    onValueChange={(value) => {
+                      const smoothnessValue = getCurveSmoothnessValue(value);
+                      console.log('🔍 CURVE STYLE DEBUG - User selected:', value);
+                      console.log('🔍 CURVE STYLE DEBUG - Converted to smoothness:', smoothnessValue);
+                      console.log('🔍 CURVE STYLE DEBUG - Current smoothness in properties:', properties.properties.smoothness);
+                      onUpdateProperty('smoothness', smoothnessValue);
+                    }}
                   >
                     <SelectTrigger className="mt-2">
                       <SelectValue />

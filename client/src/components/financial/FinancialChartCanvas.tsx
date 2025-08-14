@@ -1718,6 +1718,12 @@ export function FinancialChartCanvas({
           chartLineObject.set('strokeDashArray', value);
           break;
         case 'smoothness':
+          console.log(`🔄 SMOOTHNESS CHANGE - Old value: ${chartLineObject.smoothness}, New value: ${value}`);
+          console.log(`🔄 SMOOTHNESS CHANGE - Chart line strokeWidth before regeneration: ${chartLineObject.strokeWidth}`);
+          console.log(`🔄 SMOOTHNESS CHANGE - Chart line opacity before regeneration: ${chartLineObject.opacity}`);
+          console.log(`🔄 SMOOTHNESS CHANGE - Chart line stroke before regeneration: ${chartLineObject.stroke}`);
+          console.log(`${property} requires regeneration - returning false`);
+          return false;
         case 'showMarkers':
         case 'showJunctions':
         case 'markerFrequency':
@@ -1803,6 +1809,12 @@ export function FinancialChartCanvas({
     }
     
     console.log('✅ renderChartWithProperties proceeding: fabricCanvas exists, data length:', data.length);
+    console.log('🔄 REGENERATION DEBUG - Properties passed to regeneration:');
+    console.log('🔄 REGENERATION DEBUG - strokeWidth:', currentProperties.strokeWidth);
+    console.log('🔄 REGENERATION DEBUG - opacity:', currentProperties.opacity);
+    console.log('🔄 REGENERATION DEBUG - color:', currentProperties.color);
+    console.log('🔄 REGENERATION DEBUG - smoothness:', currentProperties.smoothness);
+    console.log('🔄 REGENERATION DEBUG - strokeDashArray:', currentProperties.strokeDashArray);
     
     // Remove existing chart elements including markers and junctions
     console.log('🧹 CLEANUP: Starting removal of old chart elements');
