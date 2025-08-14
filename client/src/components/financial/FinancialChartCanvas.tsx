@@ -1210,7 +1210,15 @@ export function FinancialChartCanvas({
             visible: fabricPath.visible,
             left: fabricPath.left,
             top: fabricPath.top,
-            angle: fabricPath.angle
+            angle: fabricPath.angle,
+            // Ensure marker/junction properties are included
+            showMarkers: lineProperties.showMarkers,
+            showJunctions: lineProperties.showJunctions,
+            markerStyle: lineProperties.markerStyle,
+            markerSize: lineProperties.markerSize,
+            markerFrequency: lineProperties.markerFrequency,
+            junctionSize: lineProperties.junctionSize,
+            junctionColor: lineProperties.junctionColor
           }
         });
       }
@@ -1876,6 +1884,7 @@ export function FinancialChartCanvas({
 
       // Create draggable chart group with all elements and updated properties
       console.log('🔄 Calling createDraggableChartGroupWithProperties with properties:', currentProperties);
+      console.log('🔄 MARKERS DEBUG: showMarkers =', currentProperties.showMarkers, 'showJunctions =', currentProperties.showJunctions);
       createDraggableChartGroupWithProperties(pathData, margin, xScale, yScale, chartWidth, chartHeight, currentProperties, yMin, yMax);
     }, 10);
   };
