@@ -1694,6 +1694,15 @@ export function FinancialChartCanvas({
         case 'visible':
         case 'strokeLineCap':
         case 'color':
+        case 'smoothness':
+        case 'showMarkers':
+        case 'showJunctions':
+        case 'markerFrequency':
+        case 'strokeDashArray':
+        case 'markerStyle':
+        case 'markerSize':
+        case 'junctionSize':
+        case 'junctionColor':
           // Force regeneration for ALL properties to avoid artifacts
           console.log(`${property} forcing regeneration to avoid artifacts`);
           return false;
@@ -1792,7 +1801,8 @@ export function FinancialChartCanvas({
                           obj.type === 'x-axis-line' || obj.type === 'y-axis-line' || 
                           obj.type === 'x-axis-labels' || obj.type === 'y-axis-labels' || 
                           obj.type === 'chart-marker' || obj.type === 'chart-junction' ||
-                          obj.type === 'y-grid-line' || obj.type === 'x-grid-line';
+                          obj.type === 'y-grid-line' || obj.type === 'x-grid-line' ||
+                          obj.type === 'source-attribution';
       if (shouldRemove) {
         console.log('🧹 CLEANUP: Removing object type:', obj.type);
       }
@@ -1818,7 +1828,8 @@ export function FinancialChartCanvas({
       const additionalCleanup = remainingObjects.filter((obj: any) => {
         return obj.type === 'financial-chart-line' || 
                obj.type === 'chart-marker' || 
-               obj.type === 'chart-junction';
+               obj.type === 'chart-junction' ||
+               obj.type === 'source-attribution';
       });
       
       if (additionalCleanup.length > 0) {
