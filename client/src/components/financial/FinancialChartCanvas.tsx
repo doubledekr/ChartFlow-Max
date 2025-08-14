@@ -38,6 +38,11 @@ export function FinancialChartCanvas({
   const fabricCanvasRef = useRef<any>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [data, setData] = useState<ChartDataPoint[]>([]);
+  
+  // Add debugging to track data changes
+  useEffect(() => {
+    console.log('🔍 DATA STATE CHANGED - Length:', data.length, 'First item:', data[0]);
+  }, [data]);
   const [multiSymbolData, setMultiSymbolData] = useState<any>(null);
   const [isMultiSymbol, setIsMultiSymbol] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -88,7 +93,9 @@ export function FinancialChartCanvas({
   // Load data when symbol or timeframe changes
   useEffect(() => {
     console.log(`📊 FinancialChartCanvas - Received props: symbol="${symbol}", timeframe="${timeframe}"`);
+    console.log(`🔍 EFFECT TRIGGERED - Current data length: ${data.length}`);
     if (symbol) {
+      console.log(`🔍 CALLING loadStockData() - This will reset data to loading state`);
       loadStockData();
     }
   }, [symbol, timeframe]);
@@ -446,11 +453,14 @@ export function FinancialChartCanvas({
         console.log(`📊 Loading multi-symbol data: ${symbolsArray.join(', ')}`);
         setMultiSymbolData(stockData);
         setIsMultiSymbol(true);
-        setData(stockData.combinedData || stockData.data || []); // Use combined data for Y-axis calculation
+        const newData = stockData.combinedData || stockData.data || [];
+        console.log(`🔍 SETTING MULTI-SYMBOL DATA - Length: ${newData.length}`);
+        setData(newData); // Use combined data for Y-axis calculation
       } else {
         console.log(`📊 Loading single symbol data: ${symbol}`);
         setMultiSymbolData(null);
         setIsMultiSymbol(false);
+        console.log(`🔍 SETTING SINGLE-SYMBOL DATA - Length: ${stockData.length}`);
         setData(stockData);
       }
     } catch (err) {
@@ -458,6 +468,8 @@ export function FinancialChartCanvas({
       console.error('Error loading stock data:', err);
       setMultiSymbolData(null);
       setIsMultiSymbol(false);
+      console.log(`🔍 ERROR: CLEARING DATA DUE TO ERROR`);
+      setData([]); // This could be causing data loss!
     } finally {
       setLoading(false);
     }
@@ -1759,13 +1771,18 @@ export function FinancialChartCanvas({
     
     if (data.length === 0) {
       console.log('❌ ABORT renderChartWithProperties: data length is 0, waiting for data...');
-      // Retry after a short delay in case data is loading
-      setTimeout(() => {
-        if (data.length > 0) {
-          console.log('🔄 Data loaded, retrying chart regeneration...');
-          renderChartWithProperties(overrideProperties);
-        }
-      }, 100);
+      console.log('🔍 CHECKING: Is symbol and timeframe available?', { symbol, timeframe });
+      
+      // If we have symbol but no data, try to reload it
+      if (symbol && timeframe) {
+        console.log('🔄 Attempting to reload data for regeneration...');
+        loadStockData().then(() => {
+          console.log('🔄 Data reloaded, retrying chart regeneration...');
+          if (data.length > 0) {
+            renderChartWithProperties(overrideProperties);
+          }
+        });
+      }
       return;
     }
     
