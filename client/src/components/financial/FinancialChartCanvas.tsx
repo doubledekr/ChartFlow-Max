@@ -166,7 +166,7 @@ export function FinancialChartCanvas({
       
       // Expose the chart update function to parent
       if (onChartUpdateRef) {
-        onChartUpdateRef(updateChartLineProperties);
+        updateChartLinePropertiesRef.current = updateChartLineProperties;
       }
       
       // Expose load data function to parent
@@ -1129,24 +1129,27 @@ export function FinancialChartCanvas({
       }
     });
 
-    // Create source attribution text at bottom right
-    const sourceText = new (window as any).fabric.Text('Source: Polygon.io', {
-      left: chartStartX + chartWidth - 80, // Position at bottom right
-      top: margin.top + chartHeight + 35, // Below the X-axis labels
-      fontSize: 9,
-      fontFamily: 'Inter, sans-serif',
-      fill: '#9ca3af', // Light gray color
-      selectable: true,
-      hasControls: false,
-      hasBorders: true,
-      type: 'source-attribution',
-      elementType: 'source-attribution'
-    });
-
-    // Add selection handler for source attribution
-    sourceText.on('selected', () => {
-      console.log('Source attribution selected');
-      if (onElementSelect) {
+    // Create source attribution text at bottom right (only if one doesn't exist)
+    const existingSourceAttribution = fabricCanvasRef.current.getObjects().find((obj: any) => obj.type === 'source-attribution');
+    
+    if (!existingSourceAttribution) {
+      const sourceText = new (window as any).fabric.Text('Source: Polygon.io', {
+        left: chartStartX + chartWidth - 80, // Position at bottom right
+        top: margin.top + chartHeight + 35, // Below the X-axis labels
+        fontSize: 9,
+        fontFamily: 'Inter, sans-serif',
+        fill: '#9ca3af', // Light gray color
+        selectable: true,
+        hasControls: false,
+        hasBorders: true,
+        type: 'source-attribution',
+        elementType: 'source-attribution'
+      });
+      
+      // Add selection handler for source attribution
+      sourceText.on('selected', () => {
+        console.log('Source attribution selected');
+        if (onElementSelect) {
         onElementSelect(sourceText, {
           type: 'source-attribution',
           properties: {
@@ -1170,15 +1173,20 @@ export function FinancialChartCanvas({
             fabricCanvasRef.current?.renderAll();
           }
         });
-      }
-    });
+        }
+      });
+      
+      fabricCanvasRef.current.add(sourceText);
+      console.log('✅ Added new source attribution');
+    } else {
+      console.log('⚠️ Source attribution already exists, skipping creation');
+    }
 
     // Add all axis elements
     fabricCanvasRef.current.add(yAxisLine);
     fabricCanvasRef.current.add(xAxisLine);
     fabricCanvasRef.current.add(yAxisLabelsGroup);
     fabricCanvasRef.current.add(xAxisLabelsGroup);
-    fabricCanvasRef.current.add(sourceText);
   };
 
   const createDraggableChartLineOnly = (pathData: string, margin: any, xScale: any, yScale: any, chartWidth: number, chartHeight: number) => {
@@ -1484,7 +1492,7 @@ export function FinancialChartCanvas({
           symbol,
           timeframe,
           properties: currentProperties,
-          updateFunction: updateChartLineProperties,
+          updateFunction: (property: string, value: any) => updateChartLineProperties(property, value),
           duplicateFunction: duplicateChartLine,
           deleteFunction: deleteChartLine
         });
@@ -1705,17 +1713,6 @@ export function FinancialChartCanvas({
         case 'junctionColor':
           // Force regeneration for ALL properties to avoid artifacts
           console.log(`${property} forcing regeneration to avoid artifacts`);
-          return false;
-        case 'smoothness':
-        case 'showMarkers':
-        case 'showJunctions':
-        case 'markerFrequency':
-        case 'strokeDashArray':
-        case 'markerStyle':
-        case 'markerSize':
-        case 'junctionSize':
-        case 'junctionColor':
-          console.log(`${property} requires regeneration - returning false`);
           return false;
         default:
           console.log('❌ Unknown property:', property);
@@ -2527,7 +2524,7 @@ export function FinancialChartCanvas({
           symbol,
           timeframe,
           properties,
-          updateFunction: updateChartLineProperties,
+          updateFunction: (property: string, value: any) => updateChartLineProperties(property, value),
           duplicateFunction: duplicateChartLine,
           deleteFunction: deleteChartLine
         });
