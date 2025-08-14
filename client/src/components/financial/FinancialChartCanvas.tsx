@@ -1698,21 +1698,33 @@ export function FinancialChartCanvas({
       // Apply property directly to the chart line object
       switch (property) {
         case 'strokeWidth':
+          chartLineObject.set('strokeWidth', value);
+          break;
         case 'opacity':
+          chartLineObject.set('opacity', value);
+          break;
         case 'visible':
+          chartLineObject.set('visible', value);
+          break;
         case 'strokeLineCap':
+          chartLineObject.set('strokeLineCap', value);
+          break;
         case 'color':
+          chartLineObject.set('stroke', value);
+          break;
+        case 'strokeDashArray':
+          chartLineObject.set('strokeDashArray', value);
+          break;
         case 'smoothness':
         case 'showMarkers':
         case 'showJunctions':
         case 'markerFrequency':
-        case 'strokeDashArray':
         case 'markerStyle':
         case 'markerSize':
         case 'junctionSize':
         case 'junctionColor':
-          // Force regeneration for ALL properties to avoid artifacts
-          console.log(`${property} forcing regeneration to avoid artifacts`);
+          // Force regeneration for complex properties that require chart rebuilding
+          console.log(`${property} requires regeneration - returning false`);
           return false;
         default:
           console.log('❌ Unknown property:', property);
