@@ -103,7 +103,8 @@ export default function ChartDesigner() {
           'id', 'selectable', 'hasControls', 'hasBorders', 'visible',
           'strokeWidth', 'opacity', 'smoothness', 'color', 'symbol', 'elementType',
           'text', 'fontSize', 'fontWeight', 'fontFamily', 'fill', 'backgroundColor',
-          'stroke', 'radius', 'width', 'height', 'angle', 'strokeDashArray', 'padding'
+          'stroke', 'radius', 'width', 'height', 'angle', 'strokeDashArray', 'padding',
+          'strokeLineCap', 'properties', 'timeframe', 'type' // Added chart-specific properties
         ]));
         
         // Remove any states after current index (for branching)
@@ -367,7 +368,8 @@ export default function ChartDesigner() {
           'id', 'selectable', 'hasControls', 'hasBorders', 'visible',
           'strokeWidth', 'opacity', 'smoothness', 'color', 'symbol', 'elementType',
           'text', 'fontSize', 'fontWeight', 'fontFamily', 'fill', 'backgroundColor',
-          'stroke', 'radius', 'width', 'height', 'angle', 'strokeDashArray', 'padding'
+          'stroke', 'radius', 'width', 'height', 'angle', 'strokeDashArray', 'padding',
+          'strokeLineCap', 'properties', 'timeframe', 'type' // Added chart-specific properties
         ]));
         setCanvasHistory([initialState]);
         setHistoryIndex(0);

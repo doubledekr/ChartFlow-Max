@@ -1672,9 +1672,25 @@ export function FinancialChartCanvas({
         console.log('🔄 Passing properties to regeneration:', newProperties);
         console.log('🔧 CRITICAL: Data length INSIDE setTimeout:', data.length);
         renderChartWithProperties(newProperties);
+        
+        // Trigger save state after regeneration completes
+        if (onCanvasChange) {
+          setTimeout(() => {
+            console.log('💾 Triggering save state after chart regeneration');
+            onCanvasChange();
+          }, 100);
+        }
       }, 0);
     } else {
       console.log(`✅ IMMEDIATE UPDATE ${property} = ${value}`);
+      
+      // Trigger save state after successful immediate update
+      if (onCanvasChange) {
+        setTimeout(() => {
+          console.log('💾 Triggering save state after immediate property update');
+          onCanvasChange();
+        }, 100);
+      }
     }
     
     console.log('=== END PROPERTY UPDATE DEBUG ===');
@@ -1701,9 +1717,11 @@ export function FinancialChartCanvas({
       switch (property) {
         case 'strokeWidth':
           chartLineObject.set('strokeWidth', value);
+          console.log(`Applied strokeWidth: ${value}`);
           break;
         case 'opacity':
           chartLineObject.set('opacity', value);
+          console.log(`Applied opacity: ${value}`);
           break;
         case 'visible':
           chartLineObject.set('visible', value);
@@ -1713,9 +1731,11 @@ export function FinancialChartCanvas({
           break;
         case 'color':
           chartLineObject.set('stroke', value);
+          console.log(`Applied color/stroke: ${value}`);
           break;
         case 'strokeDashArray':
           chartLineObject.set('strokeDashArray', value);
+          console.log(`Applied strokeDashArray: ${value}`);
           break;
         case 'smoothness':
           console.log(`🔄 SMOOTHNESS CHANGE - Old value: ${chartLineObject.smoothness}, New value: ${value}`);
@@ -2039,8 +2059,23 @@ export function FinancialChartCanvas({
       top: chartStartY
     });
     
+    // Store smoothness and other custom properties on the fabric object for proper serialization
+    fabricPath.set({
+      smoothness: properties.smoothness,
+      strokeDashArray: properties.strokeDashArray,
+      strokeLineCap: properties.strokeLineCap || 'round',
+      // Store all properties for undo/redo functionality
+      properties: properties
+    });
+    
     // Add chart line to canvas first
     fabricCanvasRef.current.add(fabricPath);
+    
+    // Trigger save state after chart is added to canvas
+    console.log('💾 Chart line added - triggering save state');
+    if (onCanvasChange) {
+      setTimeout(() => onCanvasChange(), 50);
+    }
     
     // Add markers at data points if enabled
     if (properties.showMarkers) {
