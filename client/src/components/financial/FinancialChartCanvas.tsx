@@ -476,6 +476,8 @@ export function FinancialChartCanvas({
   };
 
   const renderChart = () => {
+    if (!svgRef.current) return;
+    
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
 
@@ -769,101 +771,116 @@ export function FinancialChartCanvas({
   const addChartLegend = (seriesArray: any[], colors: string[], chartMargin: any) => {
     if (!fabricCanvasRef.current || !seriesArray?.length) return;
     
-    const legendStartX = chartMargin.left + 40; // Align with chart
-    const legendStartY = 50; // Position near top of canvas
-    const itemSpacing = 120; // Horizontal spacing between legend items
-    const itemHeight = 20;
+    const itemSpacing = 110; // Horizontal spacing between legend items
+    const itemHeight = 32;
+    const legendWidth = seriesArray.length * itemSpacing + 20;
     
-    console.log(`📋 Creating legend for ${seriesArray.length} symbols`);
+    // Position legend at top right, aligned with title
+    const legendStartX = width - legendWidth - 20; 
+    const legendStartY = 30; // Same level as title
+    
+    console.log(`📋 Creating draggable legend group for ${seriesArray.length} symbols`);
+    
+    // Get company name from symbol (simplified mapping)
+    const getCompanyName = (symbol: string) => {
+      const companies: Record<string, string> = {
+        'AAPL': 'Apple Inc.',
+        'GOOGL': 'Alphabet Inc.',
+        'TSLA': 'Tesla Inc.',
+        'MSFT': 'Microsoft Corp.',
+        'AMZN': 'Amazon.com Inc.',
+        'NVDA': 'NVIDIA Corp.',
+        'META': 'Meta Platforms Inc.',
+        'BRK.B': 'Berkshire Hathaway',
+        'V': 'Visa Inc.',
+        'JPM': 'JPMorgan Chase'
+      };
+      return companies[symbol] || symbol;
+    };
+    
+    // Create all legend elements
+    const legendElements: any[] = [];
     
     // Create legend background
-    const legendWidth = seriesArray.length * itemSpacing;
     const legendBackground = new (window as any).fabric.Rect({
-      left: legendStartX - 10,
-      top: legendStartY - 8,
+      left: 0,
+      top: 0,
       width: legendWidth,
-      height: itemHeight + 16,
+      height: itemHeight,
       fill: 'rgba(255, 255, 255, 0.95)',
       stroke: '#e5e7eb',
       strokeWidth: 1,
       rx: 6,
       ry: 6,
       selectable: false,
-      evented: false,
-      type: 'legend-background'
+      evented: false
     });
-    
-    fabricCanvasRef.current.add(legendBackground);
+    legendElements.push(legendBackground);
     
     // Create legend items for each symbol
     seriesArray.forEach((series: any, index: number) => {
       const color = colors[index % colors.length];
-      const itemX = legendStartX + (index * itemSpacing);
+      const itemX = 10 + (index * itemSpacing); // Relative to group
       
       // Create color indicator circle
       const colorIndicator = new (window as any).fabric.Circle({
         left: itemX,
-        top: legendStartY + 2,
+        top: 8,
         radius: 6,
         fill: color,
         stroke: color,
         strokeWidth: 1,
         selectable: false,
-        evented: false,
-        type: 'legend-item'
+        evented: false
       });
       
       // Create symbol text (e.g., "AAPL")
       const symbolText = new (window as any).fabric.Text(series.symbol, {
-        left: itemX + 20,
-        top: legendStartY,
-        fontSize: 12,
+        left: itemX + 18,
+        top: 4,
+        fontSize: 11,
         fontFamily: 'Inter, sans-serif',
         fontWeight: 'bold',
         fill: '#374151',
         selectable: false,
-        evented: false,
-        type: 'legend-item'
+        evented: false
       });
-      
-      // Get company name from symbol (simplified mapping)
-      const getCompanyName = (symbol: string) => {
-        const companies: Record<string, string> = {
-          'AAPL': 'Apple Inc.',
-          'GOOGL': 'Alphabet Inc.',
-          'TSLA': 'Tesla Inc.',
-          'MSFT': 'Microsoft Corp.',
-          'AMZN': 'Amazon.com Inc.',
-          'NVDA': 'NVIDIA Corp.',
-          'META': 'Meta Platforms Inc.',
-          'BRK.B': 'Berkshire Hathaway',
-          'V': 'Visa Inc.',
-          'JPM': 'JPMorgan Chase'
-        };
-        return companies[symbol] || symbol;
-      };
       
       // Create company name text (smaller, below symbol)
       const companyText = new (window as any).fabric.Text(getCompanyName(series.symbol), {
-        left: itemX + 20,
-        top: legendStartY + 14,
-        fontSize: 9,
+        left: itemX + 18,
+        top: 16,
+        fontSize: 8,
         fontFamily: 'Inter, sans-serif',
         fill: '#6b7280',
         selectable: false,
-        evented: false,
-        type: 'legend-item'
+        evented: false
       });
       
-      fabricCanvasRef.current.add(colorIndicator);
-      fabricCanvasRef.current.add(symbolText);
-      fabricCanvasRef.current.add(companyText);
+      legendElements.push(colorIndicator);
+      legendElements.push(symbolText);
+      legendElements.push(companyText);
       
       console.log(`📋 Added legend item: ${series.symbol} (${getCompanyName(series.symbol)}) with color ${color}`);
     });
     
+    // Create grouped legend element
+    const legendGroup = new (window as any).fabric.Group(legendElements, {
+      left: legendStartX,
+      top: legendStartY,
+      selectable: true,
+      hasControls: true,
+      hasBorders: true,
+      lockScalingX: true,
+      lockScalingY: true,
+      lockRotation: true,
+      type: 'chart-legend',
+      elementType: 'legend'
+    });
+    
+    fabricCanvasRef.current.add(legendGroup);
     fabricCanvasRef.current.renderAll();
-    console.log('✅ Chart legend created successfully');
+    console.log('✅ Chart legend group created successfully');
   };
 
   // Helper function to add axis elements
