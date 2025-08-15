@@ -748,8 +748,26 @@ export default function ChartDesigner() {
             
             <ColorPalettePanel />
             <GradientEffectsPanel />
-            <LineStylingPanel />
-            <TypographyPanel />
+            
+            {/* Show LineStylingPanel only when a chart line or line-related element is selected */}
+            {selectedElement && (
+              elementProperties?.type === 'financial-chart-line' ||
+              elementProperties?.elementType?.includes('line') ||
+              elementProperties?.elementType === 'trend-line'
+            ) && (
+              <LineStylingPanel />
+            )}
+            
+            {/* Show TypographyPanel only when a text element is selected or when adding text */}
+            {selectedElement && (
+              selectedElement.type === 'textbox' ||
+              selectedElement.type === 'i-text' ||
+              elementProperties?.type === 'y-axis-labels' ||
+              elementProperties?.type === 'x-axis-labels' ||
+              elementProperties?.elementType === 'text'
+            ) && (
+              <TypographyPanel />
+            )}
             <LogoPanel />
             <AxisFormattingPanel />
             <ElementLibraryPanel onAddElement={handleAddElement} />
