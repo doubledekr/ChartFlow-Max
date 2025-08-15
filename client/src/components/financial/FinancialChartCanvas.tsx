@@ -1487,11 +1487,20 @@ export function FinancialChartCanvas({
       };
       
       if (onElementSelect) {
+        // Restore properties from the chart line object if they exist
+        const storedProperties = chartLine.properties || currentProperties;
+        console.log('🔄 Restoring chart line properties:', storedProperties);
+        
+        // Update local state to match the chart line's stored properties
+        if (storedProperties) {
+          setLineProperties(storedProperties);
+        }
+        
         onElementSelect(chartLine, {
           type: 'financial-chart-line',
           symbol,
           timeframe,
-          properties: currentProperties,
+          properties: storedProperties,
           updateFunction: (property: string, value: any) => updateChartLineProperties(property, value),
           duplicateFunction: duplicateChartLine,
           deleteFunction: deleteChartLine
@@ -1597,6 +1606,75 @@ export function FinancialChartCanvas({
     setSelectedChartLine(chartLine);
   };
 
+  // NEW: In-place path update function to preserve chart line entity
+  const updateChartPathInPlace = (chartLineObject: any, properties: any) => {
+    console.log('🔄 IN-PLACE PATH UPDATE: Updating chart path without creating new object');
+    
+    if (!data || data.length === 0) {
+      console.log('❌ Cannot update path: no data available');
+      return;
+    }
+    
+    // Generate new path with updated properties
+    const margin = { top: 120, right: 40, bottom: 80, left: 80 };
+    const chartWidth = Math.min(width - margin.left - margin.right, 680);
+    const chartHeight = Math.min(height - margin.top - margin.bottom, 280);
+
+    const xScale = d3.scaleTime()
+      .domain(d3.extent(data, d => new Date(d.timestamp)) as [Date, Date])
+      .range([0, chartWidth]);
+
+    const allPrices = data.flatMap(d => [d.high, d.low, d.close, d.open]);
+    const yMin = Math.min(...allPrices);
+    const yMax = Math.max(...allPrices);
+    const yScale = d3.scaleLinear()
+      .domain([yMin, yMax])
+      .range([chartHeight, 0]);
+
+    // Generate the new path using D3 with updated smoothness
+    const smoothness = properties.smoothness || 0.3;
+    console.log('🔄 Generating new path with smoothness:', smoothness);
+    
+    let line;
+    if (smoothness <= 0.1) {
+      line = d3.line<ChartDataPoint>()
+        .x(d => xScale(new Date(d.timestamp)))
+        .y(d => yScale(d.close));
+    } else {
+      line = d3.line<ChartDataPoint>()
+        .x(d => xScale(new Date(d.timestamp)))
+        .y(d => yScale(d.close))
+        .curve(d3.curveMonotoneX);
+    }
+
+    const pathData = line(data);
+    if (!pathData) {
+      console.log('❌ Failed to generate path data');
+      return;
+    }
+
+    // Update the chart line object's path in-place
+    const pathArray = chartLineObject._setPath(pathData);
+    
+    // Update all properties while preserving the object identity
+    chartLineObject.set({
+      strokeWidth: properties.strokeWidth || chartLineObject.strokeWidth,
+      stroke: properties.color || chartLineObject.stroke,
+      opacity: properties.opacity !== undefined ? properties.opacity : chartLineObject.opacity,
+      visible: properties.visible !== undefined ? properties.visible : chartLineObject.visible,
+      strokeDashArray: properties.strokeDashArray,
+      strokeLineCap: properties.strokeLineCap || 'round',
+      smoothness: smoothness,
+      properties: properties // Store all properties for persistence
+    });
+
+    // Force canvas update
+    chartLineObject.setCoords();
+    fabricCanvasRef.current?.renderAll();
+    
+    console.log('✅ IN-PLACE PATH UPDATE: Chart line updated successfully');
+  };
+
   const updateChartLineProperties = (property: string, value: any) => {
     console.log('=== PROPERTY UPDATE DEBUG ===');
     console.log('Property:', property, 'Value:', value);
@@ -1644,12 +1722,29 @@ export function FinancialChartCanvas({
       junctionColor: lineProperties.junctionColor ?? lineProperties.color
     };
     console.log('New properties object:', newProperties);
-    console.log('🔧 CRITICAL: Data length before regeneration:', data.length);
     
     // Update state for UI consistency
     setLineProperties(newProperties);
+    
+    // Store properties on the chart line object for persistence
+    workingChartLine.set('properties', newProperties);
 
-    // Immediate update attempt on existing chart line using workingChartLine
+    // For smoothness or complex properties, use in-place update to preserve entity
+    if (property === 'smoothness' || property === 'showMarkers' || property === 'showJunctions') {
+      console.log('🔄 COMPLEX PROPERTY: Using in-place update to preserve chart line entity');
+      updateChartPathInPlace(workingChartLine, newProperties);
+      
+      // Trigger save state after in-place update
+      if (onCanvasChange) {
+        setTimeout(() => {
+          console.log('💾 Triggering save state after in-place update');
+          onCanvasChange();
+        }, 100);
+      }
+      return;
+    }
+
+    // For simple properties, try immediate update
     console.log('🚀 CALLING updateExistingChartLineImmediateWithObject now...');
     const immediateSuccess = updateExistingChartLineImmediateWithObject(workingChartLine, property, value);
     console.log('🚀 immediateSuccess result:', immediateSuccess);
@@ -1663,31 +1758,23 @@ export function FinancialChartCanvas({
       fill: workingChartLine.fill
     });
     
-    // Fallback: regenerate with new properties if immediate update failed
-    if (!immediateSuccess) {
-      console.log('⚠️ Immediate update failed, falling back to regeneration');
-      console.log('🔧 CRITICAL: Data length BEFORE setTimeout:', data.length);
-      setTimeout(() => {
-        console.log(`🔄 REGENERATING chart with ${property} = ${value}`);
-        console.log('🔄 Passing properties to regeneration:', newProperties);
-        console.log('🔧 CRITICAL: Data length INSIDE setTimeout:', data.length);
-        renderChartWithProperties(newProperties);
-        
-        // Trigger save state after regeneration completes
-        if (onCanvasChange) {
-          setTimeout(() => {
-            console.log('💾 Triggering save state after chart regeneration');
-            onCanvasChange();
-          }, 100);
-        }
-      }, 0);
-    } else {
+    if (immediateSuccess) {
       console.log(`✅ IMMEDIATE UPDATE ${property} = ${value}`);
       
       // Trigger save state after successful immediate update
       if (onCanvasChange) {
         setTimeout(() => {
           console.log('💾 Triggering save state after immediate property update');
+          onCanvasChange();
+        }, 100);
+      }
+    } else {
+      console.log('⚠️ Immediate update failed - using in-place update as fallback');
+      updateChartPathInPlace(workingChartLine, newProperties);
+      
+      if (onCanvasChange) {
+        setTimeout(() => {
+          console.log('💾 Triggering save state after fallback in-place update');
           onCanvasChange();
         }, 100);
       }
@@ -2611,11 +2698,20 @@ export function FinancialChartCanvas({
       setSelectedChartLine(fabricPath);
       
       if (onElementSelect) {
+        // Restore properties from the chart line object if they exist
+        const storedProperties = fabricPath.properties || properties;
+        console.log('🔄 Restoring newly created chart line properties:', storedProperties);
+        
+        // Update local state to match the chart line's stored properties
+        if (storedProperties) {
+          setLineProperties(storedProperties);
+        }
+        
         onElementSelect(fabricPath, {
           type: 'financial-chart-line',
           symbol,
           timeframe,
-          properties,
+          properties: storedProperties,
           updateFunction: (property: string, value: any) => updateChartLineProperties(property, value),
           duplicateFunction: duplicateChartLine,
           deleteFunction: deleteChartLine
