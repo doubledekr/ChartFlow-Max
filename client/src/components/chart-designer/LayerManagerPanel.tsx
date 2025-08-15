@@ -653,7 +653,7 @@ export function LayerManagerPanel({ canvas, selectedElement, onElementSelect }: 
       <div 
         key={layer.id} 
         className={`${depth > 0 ? 'ml-4' : ''} ${isDraggedOver ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-600' : ''}`}
-        draggable={!layer.isGroup}
+        draggable={true}
         onDragStart={(e) => handleDragStart(e, layer)}
         onDragOver={(e) => handleDragOver(e, layer.id)}
         onDragLeave={handleDragLeave}
@@ -671,12 +671,10 @@ export function LayerManagerPanel({ canvas, selectedElement, onElementSelect }: 
           data-testid={`layer-item-${layer.id}`}
         >
           <div className="flex items-center gap-2 flex-1">
-            {/* Drag handle */}
-            {!layer.isGroup && (
-              <div className="drag-handle cursor-move p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded">
-                <GripVertical className="w-3 h-3 text-gray-400" />
-              </div>
-            )}
+            {/* Drag handle - now for both groups and individual layers */}
+            <div className="drag-handle cursor-move p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded">
+              <GripVertical className="w-3 h-3 text-gray-400" />
+            </div>
 
             {layer.isGroup ? (
               <div className="flex items-center gap-1">
