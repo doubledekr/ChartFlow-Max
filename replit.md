@@ -14,6 +14,8 @@ ChartFlow is a professional chart designer application that enables users to cre
 - **Clean Vector Interface**: Removed all data information overlays for clean, professional appearance
 - **Template-Ready Architecture**: Each component saves position and properties separately for accurate template restoration
 - **Complete Grid Line System**: Implemented fully functional horizontal and vertical grid lines that extend from axis lines with independent toggle controls and professional styling
+- **Chart Line Entity Persistence**: Fixed critical layer duplication issue by implementing in-place path updates that preserve chart line object identity throughout all property changes
+- **Enhanced Undo/Redo System**: Comprehensive save state checkpoint system with automatic triggers for property updates, chart regeneration, and canvas modifications
 
 # User Preferences
 
