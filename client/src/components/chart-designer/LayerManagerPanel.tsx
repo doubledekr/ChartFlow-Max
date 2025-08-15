@@ -145,46 +145,27 @@ export function LayerManagerPanel({ canvas, selectedElement, onElementSelect }: 
       layer.type !== 'financial-chart-line' && layer.type !== 'chartline'
     );
 
-    // Group chart lines by symbol
-    const symbolGroups: { [key: string]: LayerItem[] } = {};
-    const ungroupedLines: LayerItem[] = [];
+    // If we have multiple chart lines, group them all into a single "Chart Lines" folder
+    if (chartLines.length > 1) {
+      const chartLinesGroup: LayerItem = {
+        id: 'group_chart_lines',
+        name: 'Chart Lines',
+        type: 'group',
+        visible: chartLines.every(l => l.visible),
+        locked: chartLines.every(l => l.locked),
+        opacity: Math.min(...chartLines.map(l => l.opacity)),
+        zIndex: Math.min(...chartLines.map(l => l.zIndex)),
+        isGroup: true,
+        children: chartLines,
+        isExpanded: true,
+        color: '#3b82f6' // Blue color for chart lines group
+      };
+      
+      return [chartLinesGroup, ...otherLayers];
+    }
 
-    chartLines.forEach(layer => {
-      if (layer.symbol) {
-        if (!symbolGroups[layer.symbol]) {
-          symbolGroups[layer.symbol] = [];
-        }
-        symbolGroups[layer.symbol].push(layer);
-      } else {
-        ungroupedLines.push(layer);
-      }
-    });
-
-    // Create groups for multi-symbol charts
-    const groupedChartLines: LayerItem[] = [];
-    Object.keys(symbolGroups).forEach(symbol => {
-      const symbolLayers = symbolGroups[symbol];
-      if (symbolLayers.length > 1 || Object.keys(symbolGroups).length > 1) {
-        // Create a group
-        groupedChartLines.push({
-          id: `group_${symbol}`,
-          name: `${symbol} Chart Group`,
-          type: 'group',
-          visible: symbolLayers.every(l => l.visible),
-          locked: symbolLayers.every(l => l.locked),
-          opacity: Math.min(...symbolLayers.map(l => l.opacity)),
-          zIndex: Math.min(...symbolLayers.map(l => l.zIndex)),
-          isGroup: true,
-          children: symbolLayers,
-          symbol: symbol,
-          color: symbolLayers[0]?.color
-        });
-      } else {
-        groupedChartLines.push(...symbolLayers);
-      }
-    });
-
-    return [...groupedChartLines, ...ungroupedLines, ...otherLayers];
+    // If only one chart line, don't group it
+    return [...chartLines, ...otherLayers];
   };
 
   // Group management functions
