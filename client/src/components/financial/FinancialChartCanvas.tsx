@@ -663,6 +663,23 @@ export function FinancialChartCanvas({
         }
       });
       
+      // Add chart legend for multi-symbol charts
+      setTimeout(() => {
+        if (fabricCanvasRef.current) {
+          // Remove existing legend elements
+          const objects = fabricCanvasRef.current.getObjects();
+          objects.forEach((obj: any) => {
+            if (obj.type === 'chart-legend' || obj.type === 'legend-item' || 
+                obj.type === 'legend-background') {
+              fabricCanvasRef.current?.remove(obj);
+            }
+          });
+          
+          // Create legend for multi-symbol chart
+          addChartLegend(multiSymbolData.series, symbolColors, margin);
+        }
+      }, 50);
+
       // Add axes for multi-symbol chart after all lines are rendered
       setTimeout(() => {
         if (fabricCanvasRef.current && data.length > 0) {
@@ -746,6 +763,107 @@ export function FinancialChartCanvas({
 
     fabricCanvasRef.current.add(line);
     fabricCanvasRef.current.renderAll();
+  };
+
+  // Helper function to add chart legend for multi-symbol charts
+  const addChartLegend = (seriesArray: any[], colors: string[], chartMargin: any) => {
+    if (!fabricCanvasRef.current || !seriesArray?.length) return;
+    
+    const legendStartX = chartMargin.left + 40; // Align with chart
+    const legendStartY = 50; // Position near top of canvas
+    const itemSpacing = 120; // Horizontal spacing between legend items
+    const itemHeight = 20;
+    
+    console.log(`📋 Creating legend for ${seriesArray.length} symbols`);
+    
+    // Create legend background
+    const legendWidth = seriesArray.length * itemSpacing;
+    const legendBackground = new (window as any).fabric.Rect({
+      left: legendStartX - 10,
+      top: legendStartY - 8,
+      width: legendWidth,
+      height: itemHeight + 16,
+      fill: 'rgba(255, 255, 255, 0.95)',
+      stroke: '#e5e7eb',
+      strokeWidth: 1,
+      rx: 6,
+      ry: 6,
+      selectable: false,
+      evented: false,
+      type: 'legend-background'
+    });
+    
+    fabricCanvasRef.current.add(legendBackground);
+    
+    // Create legend items for each symbol
+    seriesArray.forEach((series: any, index: number) => {
+      const color = colors[index % colors.length];
+      const itemX = legendStartX + (index * itemSpacing);
+      
+      // Create color indicator circle
+      const colorIndicator = new (window as any).fabric.Circle({
+        left: itemX,
+        top: legendStartY + 2,
+        radius: 6,
+        fill: color,
+        stroke: color,
+        strokeWidth: 1,
+        selectable: false,
+        evented: false,
+        type: 'legend-item'
+      });
+      
+      // Create symbol text (e.g., "AAPL")
+      const symbolText = new (window as any).fabric.Text(series.symbol, {
+        left: itemX + 20,
+        top: legendStartY,
+        fontSize: 12,
+        fontFamily: 'Inter, sans-serif',
+        fontWeight: 'bold',
+        fill: '#374151',
+        selectable: false,
+        evented: false,
+        type: 'legend-item'
+      });
+      
+      // Get company name from symbol (simplified mapping)
+      const getCompanyName = (symbol: string) => {
+        const companies: Record<string, string> = {
+          'AAPL': 'Apple Inc.',
+          'GOOGL': 'Alphabet Inc.',
+          'TSLA': 'Tesla Inc.',
+          'MSFT': 'Microsoft Corp.',
+          'AMZN': 'Amazon.com Inc.',
+          'NVDA': 'NVIDIA Corp.',
+          'META': 'Meta Platforms Inc.',
+          'BRK.B': 'Berkshire Hathaway',
+          'V': 'Visa Inc.',
+          'JPM': 'JPMorgan Chase'
+        };
+        return companies[symbol] || symbol;
+      };
+      
+      // Create company name text (smaller, below symbol)
+      const companyText = new (window as any).fabric.Text(getCompanyName(series.symbol), {
+        left: itemX + 20,
+        top: legendStartY + 14,
+        fontSize: 9,
+        fontFamily: 'Inter, sans-serif',
+        fill: '#6b7280',
+        selectable: false,
+        evented: false,
+        type: 'legend-item'
+      });
+      
+      fabricCanvasRef.current.add(colorIndicator);
+      fabricCanvasRef.current.add(symbolText);
+      fabricCanvasRef.current.add(companyText);
+      
+      console.log(`📋 Added legend item: ${series.symbol} (${getCompanyName(series.symbol)}) with color ${color}`);
+    });
+    
+    fabricCanvasRef.current.renderAll();
+    console.log('✅ Chart legend created successfully');
   };
 
   // Helper function to add axis elements
