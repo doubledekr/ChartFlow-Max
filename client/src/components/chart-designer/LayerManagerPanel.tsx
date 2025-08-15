@@ -50,17 +50,40 @@ export function LayerManagerPanel({ canvas, selectedElement, onElementSelect }: 
 
     const updateLayers = () => {
       const objects = canvas.getObjects();
-      const layerItems: LayerItem[] = objects.map((obj: any, index: number) => ({
-        id: obj.id || `layer_${index}`,
-        name: getLayerName(obj),
-        type: obj.type || obj.elementType || 'object',
-        visible: obj.visible !== false,
-        locked: !obj.selectable,
-        opacity: obj.opacity || 1,
-        zIndex: index,
-        symbol: obj.symbol,
-        color: obj.stroke || obj.fill || '#3b82f6'
-      }));
+      const layerItems: LayerItem[] = objects.map((obj: any, index: number) => {
+        const baseItem = {
+          id: obj.id || `layer_${index}`,
+          name: getLayerName(obj),
+          type: obj.type || obj.elementType || 'object',
+          visible: obj.visible !== false,
+          locked: !obj.selectable,
+          opacity: obj.opacity || 1,
+          zIndex: index,
+          symbol: obj.symbol,
+          color: obj.stroke || obj.fill || '#3b82f6'
+        };
+        
+        // Handle Fabric.js groups (like our legend)
+        if (obj.type === 'group' || obj.isGroup) {
+          return {
+            ...baseItem,
+            isGroup: true,
+            children: obj.getObjects ? obj.getObjects().map((childObj: any, childIndex: number) => ({
+              id: `${baseItem.id}_child_${childIndex}`,
+              name: getLayerName(childObj),
+              type: childObj.type || childObj.elementType || 'object',
+              visible: childObj.visible !== false,
+              locked: !childObj.selectable,
+              opacity: childObj.opacity || 1,
+              zIndex: childIndex,
+              symbol: childObj.symbol,
+              color: childObj.stroke || childObj.fill || '#3b82f6'
+            })) : []
+          };
+        }
+        
+        return baseItem;
+      });
 
       // Group chart lines by symbol for multi-symbol charts
       const groupedLayers = groupChartLinesBySymbol(layerItems);
@@ -105,6 +128,10 @@ export function LayerManagerPanel({ canvas, selectedElement, onElementSelect }: 
         return 'Trend Line';
       case 'logo':
         return 'Logo';
+      case 'chart-legend':
+        return 'Chart Legend';
+      case 'group':
+        return obj.name || 'Group';
       default:
         return obj.type || 'Element';
     }

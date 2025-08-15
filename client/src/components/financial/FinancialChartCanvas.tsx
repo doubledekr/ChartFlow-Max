@@ -874,8 +874,11 @@ export function FinancialChartCanvas({
       lockScalingX: true,
       lockScalingY: true,
       lockRotation: true,
-      type: 'chart-legend',
-      elementType: 'legend'
+      type: 'group',
+      elementType: 'chart-legend',
+      id: `legend_${Date.now()}`,
+      name: 'Chart Legend',
+      isGroup: true
     });
     
     fabricCanvasRef.current.add(legendGroup);
