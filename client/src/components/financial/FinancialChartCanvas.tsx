@@ -1855,11 +1855,38 @@ export function FinancialChartCanvas({
     });
     
     console.log('🧹 CLEANUP: Removing', objectsToRemove.length, 'chart objects');
-    objectsToRemove.forEach((obj: any) => {
+    
+    // Log each object being removed for debugging
+    objectsToRemove.forEach((obj: any, index: number) => {
+      console.log(`🧹 CLEANUP: Removing object ${index + 1}/${objectsToRemove.length}: type=${obj.type}, id=${obj.id || 'no-id'}`);
       fabricCanvasRef.current?.remove(obj);
     });
     
+    // Force render and clear selection to ensure clean state
+    fabricCanvasRef.current.discardActiveObject();
     fabricCanvasRef.current.renderAll();
+    
+    // Double-check that objects were actually removed
+    const remainingObjects = fabricCanvasRef.current.getObjects();
+    const remainingChartObjects = remainingObjects.filter((obj: any) => 
+      obj.type === 'financial-chart-line' || 
+      obj.type === 'chart-marker' || 
+      obj.type === 'chart-junction'
+    );
+    
+    console.log('🧹 CLEANUP: Post-cleanup verification:');
+    console.log(`🧹 CLEANUP: Total objects after cleanup: ${remainingObjects.length}`);
+    console.log(`🧹 CLEANUP: Remaining chart objects: ${remainingChartObjects.length}`);
+    
+    if (remainingChartObjects.length > 0) {
+      console.log('⚠️ WARNING: Some chart objects were not removed, forcing removal...');
+      remainingChartObjects.forEach((obj: any) => {
+        console.log(`⚠️ Force removing: ${obj.type}`);
+        fabricCanvasRef.current?.remove(obj);
+      });
+      fabricCanvasRef.current.renderAll();
+    }
+    
     console.log('🧹 CLEANUP: Cleanup complete');
     
     // Use the standard chart creation method that includes all elements
@@ -1867,23 +1894,25 @@ export function FinancialChartCanvas({
       console.log('🔄 Inside setTimeout - starting chart regeneration');
       console.log('🔄 Data length at regeneration start:', data.length);
       
-      // Additional cleanup inside setTimeout to ensure clean slate
-      console.log('🧹 ADDITIONAL CLEANUP: Checking for leftover objects');
-      const remainingObjects = fabricCanvasRef.current.getObjects();
-      const additionalCleanup = remainingObjects.filter((obj: any) => {
+      // Final verification that canvas is clean before regeneration
+      console.log('🧹 FINAL VERIFICATION: Checking canvas state before regeneration');
+      const preRegenObjects = fabricCanvasRef.current.getObjects();
+      const preRegenChartObjects = preRegenObjects.filter((obj: any) => {
         return obj.type === 'financial-chart-line' || 
                obj.type === 'chart-marker' || 
-               obj.type === 'chart-junction' ||
-               obj.type === 'source-attribution';
+               obj.type === 'chart-junction';
       });
       
-      if (additionalCleanup.length > 0) {
-        console.log('🧹 ADDITIONAL CLEANUP: Found', additionalCleanup.length, 'leftover objects, removing...');
-        additionalCleanup.forEach((obj: any) => {
-          console.log('🧹 ADDITIONAL CLEANUP: Removing leftover', obj.type);
+      console.log(`🧹 FINAL VERIFICATION: Found ${preRegenChartObjects.length} chart objects before regeneration`);
+      
+      if (preRegenChartObjects.length > 0) {
+        console.log('🚨 CRITICAL: Chart objects still exist! This will cause layer duplication!');
+        preRegenChartObjects.forEach((obj: any, index: number) => {
+          console.log(`🚨 LEFTOVER OBJECT ${index + 1}: type=${obj.type}, id=${obj.id || 'no-id'}`);
           fabricCanvasRef.current?.remove(obj);
         });
         fabricCanvasRef.current.renderAll();
+        console.log('🚨 FORCED REMOVAL: Removed all leftover chart objects');
       }
       
       const svg = d3.select(svgRef.current);
