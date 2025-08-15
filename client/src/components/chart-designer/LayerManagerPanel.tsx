@@ -395,7 +395,33 @@ export function LayerManagerPanel({ canvas, selectedElement, onElementSelect }: 
     if (!canvas) return;
 
     const layer = findLayerById(layerId);
-    if (!layer || layer.isGroup) return;
+    if (!layer) return;
+
+    // Handle group selection
+    if (layer.isGroup) {
+      console.log('Selected group:', layer.name, layer.id);
+      // Clear any canvas selection for groups
+      canvas.discardActiveObject();
+      canvas.renderAll();
+      
+      // Pass the group object with properties for bulk editing
+      if (onElementSelect) {
+        const groupProperties = {
+          type: 'group',
+          isGroup: true,
+          name: layer.name,
+          id: layer.id,
+          children: layer.children,
+          properties: {
+            strokeWidth: 3, // Default values - will be used for bulk editing
+            opacity: 1,
+            smoothness: 0.5
+          }
+        };
+        onElementSelect(groupProperties, 'group');
+      }
+      return;
+    }
 
     const obj = canvas.getObjects().find((o: any) => (o.id || `layer_${canvas.getObjects().indexOf(o)}`) === layerId);
     if (obj && obj.selectable) {

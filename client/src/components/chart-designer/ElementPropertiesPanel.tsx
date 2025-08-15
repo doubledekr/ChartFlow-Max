@@ -79,6 +79,8 @@ export function ElementPropertiesPanel({
   const isChartGroup = properties.type === 'financial-chart-group' || properties.type === 'financial-chart-line' || properties.type === 'chartline' || selectedElement?.type === 'financial-chart-line';
   const elementType = selectedElement?.type === 'financial-chart-line' ? 'financial-chart-line' : properties.type;
   const isMultiSelection = elementType === 'multi-selection';
+  const isGroupSelection = selectedElement?.isGroup || elementType === 'group';
+  const isChartLinesGroup = isGroupSelection && (selectedElement?.name === 'Chart Lines' || selectedElement?.id === 'group_chart_lines');
   const isTextElement = ['title', 'annotation', 'price-label', 'source-attribution'].includes(elementType);
   const isShapeElement = ['rectangle', 'circle', 'triangle', 'star', 'target', 'alert', 'highlight'].includes(elementType);
   const isLineElement = ['trend-line', 'arrow-up', 'arrow-down'].includes(elementType);
@@ -99,7 +101,9 @@ export function ElementPropertiesPanel({
               <Move className="h-4 w-4 text-gray-600" />
             )}
             <h3 className="text-sm font-medium">
-              {isChartGroup || elementType === 'chartline' ? 'Financial Chart Line' : 
+              {isChartLinesGroup ? 'Chart Lines Group' :
+               isGroupSelection ? selectedElement?.name || 'Group' :
+               isChartGroup || elementType === 'chartline' ? 'Financial Chart Line' : 
                isMultiSelection ? `Multi-Selection (${properties.count} items)` :
                elementType === 'y-axis-labels' ? 'Y-Axis Labels (Price)' : 
                elementType === 'x-axis-labels' ? 'X-Axis Labels (Dates)' :
@@ -142,8 +146,76 @@ export function ElementPropertiesPanel({
         </div>
 
         <div className="space-y-4">
+          {/* Group properties - show bulk editing controls for Chart Lines group */}
+          {isChartLinesGroup && (
+            <>
+              <div className="space-y-4">
+                <h4 className="text-sm font-semibold text-gray-800 border-b pb-2">
+                  Apply to All Chart Lines <Badge variant="secondary" className="ml-2 text-xs">Bulk Edit</Badge>
+                </h4>
+                
+                {/* Bulk Line Thickness */}
+                <div className="space-y-2">
+                  <Label className="text-xs font-medium text-gray-700">Line Thickness</Label>
+                  <div className="flex items-center space-x-2">
+                    <Slider
+                      value={[properties.properties?.strokeWidth || 3]}
+                      onValueChange={([value]) => onUpdateProperty('strokeWidth', value)}
+                      max={8}
+                      min={1}
+                      step={0.5}
+                      className="flex-1"
+                      data-testid="slider-bulk-stroke-width"
+                    />
+                    <span className="text-xs text-gray-500 min-w-[2rem]">
+                      {(properties.properties?.strokeWidth || 3).toFixed(1)}px
+                    </span>
+                  </div>
+                </div>
+
+                {/* Bulk Opacity */}
+                <div className="space-y-2">
+                  <Label className="text-xs font-medium text-gray-700">Opacity</Label>
+                  <div className="flex items-center space-x-2">
+                    <Slider
+                      value={[(properties.properties?.opacity || 1) * 100]}
+                      onValueChange={([value]) => onUpdateProperty('opacity', value / 100)}
+                      max={100}
+                      min={10}
+                      step={5}
+                      className="flex-1"
+                      data-testid="slider-bulk-opacity"
+                    />
+                    <span className="text-xs text-gray-500 min-w-[3rem]">
+                      {Math.round((properties.properties?.opacity || 1) * 100)}%
+                    </span>
+                  </div>
+                </div>
+
+                {/* Bulk Smoothness */}
+                <div className="space-y-2">
+                  <Label className="text-xs font-medium text-gray-700">Line Smoothness</Label>
+                  <div className="flex items-center space-x-2">
+                    <Slider
+                      value={[(properties.properties?.smoothness || 0.5) * 100]}
+                      onValueChange={([value]) => onUpdateProperty('smoothness', value / 100)}
+                      max={100}
+                      min={0}
+                      step={10}
+                      className="flex-1"
+                      data-testid="slider-bulk-smoothness"
+                    />
+                    <span className="text-xs text-gray-500 min-w-[3rem]">
+                      {Math.round((properties.properties?.smoothness || 0.5) * 100)}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
           {/* Chart line properties - only show when chart line is selected */}
-          {(elementType === 'chartline' || elementType === 'financial-chart-line') && properties.properties && (
+          {(elementType === 'chartline' || elementType === 'financial-chart-line') && properties.properties && !isGroupSelection && (
             <>
               {/* Line Style Section */}
               <div className="space-y-4">

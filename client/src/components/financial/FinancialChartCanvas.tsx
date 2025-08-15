@@ -821,6 +821,40 @@ export function FinancialChartCanvas({
     seriesArray.forEach((series: any, index: number) => {
       const color = colors[index % colors.length];
       const itemX = 10 + (index * itemSpacing); // Relative to group
+      const symbol = series.symbol;
+      
+      // Create clickable background for toggle functionality
+      const toggleArea = new (window as any).fabric.Rect({
+        left: itemX - 2,
+        top: 2,
+        width: itemSpacing - 5,
+        height: itemHeight - 4,
+        fill: 'transparent',
+        stroke: null,
+        selectable: false,
+        evented: true,
+        hoverCursor: 'pointer'
+      });
+      
+      // Add click handler for toggle functionality
+      toggleArea.on('mousedown', () => {
+        const chartLine = fabricCanvasRef.current?.getObjects().find((obj: any) => 
+          obj.symbol === symbol && (obj.type === 'chartline' || obj.type === 'financial-chart-line')
+        );
+        
+        if (chartLine) {
+          const isVisible = chartLine.visible !== false;
+          chartLine.set('visible', !isVisible);
+          
+          // Update color indicator opacity to reflect visibility state
+          colorIndicator.set('opacity', !isVisible ? 1 : 0.3);
+          symbolText.set('opacity', !isVisible ? 1 : 0.5);
+          companyText.set('opacity', !isVisible ? 1 : 0.5);
+          
+          fabricCanvasRef.current?.renderAll();
+          console.log(`🎯 Toggled ${symbol} chart line: ${!isVisible ? 'visible' : 'hidden'}`);
+        }
+      });
       
       // Create color indicator circle
       const colorIndicator = new (window as any).fabric.Circle({
@@ -835,7 +869,7 @@ export function FinancialChartCanvas({
       });
       
       // Create symbol text (e.g., "AAPL")
-      const symbolText = new (window as any).fabric.Text(series.symbol, {
+      const symbolText = new (window as any).fabric.Text(symbol, {
         left: itemX + 18,
         top: 4,
         fontSize: 11,
@@ -847,7 +881,7 @@ export function FinancialChartCanvas({
       });
       
       // Create company name text (smaller, below symbol)
-      const companyText = new (window as any).fabric.Text(getCompanyName(series.symbol), {
+      const companyText = new (window as any).fabric.Text(getCompanyName(symbol), {
         left: itemX + 18,
         top: 16,
         fontSize: 8,
@@ -857,11 +891,12 @@ export function FinancialChartCanvas({
         evented: false
       });
       
+      legendElements.push(toggleArea);
       legendElements.push(colorIndicator);
       legendElements.push(symbolText);
       legendElements.push(companyText);
       
-      console.log(`📋 Added legend item: ${series.symbol} (${getCompanyName(series.symbol)}) with color ${color}`);
+      console.log(`📋 Added interactive legend item: ${symbol} (${getCompanyName(symbol)}) with color ${color}`);
     });
     
     // Create grouped legend element

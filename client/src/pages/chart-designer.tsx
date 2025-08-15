@@ -256,6 +256,30 @@ export default function ChartDesigner() {
     if (!selectedElement || !fabricCanvas) return;
 
     try {
+      // Handle bulk updates for Chart Lines group
+      if (selectedElement?.isGroup && selectedElement?.id === 'group_chart_lines') {
+        console.log('🔧 Chart Designer - Handling bulk chart lines property update:', property, '=', value);
+        
+        // Find all chart line objects
+        const chartLines = fabricCanvas.getObjects().filter((obj: any) => 
+          obj.type === 'financial-chart-line' || obj.type === 'chartline'
+        );
+        
+        console.log(`📊 Applying ${property}=${value} to ${chartLines.length} chart lines`);
+        
+        // Apply property to all chart lines
+        chartLines.forEach((chartLine: any) => {
+          if (chartUpdateRef.current) {
+            chartUpdateRef.current(property, value, chartLine.symbol);
+          } else {
+            console.log('❌ Chart Designer - chartUpdateRef.current is null');
+          }
+        });
+        
+        fabricCanvas.renderAll();
+        return;
+      }
+      
       // Special handling for chart line elements
       if (elementProperties?.type === 'chartline' || elementProperties?.type === 'financial-chart-line' || selectedElement?.type === 'financial-chart-line') {
         console.log('🔧 Chart Designer - Handling chart line property update:', property, '=', value);
